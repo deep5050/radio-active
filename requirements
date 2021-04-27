@@ -1,0 +1,10 @@
+appdirs==1.4.4
+certifi==2020.12.5
+chardet==4.0.0
+colorlog==5.0.1
+idna==2.10
+psutil==5.8.0
+pyradios==0.0.22
+requests==2.25.1
+urllib3==1.26.4
+zenlog==1.1
