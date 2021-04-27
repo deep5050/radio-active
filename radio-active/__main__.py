@@ -1,6 +1,7 @@
-#!/usr/bin/ python
+#!/usr/bin/ python3
 
 import sys
+import os
 import signal
 import argparse
 import json
@@ -9,6 +10,8 @@ from handler import Handler
 from player import Player
 
 player = None
+
+last_station_path = os.path.join(os.path.expanduser("~"), ".last_station.json")
 
 
 def signal_handler(sig, frame):
@@ -71,7 +74,7 @@ def main():
             "No station information provided, trying to get the last station information"
         )
         try:
-            with open("last_station.json", "r") as f:
+            with open(last_station_path, "r") as f:
                 last_station = json.load(f)
                 f.close()
                 station_uuid = last_station["stationuuid"]
@@ -104,7 +107,7 @@ def main():
     # don't specify anything will try to start the last station
 
     log.debug("Dumping station information")
-    with open("last_station.json", "w") as f:
+    with open(last_station_path, "w") as f:
         json.dump(handler.target_station, f)
         f.close()
 
