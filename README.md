@@ -1,41 +1,45 @@
-# RADIO-ACTIVE
-
-Play any radios around the globe right from your terminal
-
-
-## Example
-
-```bash
-(.venv) deep@lubuntu:~/Desktop/radio-active$ python radio-active 
-     [!]    | No station information provided, trying to get the last station information
-      i     | Station found: Radio Mirchi - 90s Hit Songs
-      i     | Radio started successfully
+<div align=center>
+<p align=center><img src=images/logo.png width=250px></p>
+<h1 align=center> RADIO-ACTIVE </h1>
+<p align=center> Play any radios around the globe right from your terminal </p>
 
 
-```
+<img align=center src=images/example_1.png >
 
-### Note 
+<hr>
+</div>
+
+
+
+### External Dependency 
 
 It needs [FFmpeg](https://ffmpeg.org/download.html) to be installed on your system in order to play the audio
 
 on Ubuntu based system > 20.04 Run
 
-```
+``` 
+
 sudo apt update
 sudo apt install ffmpeg
 ```
+
 For other systems including windows see the above link
+
 ### Install
-```
+
+``` 
+
 git clone https://github.com/deep5050/radio-active.git && cd radio-active
 
 pip install -r requirements
 ```
+
 Run with `python radio-active --station [STATION_NAME]`
 
 ### Options
 
-```
+``` 
+
 usage: radio-active [-h] [--version] [--station STATION_NAME] [--uuid STATION_UUID] [--log-level LOG_LEVEL]
 
 Play any radios around the globe right from the Terminal!
@@ -47,3 +51,12 @@ optional arguments:
   --uuid STATION_UUID     Specify a station UUID
   --log-level LOG_LEVEL   Specify log level
 ```
+
+### Acknowledegements
+
+<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
+<div align=center>
+<img src=images/footer.png>
+<p align=center> Happy Coding </p>
+</div>
