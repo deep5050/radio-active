@@ -9,10 +9,11 @@
 <hr>
 </div>
 
-### Features
+### Features 
 - [x] Supports more than 30K stations !!
-[ x ] Saves last station information 
-[ x ] Supports user-added stations
+- [x] Saves last station information 
+- [ ] Supports user-added stations
+
 
 ### External Dependency 
 
@@ -56,5 +57,5 @@ optional arguments:
 
 <div align=center>
 <img src=images/footer.png>
-<p align=center> Happy Coding </p>
+<p align=center> Happy Listening </p>
 </div>
