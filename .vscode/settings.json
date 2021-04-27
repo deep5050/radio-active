@@ -1,0 +1,4 @@
+{
+    "python.pythonPath": "/home/deep/radio-active/.venv/bin/python3",
+    "python.formatting.provider": "black"
+}
