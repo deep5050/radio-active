@@ -11,7 +11,10 @@ from player import Player
 
 player = None
 
-last_station_path = os.path.join(os.path.expanduser("~"), ".last_station.json")
+last_station_path = os.path.join(
+    os.path.expanduser("~"), ".radio-active-last-station.json"
+)
+alias_path = os.path.join(os.path.expanduser("~"), "radio-active-alias.txt")
 
 
 def signal_handler(sig, frame):
@@ -28,6 +31,11 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 def main():
+    handler = Handler()
+    target_station = None
+    mode_of_search = ""
+    alias_map = []
+
     parser = argparse.ArgumentParser(
         description="Play any radio around the globe right from the CLI ",
         prog="radio-active",
@@ -68,36 +76,76 @@ def main():
         log.level("info")
         log.warning("Correct log levels are: error,warning,info(default),debug")
 
+    # create alias map
+    try:
+        with open(alias_path, "r") as f:
+            log.debug("Alias file exists")
+            alias_data = f.read()
+            f.close()
+            alias_list = alias_data.splitlines()
+            for alias in alias_list:
+                temp = alias.split("=")
+                left = temp[0]
+                right = temp[1]
+                alias_map.append({"name": left, "uuid": right})
+                log.debug("[ {} = {} ]".format(left, right))
+
+            # log.debug(json.dumps(alias_map, indent=3))
+
+    except Exception as e:
+        log.warning("could not get / parse alias data")
+
+    # if neither of --station and --uuid provided , look in last_station file
     if station_name is None and station_uuid is None:
         # try to fetch the last played station's information
         log.warn(
             "No station information provided, trying to get the last station information"
         )
+        # getting last station details
         try:
             with open(last_station_path, "r") as f:
                 last_station = json.load(f)
                 f.close()
                 station_uuid = last_station["stationuuid"]
+                log.info("Playing last station: {}".format(last_station["name"]))
         except Exception as e:
             log.critical("Need a station name  or UUID to play the radio, see help")
             sys.exit(0)
+        #################################
 
-    # log.debug("Station name: " + station_name)
+    alias_found = False
 
-    handler = Handler()
-    target_station = None
-    # uuid gets first preference
-
-    if station_uuid is not None and station_name is not None:
-        log.info(
-            "Both station name and UUID are provided, selecting UUID to find the station"
-        )
-
+    # if --uuid provided call directly
     if station_uuid is not None:
-        log.debug("Started with UUID mode")
+        mode_of_search = "uuid"
+
+    elif station_name is not None and station_uuid is None:
+        # got station name only, looking in alias first
+        # look for alias file (if any)
+        if len(alias_map) > 0:
+            log.debug("looking under alias file")
+            for alias in alias_map:
+                if alias["name"] == station_name:
+                    station_uuid = alias["uuid"]
+                    log.debug(
+                        "Alias found: {} = {}".format(alias["name"], alias["uuid"])
+                    )
+                    alias_found = True
+                    break
+
+        if alias_found == True:
+            # log.debug("Started with UUID mode")
+            mode_of_search = "uuid"
+        else:
+            log.debug("Alias not found, using normal API search")
+            mode_of_search = "name"
+
+    log.debug("Mode of search: {}".format(mode_of_search))
+
+    if mode_of_search == "uuid":
         handler.play_by_station_uuid(station_uuid)
 
-    if station_uuid is None and station_name is not None:
+    else:
         handler.play_by_station_name(station_name)
 
     global player
