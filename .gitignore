@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+last_station.json
+build.sh
+deploy.sh
+Makefile
