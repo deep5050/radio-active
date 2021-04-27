@@ -16,8 +16,15 @@ Play any radios around the globe right from your terminal
 
 ### Note 
 
-It needs [FFmpeg](https://ffmpeg.org/download.html) to be installed on your system in order to play he audio
+It needs [FFmpeg](https://ffmpeg.org/download.html) to be installed on your system in order to play the audio
 
+on Ubuntu based system > 20.04 Run
+
+```
+sudo apt update
+sudo apt install ffmpeg
+```
+For other systems including windows see the obve link
 ### Install
 ```
 git clone https://github.com/deep5050/radio-active.git && cd radio-active
