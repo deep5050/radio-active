@@ -24,7 +24,7 @@ on Ubuntu based system > 20.04 Run
 sudo apt update
 sudo apt install ffmpeg
 ```
-For other systems including windows see the obve link
+For other systems including windows see the above link
 ### Install
 ```
 git clone https://github.com/deep5050/radio-active.git && cd radio-active
