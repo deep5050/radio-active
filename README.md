@@ -9,7 +9,10 @@
 <hr>
 </div>
 
-
+### Features
+- [x] Supports more than 30K stations !!
+[ x ] Saves last station information 
+[ x ] Supports user-added stations
 
 ### External Dependency 
 
@@ -27,12 +30,7 @@ For other systems including windows see the above link
 
 ### Install
 
-``` 
-
-git clone https://github.com/deep5050/radio-active.git && cd radio-active
-
-pip install -r requirements
-```
+Run: `bash install.sh`
 
 Run with `python radio-active --station [STATION_NAME]`
 
