@@ -20,7 +20,7 @@
 
 It needs [FFmpeg](https://ffmpeg.org/download.html) to be installed on your system in order to play the audio
 
-on Ubuntu based system > 20.04 Run
+on Ubuntu based system >= 20.04 Run
 
 ``` 
 sudo apt update
