@@ -12,7 +12,7 @@
 
 - [x] Supports more than 30K stations !!
 - [x] Saves last station information 
-- [x] Favourite stations (Aliasing)
+- [x] Favorite stations (Aliasing)
 - [ ] Supports user-added stations
 - [ ] Finds nearby stations
 
@@ -37,7 +37,7 @@ git clone https://github.com/deep5050/radio-active.git && cd radio-active
 pip install -r requirements
 ```
 
-####  Uinux/Linux
+####  Unix/Linux
 
 you can add the path to the ENV and execute it from any where (optional)
 
@@ -69,7 +69,7 @@ optional arguments:
   --log-level LOG_LEVEL   Specify log level
 ```
 
-> `--station` : Expects a station name to be played ( if not provided it will try to get the last played station ). Exaple: "pehla nasha" , pehla_nasha, bbc_radio 
+> `--station` : Expects a station name to be played ( if not provided it will try to get the last played station ). Example: "pehla nasha" , pehla_nasha, bbc_radio 
 
 > `--uuid` : When station names are too long or confusing ( or multiple results for the same name )  use the station's uuid to play . --uuid gets the greater priority than --station. example: 96444e20-0601-11e8-ae97-52543be04c81
 
@@ -77,9 +77,9 @@ optional arguments:
 
 ### Extra
 
-You  can always alias your favourite stations' name with a custom name. radio-active firsts looks for stations in your favourite list.
+You  can always alias your favorite stations' name with a custom name. radio-active firsts looks for stations in your favorite list.
 
-To add a sation to your favourite station list:
+To add a station to your favorite station list:
 
 1. place a file named `radio-active-alias.txt` under your home directory.
 
@@ -88,7 +88,7 @@ To add a sation to your favourite station list:
  mirchi_ranbindra_sangeet=72e039a6-9ed9-4741-b45e-165eec3bec6d
  bongo_net=96444e20-0601-11e8-ae97-52543be04c81
  ````
-### Acknowledegements
+### Acknowledgements
 
 <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
