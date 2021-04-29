@@ -6,13 +6,16 @@ from radioactive.app_version import get_version
 DESCRIPTION = "Play any radio around the globe right from the terminal"
 VERSION = get_version()
 
+
 def readme():
     with open("README.md") as f:
         return f.read()
 
+
 def required():
     with open("requirements") as f:
         return f.read().splitlines()
+
 
 setup(
     name="radio-active",

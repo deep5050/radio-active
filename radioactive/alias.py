@@ -2,6 +2,7 @@ import os.path
 import json
 from zenlog import log
 
+
 class Alias:
     def __init__(self):
         self.alias_map = []
@@ -40,7 +41,8 @@ class Alias:
             for alias in self.alias_map:
                 if alias["name"] == entry:
                     log.debug(
-                        "Alias found: {} = {}".format(alias["name"], alias["uuid"])
+                        "Alias found: {} = {}".format(
+                            alias["name"], alias["uuid"])
                     )
                     self.found = True
                     return alias
