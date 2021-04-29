@@ -1,8 +1,9 @@
-import sys
-import signal
 import json
-from zenlog import log
+import signal
+import sys
+
 from pyradios import RadioBrowser
+from zenlog import log
 
 from radioactive.player import Player
 
@@ -20,7 +21,8 @@ class Handler:
             log.error("No stations found by the name")
             sys.exit(0)
         if len(self.response) > 1:
-            log.warn("{} stations found by the name".format(len(self.response)))
+            log.warn("{} stations found by the name".format(len(
+                self.response)))
             stations_name = ""
 
             for station in self.response:
@@ -65,7 +67,8 @@ class Handler:
             sys.exit(0)
 
         log.info("Station found: {}".format(self.target_station["name"]))
-        temp = self.API.search(name=self.target_station["name"], name_exact=True)
+        temp = self.API.search(name=self.target_station["name"],
+                               name_exact=True)
         log.debug(json.dumps(temp, indent=3))
         # againg register a valid click
         if is_ok == "false":

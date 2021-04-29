@@ -1,18 +1,21 @@
-from setuptools import setup
 from setuptools import find_packages
+from setuptools import setup
 
 from radioactive.app_version import get_version
 
 DESCRIPTION = "Play any radio around the globe right from the terminal"
 VERSION = get_version()
 
+
 def readme():
     with open("README.md") as f:
         return f.read()
 
+
 def required():
     with open("requirements") as f:
         return f.read().splitlines()
+
 
 setup(
     name="radio-active",
@@ -25,10 +28,10 @@ setup(
     author_email="dipankarpal5050@gmail.com",
     url="https://github.com/deep5050/radio-active",
     license="MIT",
-        entry_points={
-        'console_scripts': [
-            'radioactive = radioactive.__main__:main',
-            'radio = radioactive.__main__:main',
+    entry_points={
+        "console_scripts": [
+            "radioactive = radioactive.__main__:main",
+            "radio = radioactive.__main__:main",
         ]
     },
     packages=find_packages(),
