@@ -1,11 +1,12 @@
+"""
+The main handler that solely depends on pyradios module to communicate with our remote API
+"""
+
 import json
-import signal
 import sys
 
 from pyradios import RadioBrowser
 from zenlog import log
-
-from radioactive.player import Player
 
 
 class Handler:
@@ -21,9 +22,7 @@ class Handler:
             log.error("No stations found by the name")
             sys.exit(0)
         if len(self.response) > 1:
-            log.warn("{} stations found by the name".format(len(
-                self.response)))
-            stations_name = ""
+            log.warn("{} stations found by the name".format(len(self.response)))
 
             for station in self.response:
                 data = {}
@@ -33,14 +32,6 @@ class Handler:
 
                 log.info(json.dumps(data, indent=3))
 
-                # stations_name = stations_name + "," + station["name"]
-                # log.info(
-                #     "name: {} | uuid: {} | country: {}".format(
-                #         station["name"], station["stationuuid"], station["country"]
-                #     )
-                # )
-
-            # log.info(stations_name)
             sys.exit(0)
         if len(self.response) == 1:
             log.info("Station found: {}".format(self.response[0]["name"]))
@@ -62,13 +53,12 @@ class Handler:
             self.target_station = self.API.click_counter(_uuid)
             log.debug(json.dumps(self.target_station, indent=3))
             is_ok = self.target_station["ok"]
-        except Exception as e:
+        except Exception:
             log.error("Could not find the station by the UUID")
             sys.exit(0)
 
         log.info("Station found: {}".format(self.target_station["name"]))
-        temp = self.API.search(name=self.target_station["name"],
-                               name_exact=True)
+        temp = self.API.search(name=self.target_station["name"], name_exact=True)
         log.debug(json.dumps(temp, indent=3))
         # againg register a valid click
         if is_ok == "false":
