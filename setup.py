@@ -28,10 +28,10 @@ setup(
     author_email="dipankarpal5050@gmail.com",
     url="https://github.com/deep5050/radio-active",
     license="MIT",
-        entry_points={
-        'console_scripts': [
-            'radioactive = radioactive.__main__:main',
-            'radio = radioactive.__main__:main',
+    entry_points={
+        "console_scripts": [
+            "radioactive = radioactive.__main__:main",
+            "radio = radioactive.__main__:main",
         ]
     },
     packages=find_packages(),

@@ -41,8 +41,7 @@ class Alias:
             for alias in self.alias_map:
                 if alias["name"] == entry:
                     log.debug(
-                        "Alias found: {} = {}".format(
-                            alias["name"], alias["uuid"])
+                        "Alias found: {} = {}".format(alias["name"], alias["uuid"])
                     )
                     self.found = True
                     return alias
