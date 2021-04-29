@@ -2,11 +2,12 @@ import os.path
 import json
 from zenlog import log
 
+
 class Last_station:
     def __init__(self):
         self.last_station_path = None
 
-        self.last_station_path =  os.path.join(
+        self.last_station_path = os.path.join(
             os.path.expanduser("~"), ".radio-active-last-station.json"
         )
 
@@ -20,8 +21,7 @@ class Last_station:
             log.critical("Need a station name  or UUID to play the radio, see help")
             sys.exit(0)
 
-    def save_info(self,station):
+    def save_info(self, station):
         log.debug("Dumping station information")
         with open(self.last_station_path, "w") as f:
             json.dump(station, f)
-
