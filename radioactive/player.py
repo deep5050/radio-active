@@ -1,10 +1,11 @@
 import os
 import sys
-from time import sleep
 from signal import SIGTERM
 from subprocess import Popen
-from zenlog import log
+from time import sleep
+
 import psutil
+from zenlog import log
 
 
 class Player:

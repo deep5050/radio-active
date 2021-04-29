@@ -1,8 +1,9 @@
-import sys
-import signal
 import json
-from zenlog import log
+import signal
+import sys
+
 from pyradios import RadioBrowser
+from zenlog import log
 
 from radioactive.player import Player
 

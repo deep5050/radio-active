@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
-import sys
-import os
-import signal
 import argparse
 import json
+import os
+import signal
+import sys
+
 from zenlog import log
 
-from radioactive.args import Parser
-from radioactive.app_version import get_version
 from radioactive.alias import Alias
+from radioactive.app_version import get_version
+from radioactive.args import Parser
 from radioactive.handler import Handler
-from radioactive.player import Player
 from radioactive.last_station import Last_station
-
+from radioactive.player import Player
 
 # globally needed as signal handler needs it
 # to terminate main() properly
