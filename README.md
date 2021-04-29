@@ -64,6 +64,15 @@ optional arguments:
                         Specify log level
 
 ```
+| Argument            | Note                                 | Description              | Default |
+| ------------------- | ------------------------------------ | ------------------------ | ------- |
+| `--station`, `-S`   | Required ( Optional from second run) | Station name             | None    |
+| `--uuid`, `-U`      | Optional                             | ID of the station        | None    |
+| `--log-level`, `-L` | Optional                             | Log level of the program | info    |
+
+
+
+
 
 > `--station`, `-S` : Expects a station name to be played ( if not provided it
 > will try to get the last played station ). Example: "pehla nasha" ,

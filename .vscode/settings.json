@@ -2,6 +2,9 @@
     "python.formatting.provider": "black",
     "cSpell.words": [
         "Dipankar",
+        "Popen",
+        "ffplay",
+        "psutil",
         "pyradios",
         "stationuuid"
     ]
