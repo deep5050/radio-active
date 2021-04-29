@@ -76,7 +76,7 @@ def main():
         if result is not None and alias.found:
             station_uuid = result["stationuuid"]
 
-        if alias.found == True:
+        if alias.found:
             mode_of_search = "uuid"
         else:
             log.debug("Alias not found, using normal API search")
