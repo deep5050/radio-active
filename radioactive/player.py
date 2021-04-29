@@ -19,13 +19,12 @@ class Player:
         log.debug("player: url => {}".format(self.url))
 
         self.process = Popen(
-            ["ffplay", "-nodisp", "-nostats", "-loglevel", "0", self.url])
+            ["ffplay", "-nodisp", "-nostats", "-loglevel", "0", self.url]
+        )
 
-        log.debug("player: ffplay => PID {} initiated".format(
-            self.process.pid))
+        log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
 
-        sleep(
-            3)  # sleeping for 3 seconds wainting for ffplay to start properly
+        sleep(3)  # sleeping for 3 seconds wainting for ffplay to start properly
 
         if self.is_active():
             self.is_playing = True
