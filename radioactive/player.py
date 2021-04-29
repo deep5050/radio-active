@@ -10,6 +10,7 @@ from zenlog import log
 
 class Player:
     """FFmepg required to be installed seperately"""
+
     def __init__(self, URL):
         self.url = URL
         self.is_playing = False
