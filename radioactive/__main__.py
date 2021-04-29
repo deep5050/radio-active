@@ -1,4 +1,4 @@
-#!/usr/bin/ python3
+#!/usr/bin/env python
 
 import sys
 import os
@@ -7,12 +7,12 @@ import argparse
 import json
 from zenlog import log
 
-from __init__ import get_version
-from args import Parser
-from alias import Alias
-from handler import Handler
-from player import Player
-from last_station import Last_station
+from radioactive.args import Parser
+from radioactive.app_version import get_version
+from radioactive.alias import Alias
+from radioactive.handler import Handler
+from radioactive.player import Player
+from radioactive.last_station import Last_station
 
 
 # globally needed as signal handler needs it
@@ -112,7 +112,6 @@ def signal_handler(sig, frame):
 
 
 signal.signal(signal.SIGINT, signal_handler)
-
 
 if __name__ == "__main__":
     main()

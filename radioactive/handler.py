@@ -1,9 +1,10 @@
 import sys
 import signal
-from zenlog import log
 import json
-from player import Player
+from zenlog import log
 from pyradios import RadioBrowser
+
+from radioactive.player import Player
 
 
 class Handler:
