@@ -37,7 +37,6 @@ class Alias:
     def search(self, entry):
         if len(self.alias_map) > 0:
             log.debug("looking under alias file")
-            0
             for alias in self.alias_map:
                 if alias["name"] == entry:
                     log.debug(
