@@ -73,7 +73,7 @@ optional arguments:
 > results for the same name ) use the station's uuid to play . --uuid gets the
 > greater priority than --station. example: 96444e20-0601-11e8-ae97-52543be04c81
 
-> `--log-level`, `-L` : don't need to specify unless you are developing it. [
+> `--log-level`, `-L` : don't need to specify unless you are developing it. [ >
 > `info` , `warning` , `error` , `debug` ]
 
 ### Extra
