@@ -1,6 +1,6 @@
 import os.path
+import json
 from zenlog import log
-
 
 class Alias:
     def __init__(self):
@@ -24,13 +24,15 @@ class Alias:
                         left = temp[0]
                         right = temp[1]
                         self.alias_map.append({"name": left, "uuid": right})
-                        log.debug("[ {} = {} ]".format(left, right))
 
                 # log.debug(json.dumps(alias_map, indent=3))
             except Exception as e:
                 log.warning("could not get / parse alias data")
+            # log.debug(json.dumps(self.alias_map))
         else:
             log.warning("Alias file does not exist")
+
+        # log.debug(json.dumps(self.alias_map, indent=3))
 
     def search(self, entry):
         if len(self.alias_map) > 0:
