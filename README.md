@@ -3,9 +3,16 @@
 <h1 align=center> RADIO-ACTIVE </h1>
 <p align=center> Play any radios around the globe right from your terminal </p>
 
-<img align=center src=images/example_1.png >
-
+<p align=center>
+<img align=center src=images/banner.png >
 <hr>
+<img alt="GitHub" src="https://img.shields.io/github/license/deep5050/radio-active?style=for-the-badge">
+<img alt="PyPI" src="https://img.shields.io/pypi/v/radio-active?style=for-the-badge">
+<img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/radio-active?style=for-the-badge">
+<img alt="CodeFactor Grade" src="https://img.shields.io/codefactor/grade/github/deep5050/radio-active/main?style=for-the-badge">
+
+
+</p>
 </div>
 
 ### Features 
@@ -30,50 +37,38 @@ sudo apt install ffmpeg
 For other systems including windows see the above link
 
 ### Install
+Just run: `pip3 install radio-active`
 
-``` bash
-git clone https://github.com/deep5050/radio-active.git && cd radio-active
+### Run
 
-pip install -r requirements
-```
-
-####  Unix/Linux
-
-you can add the path to the ENV and execute it from any where (optional)
-
-``` bash
-echo "alias radio-active='python3 $PWD/radio-active'" >> ~/.bashrc
-
-source ~/.bashrc
-```
-
-### Other (Windows , Mac)
-
-Add this directory to your ENV path manually
-
-Run with `python radio-active --station [STATION_NAME]`
+Run with `radioactive --station [STATION_NAME]`
 
 ### Options
 
-``` 
+``` bash
+deep@lubuntu:~/Desktop$ radioactive --help
+usage: radio-active [-h] [--version] [--station STATION_NAME] [--uuid STATION_UUID]
+                    [--log-level LOG_LEVEL]
 
-usage: radio-active [-h] [--version] [--station STATION_NAME] [--uuid STATION_UUID] [--log-level LOG_LEVEL]
-
-Play any radios around the globe right from the Terminal!
+Play any radio around the globe right from the CLI
 
 optional arguments:
-  -h, --help              Show this help message and exit
-  --version               Show program's version number and exit
-  --station STATION_NAME  Specify a station name
-  --uuid STATION_UUID     Specify a station UUID
-  --log-level LOG_LEVEL   Specify log level
+  -h, --help            show this help message and exit
+  --version, -V
+  --station STATION_NAME, -S STATION_NAME
+                        Specify a station name
+  --uuid STATION_UUID, -U STATION_UUID
+                        Specify a station UUID
+  --log-level LOG_LEVEL, -L LOG_LEVEL
+                        Specify log level
+
 ```
 
-> `--station` : Expects a station name to be played ( if not provided it will try to get the last played station ). Example: "pehla nasha" , pehla_nasha, bbc_radio 
+> `--station`, `-S` : Expects a station name to be played ( if not provided it will try to get the last played station ). Example: "pehla nasha" , pehla_nasha, bbc_radio 
 
-> `--uuid` : When station names are too long or confusing ( or multiple results for the same name )  use the station's uuid to play . --uuid gets the greater priority than --station. example: 96444e20-0601-11e8-ae97-52543be04c81
+> `--uuid`,`-U` : When station names are too long or confusing ( or multiple results for the same name )  use the station's uuid to play . --uuid gets the greater priority than --station. example: 96444e20-0601-11e8-ae97-52543be04c81
 
-> `--log-level` : don't need to specify unless you are developing it. [ `info` , `warning` , `error` , `debug` ]
+> `--log-level`, `-L` : don't need to specify unless you are developing it. [ `info` , `warning` , `error` , `debug` ]
 
 ### Extra
 
@@ -95,4 +90,5 @@ To add a station to your favorite station list:
 <div align=center>
 <img src=images/footer.png>
 <p align=center> Happy Listening </p>
+<img src=https://forthebadge.com/images/badges/built-with-love.svg>
 </div>
