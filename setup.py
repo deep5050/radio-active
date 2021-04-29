@@ -2,7 +2,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 DESCRIPTION = "Play any radio around the globe right from the terminal"
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 
 def readme():
     with open("README.md") as f:
