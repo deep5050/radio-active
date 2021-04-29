@@ -11,9 +11,11 @@ class Parser:
             prog="radio-active",
         )
 
-        self.parser.add_argument(
-            "--version", "-V", action="store_true", dest="version", default=False
-        )
+        self.parser.add_argument("--version",
+                                 "-V",
+                                 action="store_true",
+                                 dest="version",
+                                 default=False)
 
         self.parser.add_argument(
             "--station",
