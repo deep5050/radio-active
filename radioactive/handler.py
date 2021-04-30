@@ -47,7 +47,7 @@ class Handler:
     def play_by_station_uuid(self, _uuid):
         # print(_uuid)
         # Pyradios by default don't let you search by uuid
-        # a trick is to call click_counter(uuid) directly to get the statioon info
+        # a trick is to call click_counter(uuid) directly to get the station info
         is_ok = "false"
         try:
             self.target_station = self.API.click_counter(_uuid)
