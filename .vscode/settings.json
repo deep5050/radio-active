@@ -2,6 +2,7 @@
     "python.formatting.provider": "black",
     "cSpell.words": [
         "Dipankar",
+        "Fmepg",
         "Popen",
         "ffplay",
         "psutil",
