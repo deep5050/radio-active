@@ -36,9 +36,17 @@ sudo apt install ffmpeg
 
 For other systems including windows see the above link
 
+#### Installing FFmpeg
+
+ffmpeg is required for this program to work correctly. Install ffmpeg by following these steps :-
+
+- On Linux - <https://www.tecmint.com/install-ffmpeg-in-linux/>
+- On Windows - <https://www.wikihow.com/Install-FFmpeg-on-Windows>
+
+
 ### Install
 
-Just run: `pip3 install radio-active`
+Just run: `pip3 install --upgrade radio-active`
 
 ### Run
 
@@ -64,6 +72,8 @@ optional arguments:
                         Specify log level
 
 ```
+
+
 | Argument            | Note                                 | Description              | Default |
 | ------------------- | ------------------------------------ | ------------------------ | ------- |
 | `--station`, `-S`   | Required ( Optional from second run) | Station name             | None    |
