@@ -1,7 +1,7 @@
 """
     Version of the current program, ( in development mode it needs to be updated in every realease)
 """
-__VERSION__ = "2.0.4"
+__VERSION__ = "2.1.0"
 
 
 def get_version():
