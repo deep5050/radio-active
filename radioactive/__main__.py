@@ -15,6 +15,16 @@ from radioactive.player import Player
 # to terminate main() properly
 player = None
 
+import sentry_sdk
+sentry_sdk.init(
+    "https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+    debug=True,
+)
 
 def main():
     parser = Parser()
