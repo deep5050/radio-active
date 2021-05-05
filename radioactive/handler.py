@@ -7,6 +7,10 @@ import sys
 
 from pyradios import RadioBrowser
 from zenlog import log
+from rich.console import Console
+from rich.table import Table
+
+console = Console()
 
 
 class Handler:
@@ -37,14 +41,22 @@ class Handler:
 
         # when multiple results found
         if len(self.response) > 1:
-            log.warn("{} stations found by the name".format(len(self.response)))
+            table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("Station", justify="left")
+            table.add_column("Country", justify="center")
+            table.add_column("UUID", justify="center")
 
+            log.warn("{} stations found by the name, select one and run with UUID instead".format(len(self.response)))
+ 
             for station in self.response:
-                data = {}
-                data["name"] = station["name"]
-                data["uuid"] = station["stationuuid"]
-                data["country"] = station["country"]
-                log.info(json.dumps(data, indent=3))
+                # data = {}
+                # data["name"] = station["name"]
+                # data["uuid"] = station["stationuuid"]
+                # data["country"] = station["country"]
+                # log.info(json.dumps(data, indent=3))
+                table.add_row(station['name'], station['countrycode'], station['stationuuid'])
+
+            console.print(table)
             sys.exit(1)
 
         # when exactly one response found
