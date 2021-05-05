@@ -8,9 +8,8 @@ class Alias:
         self.alias_map = []
         self.found = False
 
-        self.alias_path = os.path.join(
-            os.path.expanduser("~"), "radio-active-alias.txt"
-        )
+        self.alias_path = os.path.join(os.path.expanduser("~"),
+                                       "radio-active-alias.txt")
 
     def generate_map(self):
         # create alias map
@@ -40,9 +39,8 @@ class Alias:
             log.debug("looking under alias file")
             for alias in self.alias_map:
                 if alias["name"] == entry:
-                    log.debug(
-                        "Alias found: {} = {}".format(alias["name"], alias["uuid"])
-                    )
+                    log.debug("Alias found: {} = {}".format(
+                        alias["name"], alias["uuid"]))
                     self.found = True
                     return alias
 

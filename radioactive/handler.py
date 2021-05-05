@@ -12,7 +12,6 @@ class Handler:
     """
     radio-browser API handler. This module communicates with the underlying API via PyRadios
     """
-
     def __init__(self):
         self.API = None
         self.response = None
@@ -36,7 +35,8 @@ class Handler:
 
         # when multiple results found
         if len(self.response) > 1:
-            log.warn("{} stations found by the name".format(len(self.response)))
+            log.warn("{} stations found by the name".format(len(
+                self.response)))
 
             for station in self.response:
                 data = {}
@@ -74,7 +74,8 @@ class Handler:
             sys.exit(0)
 
         log.info("Station found: {}".format(self.target_station["name"]))
-        temp = self.API.search(name=self.target_station["name"], name_exact=True)
+        temp = self.API.search(name=self.target_station["name"],
+                               name_exact=True)
         log.debug(json.dumps(temp, indent=3))
 
         # register a valid click against the current response
