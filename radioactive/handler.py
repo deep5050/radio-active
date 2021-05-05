@@ -75,7 +75,8 @@ class Handler:
             sys.exit(0)
 
         log.info("Station found: {}".format(self.target_station["name"]))
-        temp = self.API.search(name=self.target_station["name"], name_exact=True)
+        temp = self.API.search(
+            name=self.target_station["name"], name_exact=True)
         log.debug(json.dumps(temp, indent=3))
 
         # register a valid click against the current response
