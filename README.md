@@ -122,8 +122,8 @@ bongo_net=96444e20-0601-11e8-ae97-52543be04c81
 <img src=images/footer.png>
 <p align=center> Happy Listening </p>
 <img src=https://forthebadge.com/images/badges/built-with-love.svg>
-  
-  <img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=Installs/>
+
+<p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p>
   
 </div>
 
