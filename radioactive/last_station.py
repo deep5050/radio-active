@@ -9,7 +9,7 @@ from zenlog import log
 
 class Last_station:
 
-    """ Saves the last played radio station information, when user don't provide any -S or -U
+    """Saves the last played radio station information, when user don't provide any -S or -U
     it looks for the information.
 
     on every successful run, it saves the station information.
@@ -20,18 +20,17 @@ class Last_station:
         self.last_station_path = None
 
         self.last_station_path = os.path.join(
-            os.path.expanduser("~"), ".radio-active-last-station.json")
+            os.path.expanduser("~"), ".radio-active-last-station.json"
+        )
 
     def get_info(self):
         try:
             with open(self.last_station_path, "r") as f:
                 last_station = json.load(f)
-                log.info("Playing last station: {}".format(
-                    last_station["name"]))
+                log.info("Playing last station: {}".format(last_station["name"]))
                 return last_station["stationuuid"]
         except Exception:
-            log.critical(
-                "Need a station name  or UUID to play the radio, see help")
+            log.critical("Need a station name  or UUID to play the radio, see help")
             sys.exit(0)
 
     def save_info(self, station):

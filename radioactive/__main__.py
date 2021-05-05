@@ -42,16 +42,14 @@ def main():
         log.level(log_level)
     else:
         log.level("info")
-        log.warning(
-            "Correct log levels are: error,warning,info(default),debug")
+        log.warning("Correct log levels are: error,warning,info(default),debug")
 
     # -------------------- NOTHING PROVIDED --------------------- #
     # if neither of --station and --uuid provided , look in last_station file
 
     if station_name is None and station_uuid is None:
         # try to fetch the last played station's information
-        log.warn(
-            "No station information provided, trying to get the last station")
+        log.warn("No station information provided, trying to get the last station")
         # getting last station details, getting the UUID
         station_uuid = last_station.get_info()
 
