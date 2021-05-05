@@ -3,7 +3,8 @@ import signal
 import sys
 
 from zenlog import log
-
+from rich.panel import Panel
+from rich import print
 from radioactive.alias import Alias
 from radioactive.app_version import get_version
 from radioactive.args import Parser
@@ -27,6 +28,10 @@ sentry_sdk.init(
 )
 
 def main():
+
+
+
+
     parser = Parser()
     args = parser.parse()
 
@@ -43,6 +48,22 @@ def main():
     if args.version:
         log.info("RADIO-ACTIVE : version {}".format(VERSION))
         sys.exit(0)
+
+
+    ################################# RICH ##################
+    welcome = Panel(
+    """
+        :radio: Play any radios around the globe right from this Terminal [blink]:zap:[/blink]!
+        :smile: [blue]Author: Dipankar Pal[/blue]
+        :question: Type '--help' for more details on avaliable commands.
+        :computer: Visit my [link=https://github.com/deep5050/radio-active]Github Page[/link]!
+        """,
+    title="[rgb(250,0,0)]RADIO[rgb(255,165,0)]-[rgb(255,255,0)]ACTIVE",
+    width=85
+    )
+    print(welcome)
+
+
 
     station_name = args.station_name
     station_uuid = args.station_uuid
@@ -92,6 +113,10 @@ def main():
     # ------------------------------------------------------------ #
 
     log.debug("Mode of search: {}".format(mode_of_search))
+
+
+
+
 
     if mode_of_search == "uuid":
         handler.play_by_station_uuid(station_uuid)
