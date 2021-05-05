@@ -36,9 +36,17 @@ sudo apt install ffmpeg
 
 For other systems including windows see the above link
 
+#### Installing FFmpeg
+
+ffmpeg is required for this program to work correctly. Install ffmpeg by following these steps :-
+
+- On Linux - <https://www.tecmint.com/install-ffmpeg-in-linux/>
+- On Windows - <https://www.wikihow.com/Install-FFmpeg-on-Windows>
+
+
 ### Install
 
-Just run: `pip3 install radio-active`
+Just run: `pip3 install --upgrade radio-active`
 
 ### Run
 
@@ -64,6 +72,17 @@ optional arguments:
                         Specify log level
 
 ```
+
+
+| Argument            | Note                                 | Description              | Default |
+| ------------------- | ------------------------------------ | ------------------------ | ------- |
+| `--station`, `-S`   | Required ( Optional from second run) | Station name             | None    |
+| `--uuid`, `-U`      | Optional                             | ID of the station        | None    |
+| `--log-level`, `-L` | Optional                             | Log level of the program | info    |
+
+
+
+
 
 > `--station`, `-S` : Expects a station name to be played ( if not provided it
 > will try to get the last played station ). Example: "pehla nasha" ,
@@ -91,6 +110,10 @@ mirchi_ranbindra_sangeet=72e039a6-9ed9-4741-b45e-165eec3bec6d
 bongo_net=96444e20-0601-11e8-ae97-52543be04c81
 ```
 
+
+### Demo
+
+![demo](./images/demo.svg)
 ### Acknowledgements
 
 <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
@@ -99,4 +122,8 @@ bongo_net=96444e20-0601-11e8-ae97-52543be04c81
 <img src=images/footer.png>
 <p align=center> Happy Listening </p>
 <img src=https://forthebadge.com/images/badges/built-with-love.svg>
+
+<p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p>
+  
 </div>
+

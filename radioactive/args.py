@@ -1,7 +1,12 @@
 import argparse
+import sys
+from zenlog import log
 
 
 class Parser:
+
+    """Parse the command-line args and retrun result to the __main__"""
+
     def __init__(self):
         self.parser = None
         self.result = None
@@ -11,11 +16,9 @@ class Parser:
             prog="radio-active",
         )
 
-        self.parser.add_argument("--version",
-                                 "-V",
-                                 action="store_true",
-                                 dest="version",
-                                 default=False)
+        self.parser.add_argument(
+            "--version", "-V", action="store_true", dest="version", default=False
+        )
 
         self.parser.add_argument(
             "--station",
