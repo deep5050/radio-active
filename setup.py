@@ -38,7 +38,7 @@ setup(
     install_requires=required(),
     classifiers=[
         "License :: OSI Approved :: MIT License",
-        "Development Status :: 1 - Planning",
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
