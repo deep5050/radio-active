@@ -1,5 +1,4 @@
 """ FFplay proess handler """
-
 import os
 import sys
 from shutil import which

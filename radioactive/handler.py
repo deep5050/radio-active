@@ -1,7 +1,6 @@
 """
     This handler solely depends on pyradios module to communicate with our remote API
 """
-
 import json
 import sys
 
