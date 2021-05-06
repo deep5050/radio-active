@@ -37,7 +37,7 @@ class Handler:
         # when no response from the API
         if not self.response:
             log.error("No stations found by the name")
-            sys.exit(1)
+            sys.exit(0) # considering it as not an error
 
         # when multiple results found
         if len(self.response) > 1:
