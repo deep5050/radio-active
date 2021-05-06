@@ -66,15 +66,15 @@ Run with `radioactive --station [STATION_NAME]`
 ### Options
 
 
-| Argument            | Note                                 | Description              | Default |
-| ------------------- | ------------------------------------ | ------------------------ | ------- |
-| `--station`, `-S`   | Required ( Optional from second run) | Station name             | None    |
-| `--uuid`, `-U`      | Optional                             | ID of the station        | None    |
-| `--log-level`, `-L` | Optional                             | Log level of the program | info    |
-| `--add-station` , `-A`| Optional| Add an entry to fav list | False|
-|`--show-favourite-list`,`-W`|Optional | Show fav list | False|
-|`--add-to-favourite`,`-F`| Optional | Add current station to fav list | False|
-|`--flush`| Optional | Remove all the entries from fav list | False|
+| Argument                     | Note                                 | Description                          | Default |
+| ---------------------------- | ------------------------------------ | ------------------------------------ | ------- |
+| `--station`, `-S`            | Required ( Optional from second run) | Station name                         | None    |
+| `--uuid`, `-U`               | Optional                             | ID of the station                    | None    |
+| `--log-level`, `-L`          | Optional                             | Log level of the program             | info    |
+| `--add-station` , `-A`       | Optional                             | Add an entry to fav list             | False   |
+| `--show-favourite-list`,`-W` | Optional                             | Show fav list                        | False   |
+| `--add-to-favourite`,`-F`    | Optional                             | Add current station to fav list      | False   |
+| `--flush`                    | Optional                             | Remove all the entries from fav list | False   |
 
 <hr>
 
