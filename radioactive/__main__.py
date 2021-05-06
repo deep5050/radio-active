@@ -3,6 +3,7 @@ import signal
 import sys
 
 from zenlog import log
+from radioactive.help import show_help
 from rich.panel import Panel
 from rich import print
 from radioactive.alias import Alias
@@ -37,6 +38,7 @@ def main():
     args = parser.parse()
 
     ############ all the args ############
+    show_help_table = args.help
     station_name = args.station_name
     station_uuid = args.station_uuid
     log_level = args.log_level
@@ -50,6 +52,10 @@ def main():
     VERSION = app.get_version()
     if args.version:
         log.info("RADIO-ACTIVE : version {}".format(VERSION))
+        sys.exit(0)
+
+    if show_help_table:
+        show_help()
         sys.exit(0)
 
     if log_level in ["info", "error", "warning", "debug"]:
@@ -66,7 +72,7 @@ def main():
     direct_play = False
     direct_play_url = ""
     skip_saving_current_station = False
-
+    is_alias = False
 
 
 
@@ -135,7 +141,7 @@ def main():
             "No station information provided, trying to play the last station")
         
         last_station_info = last_station.get_info()
-        is_alias = False
+
         try:
             if last_station_info['alias']:
                 is_alias = True
@@ -177,7 +183,7 @@ def main():
 
     # --------------------ONLY UUID PROVIDED --------------------- #
     # if --uuid provided call directly
-
+    result = None
     if station_uuid is not None:
         mode_of_search = "uuid"
 
@@ -257,8 +263,13 @@ def main():
     if not skip_saving_current_station:
         last_station.save_info(last_played_station)
 
-    if add_to_favourite:
-        alias.add_entry(add_to_favourite,handler.target_station['url'])
+    # TODO: handle error when favouriting last played (aliased) station
+    
+    # if add_to_favourite:
+    #     if is_alias:
+    #         alias.add_entry(add_to_favourite,result['uuid_or_url'])
+    #     else:
+    alias.add_entry(add_to_favourite,handler.target_station['url'])
 
 
     signal.pause()
