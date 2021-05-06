@@ -1,19 +1,15 @@
 import os.path
-
 from zenlog import log
-
 
 class Alias:
     def __init__(self):
         self.alias_map = []
         self.found = False
 
-        self.alias_path = os.path.join(os.path.expanduser("~"),".radio-active-alias")
-
-
+        self.alias_path = os.path.join(os.path.expanduser("~"), ".radio-active-alias")
 
     def generate_map(self):
-        """ parses the fav list file and generates a list """
+        """parses the fav list file and generates a list"""
         # create alias map
         if os.path.exists(self.alias_path):
             # log.debug("Alias file exists")
@@ -38,15 +34,18 @@ class Alias:
         # log.debug(json.dumps(self.alias_map, indent=3))
 
     def search(self, entry):
-        """ searchs for an entry in the fav list with the name 
-            the right side may contain both url or uuid , need to check properly
+        """searchs for an entry in the fav list with the name
+        the right side may contain both url or uuid , need to check properly
         """
         if len(self.alias_map) > 0:
             log.debug("looking under alias file")
             for alias in self.alias_map:
                 if alias["name"] == entry:
-                    log.debug("Alias found: {} == {}".format(
-                        alias["name"], alias["uuid_or_url"]))
+                    log.debug(
+                        "Alias found: {} == {}".format(
+                            alias["name"], alias["uuid_or_url"]
+                        )
+                    )
                     self.found = True
                     return alias
 
@@ -55,20 +54,17 @@ class Alias:
             log.debug("Empty Alias file")
         return None
 
-    def add_entry(self,left,right):
-        """ Adds a new entry to the fav list """
+    def add_entry(self, left, right):
+        """Adds a new entry to the fav list"""
         if self.search(left) is not None:
             log.warning("An entry with same name already exists, try another name")
         else:
-            with open(self.alias_path,'a+') as f:
-                f.write("{}=={}\n".format(left.strip(),right.strip()))
+            with open(self.alias_path, "a+") as f:
+                f.write("{}=={}\n".format(left.strip(), right.strip()))
                 log.info("Current station added to your favourite list")
 
-
     def flush(self):
-        """ deletes all the entries in the fav list """
-        with open(self.alias_path,"w") as f:
+        """deletes all the entries in the fav list"""
+        with open(self.alias_path, "w") as f:
             f.flush()
         log.info("All entries deleted in your favourite list")
-
-

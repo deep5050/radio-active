@@ -6,9 +6,9 @@ import json
 import sys
 
 from pyradios import RadioBrowser
-from zenlog import log
 from rich.console import Console
 from rich.table import Table
+from zenlog import log
 
 console = Console()
 
@@ -37,7 +37,7 @@ class Handler:
         # when no response from the API
         if not self.response:
             log.error("No stations found by the name")
-            sys.exit(0) # considering it as not an error
+            sys.exit(0)  # considering it as not an error
 
         # when multiple results found
         if len(self.response) > 1:
@@ -46,15 +46,21 @@ class Handler:
             table.add_column("Country", justify="center")
             table.add_column("UUID", justify="center")
 
-            log.warn("{} stations found by the name, select one and run with UUID instead".format(len(self.response)))
- 
+            log.warn(
+                "{} stations found by the name, select one and run with UUID instead".format(
+                    len(self.response)
+                )
+            )
+
             for station in self.response:
                 # data = {}
                 # data["name"] = station["name"]
                 # data["uuid"] = station["stationuuid"]
                 # data["country"] = station["country"]
                 # log.info(json.dumps(data, indent=3))
-                table.add_row(station['name'], station['countrycode'], station['stationuuid'])
+                table.add_row(
+                    station["name"], station["countrycode"], station["stationuuid"]
+                )
 
             console.print(table)
             sys.exit(1)
@@ -78,5 +84,5 @@ class Handler:
         self.response = self.API.station_by_uuid(_uuid)
         self.station_validator()
 
-    def discover_by_country(self,country_code):
+    def discover_by_country(self, country_code):
         pass

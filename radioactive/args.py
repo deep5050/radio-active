@@ -21,11 +21,12 @@ class Parser:
             "--version", "-V", action="store_true", dest="version", default=False
         )
         self.parser.add_argument(
-            "--help","-H",
-            action = "store_true",
-            default = False,
+            "--help",
+            "-H",
+            action="store_true",
+            default=False,
             dest="help",
-            help="Show help message"
+            help="Show help message",
         )
 
         self.parser.add_argument(
@@ -58,7 +59,7 @@ class Parser:
             "-D",
             action="store",
             dest="discover",
-            help="Discover stations in your country"
+            help="Discover stations in your country",
         )
 
         self.parser.add_argument(
@@ -67,7 +68,7 @@ class Parser:
             action="store_true",
             default=False,
             dest="new_station",
-            help="Add an entry to your favourite station"
+            help="Add an entry to your favourite station",
         )
 
         self.parser.add_argument(
@@ -75,7 +76,7 @@ class Parser:
             "-F",
             action="store",
             dest="add_to_favourite",
-            help="Save current station to your favourite list"
+            help="Save current station to your favourite list",
         )
 
         self.parser.add_argument(
@@ -84,7 +85,7 @@ class Parser:
             action="store_true",
             dest="show_favourite_list",
             default=False,
-            help="Show your favourite list in table format"
+            help="Show your favourite list in table format",
         )
 
         self.parser.add_argument(
@@ -93,7 +94,7 @@ class Parser:
             action="store",
             dest="random",
             default="Fasle",
-            help="Play a random station from your favourite list"
+            help="Play a random station from your favourite list",
         )
 
         self.parser.add_argument(
@@ -101,7 +102,7 @@ class Parser:
             action="store_true",
             dest="flush",
             default=False,
-            help="Flush your favourite list"
+            help="Flush your favourite list",
         )
 
     def parse(self):
