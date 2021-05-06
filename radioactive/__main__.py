@@ -263,13 +263,9 @@ def main():
     if not skip_saving_current_station:
         last_station.save_info(last_played_station)
 
-    # TODO: handle error when favouriting last played (aliased) station
-    
-    # if add_to_favourite:
-    #     if is_alias:
-    #         alias.add_entry(add_to_favourite,result['uuid_or_url'])
-    #     else:
-    alias.add_entry(add_to_favourite,handler.target_station['url'])
+    # TODO: handle error when favouriting last played (aliased) station (BUG) (LOW PRIORITY)
+    if add_to_favourite:
+        alias.add_entry(add_to_favourite,handler.target_station['url'])
 
 
     signal.pause()
