@@ -14,10 +14,18 @@ class Parser:
         self.parser = argparse.ArgumentParser(
             description="Play any radio around the globe right from the CLI ",
             prog="radio-active",
+            add_help=False,
         )
 
         self.parser.add_argument(
             "--version", "-V", action="store_true", dest="version", default=False
+        )
+        self.parser.add_argument(
+            "--help","-H",
+            action = "store_true",
+            default = False,
+            dest="help",
+            help="Show help message"
         )
 
         self.parser.add_argument(
