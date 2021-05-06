@@ -64,6 +64,7 @@ class Handler:
             log.info("Station found: {}".format(self.response[0]["name"]))
             log.debug(json.dumps(self.response[0], indent=3))
             self.target_station = self.response[0]
+            # register a valid click to increase its popularity
             self.API.click_counter(self.target_station["stationuuid"])
 
     def play_by_station_name(self, _name=None):
@@ -74,23 +75,8 @@ class Handler:
 
     def play_by_station_uuid(self, _uuid):
         """search and play station by its stationuuid"""
+        self.response = self.API.station_by_uuid(_uuid)
+        self.station_validator()
 
-        # Pyradios by default don't let you search by uuid
-        # a trick is to call click_counter(uuid) directly to get the station info
-        is_ok = "false"
-        try:
-            self.target_station = self.API.click_counter(_uuid)
-            log.debug(json.dumps(self.target_station, indent=3))
-            is_ok = self.target_station["ok"]
-        except Exception:
-            log.error("Could not find the station by the UUID")
-            sys.exit(0)
-
-        log.info("Station found: {}".format(self.target_station["name"]))
-        temp = self.API.search(name=self.target_station["name"], name_exact=True)
-        log.debug(json.dumps(temp, indent=3))
-
-        # register a valid click against the current response
-        if is_ok == "false":
-            res = self.API.click_counter(self.target_station["stationuuid"])
-            log.debug(json.dumps(res, indent=3))
+    def discover_by_country(self,country_code):
+        pass
