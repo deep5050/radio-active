@@ -99,6 +99,9 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 ### Community
 
 Share you favorite list with our community 🌐 ➡️ [Here](https://github.com/deep5050/radio-active/discussions/10)
+
+> Your favorite list `.radio-active-alias` is under your home directory as a hidden file :)
+
 ### Extra
 
 If you ever face a situation where radio-active quits but the audio (ffplay) runs in the background. Kill the process ID (PID) of ffplay. Run `ps -al` get the PID of ffplay and `kill [PID]`. I know you Know that :)
