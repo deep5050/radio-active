@@ -1,4 +1,5 @@
 from setuptools import find_packages, setup
+
 from radioactive.app import App
 
 app = App()
