@@ -11,11 +11,9 @@ from zenlog import log
 
 
 class Player:
-
     """FFPlayer handler, it holds all the attributes to properly execute ffplay
     FFmepg required to be installed seperately
     """
-
     def __init__(self, URL):
         self.url = URL
         self.is_playing = False
@@ -37,7 +35,8 @@ class Player:
             shell=False,
         )
 
-        log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
+        log.debug("player: ffplay => PID {} initiated".format(
+            self.process.pid))
 
         # sleep(3)  # sleeping for 3 seconds wainting for ffplay to start properly
 

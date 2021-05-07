@@ -16,7 +16,6 @@ class Handler:
     """
     radio-browser API handler. This module communicates with the underlying API via PyRadios
     """
-
     def __init__(self):
         self.API = None
         self.response = None
@@ -46,10 +45,8 @@ class Handler:
             table.add_column("UUID", justify="center")
 
             log.warn(
-                "{} stations found by the name, select one and run with UUID instead".format(
-                    len(self.response)
-                )
-            )
+                "{} stations found by the name, select one and run with UUID instead"
+                .format(len(self.response)))
 
             for station in self.response:
                 # data = {}
@@ -57,9 +54,8 @@ class Handler:
                 # data["uuid"] = station["stationuuid"]
                 # data["country"] = station["country"]
                 # log.info(json.dumps(data, indent=3))
-                table.add_row(
-                    station["name"], station["countrycode"], station["stationuuid"]
-                )
+                table.add_row(station["name"], station["countrycode"],
+                              station["stationuuid"])
 
             console.print(table)
             sys.exit(1)

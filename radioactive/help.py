@@ -35,9 +35,8 @@ def show_help():
         "",
         "Optional from second run",
     )
-    table.add_row(
-        "--uuid , -U", "yes", "A station UUID to play", "", "Optional from second run"
-    )
+    table.add_row("--uuid , -U", "yes", "A station UUID to play", "",
+                  "Optional from second run")
     table.add_row(
         "--log-level , -L",
         "yes [info,warning,error,debug]",
@@ -66,6 +65,7 @@ def show_help():
         "False",
         "Optional",
     )
-    table.add_row("--flush,", "no", "Clear your favourite list", "False", "Optional")
+    table.add_row("--flush,", "no", "Clear your favourite list", "False",
+                  "Optional")
 
     console.print(table)

@@ -8,7 +8,8 @@ class Alias:
         self.alias_map = []
         self.found = False
 
-        self.alias_path = os.path.join(os.path.expanduser("~"), ".radio-active-alias")
+        self.alias_path = os.path.join(os.path.expanduser("~"),
+                                       ".radio-active-alias")
 
     def generate_map(self):
         """parses the fav list file and generates a list"""
@@ -24,7 +25,10 @@ class Alias:
                         left = temp[0]
                         right = temp[1]
                         # may contain both URL and UUID
-                        self.alias_map.append({"name": left, "uuid_or_url": right})
+                        self.alias_map.append({
+                            "name": left,
+                            "uuid_or_url": right
+                        })
 
                 # log.debug(json.dumps(alias_map, indent=3))
             except Exception as e:
@@ -43,11 +47,8 @@ class Alias:
             log.debug("looking under alias file")
             for alias in self.alias_map:
                 if alias["name"] == entry:
-                    log.debug(
-                        "Alias found: {} == {}".format(
-                            alias["name"], alias["uuid_or_url"]
-                        )
-                    )
+                    log.debug("Alias found: {} == {}".format(
+                        alias["name"], alias["uuid_or_url"]))
                     self.found = True
                     return alias
 
@@ -59,7 +60,8 @@ class Alias:
     def add_entry(self, left, right):
         """Adds a new entry to the fav list"""
         if self.search(left) is not None:
-            log.warning("An entry with same name already exists, try another name")
+            log.warning(
+                "An entry with same name already exists, try another name")
         else:
             with open(self.alias_path, "a+") as f:
                 f.write("{}=={}\n".format(left.strip(), right.strip()))
