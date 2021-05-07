@@ -156,8 +156,7 @@ def main():
                 )
                 direct_play = True
                 direct_play_url = station_uuid_or_url
-                log.info("Current station: {}".format(
-                    last_station_info["name"]))
+                log.info("Current station: {}".format(last_station_info["name"]))
             else:
                 # an UUID
                 station_uuid = last_station_info["uuid_or_url"]
@@ -213,8 +212,7 @@ def main():
                     station_uuid = result["uuid_or_url"]  # its a UUID
 
             except:
-                log.warning(
-                    "Station found in favourite list but seems to be invalid")
+                log.warning("Station found in favourite list but seems to be invalid")
                 log.warning("Looking on the web instead")
                 # log.warning("URL or UUID missing for the entry in favourite list, looking in the web instead")
                 # sys.exit(1)
