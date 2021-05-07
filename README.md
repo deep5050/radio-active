@@ -25,7 +25,6 @@
 - [ ] Finds nearby stations
 - [ ] No external dependencies!
 
-
 ### External Dependency
 
 It needs [FFmpeg](https://ffmpeg.org/download.html) to be installed on your
@@ -42,11 +41,11 @@ For other systems including windows see the above link
 
 #### Installing FFmpeg
 
-FFmpeg is required for this program to work correctly. Install FFmpeg by following these steps :-
+FFmpeg is required for this program to work correctly. Install FFmpeg by
+following these steps :-
 
 - On Linux - <https://www.tecmint.com/install-ffmpeg-in-linux/>
 - On Windows - <https://www.wikihow.com/Install-FFmpeg-on-Windows>
-
 
 ### Install
 
@@ -56,17 +55,14 @@ I encourage you to install with pipx: `pipx install radio-active`
 
 ### Run
 
-Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` :zap:
+Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] `
+:zap:
 
 ### Demo
 
-
 <a align=center href="https://asciinema.org/a/412285" target="_blank"><img src="https://asciinema.org/a/412285.svg" /></a>
 
-
-
 ### Options
-
 
 | Argument                     | Note                                 | Description                          | Default |
 | ---------------------------- | ------------------------------------ | ------------------------------------ | ------- |
@@ -80,7 +76,6 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 
 <hr>
 
-
 > `--station`, `-S` : Expects a station name to be played (if not provided it
 > will try to get the last played station). Example: "pehla nasha" ,
 > pehla_nasha, bbc_radio
@@ -89,22 +84,28 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 > results for the same name) use the station's uuid to play . --uuid gets the
 > greater priority than --station. Example: 96444e20-0601-11e8-ae97-52543be04c81
 
-> `--log-level`, `-L` : don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug` 
+> `--log-level`, `-L` : don't need to specify unless you are developing it.
+> `info` , `warning` , `error` , `debug`
 
 > `-F` : Add current station to your favorite list. Example: `-F my_fav_1`
 
-> `-A`: Add any stations to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream. 
-
+> `-A`: Add any stations to your list. You can add stations that are not
+> currently available on our API. When adding a new station enter a name and
+> direct URL to the audio stream.
 
 ### Community
 
-Share you favorite list with our community 🌐 ➡️ [Here](https://github.com/deep5050/radio-active/discussions/10)
+Share you favorite list with our community 🌐 ➡️
+[Here](https://github.com/deep5050/radio-active/discussions/10)
+
 ### Extra
 
-If you ever face a situation where radio-active quits but the audio (ffplay) runs in the background. Kill the process ID (PID) of ffplay. Run `ps -al` get the PID of ffplay and `kill [PID]`. I know you Know that :)
-
+If you ever face a situation where radio-active quits but the audio (ffplay)
+runs in the background. Kill the process ID (PID) of ffplay. Run `ps -al` get
+the PID of ffplay and `kill [PID]`. I know you Know that :)
 
 ### Support
+
 <p align=center><a href="https://www.buymeacoffee.com/deep5050" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 117px !important;" ></a></p>
 
 ### Acknowledgements
@@ -119,4 +120,3 @@ If you ever face a situation where radio-active quits but the audio (ffplay) run
 <p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p>
   
 </div>
-
