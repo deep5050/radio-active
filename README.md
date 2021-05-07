@@ -23,7 +23,7 @@
 - [x] Supports user-added stations
 - [x] Looks minimal and user-friendly
 - [ ] Finds nearby stations
-- [ ] No extarnal dependencies
+- [ ] No external dependencies!
 
 
 ### External Dependency
@@ -42,7 +42,7 @@ For other systems including windows see the above link
 
 #### Installing FFmpeg
 
-ffmpeg is required for this program to work correctly. Install ffmpeg by following these steps :-
+FFmpeg is required for this program to work correctly. Install FFmpeg by following these steps :-
 
 - On Linux - <https://www.tecmint.com/install-ffmpeg-in-linux/>
 - On Windows - <https://www.wikihow.com/Install-FFmpeg-on-Windows>
@@ -81,23 +81,23 @@ Run with `radioactive --station [STATION_NAME]`
 <hr>
 
 
-> `--station`, `-S` : Expects a station name to be played ( if not provided it
-> will try to get the last played station ). Example: "pehla nasha" ,
+> `--station`, `-S` : Expects a station name to be played (if not provided it
+> will try to get the last played station). Example: "pehla nasha" ,
 > pehla_nasha, bbc_radio
 
-> `--uuid`,`-U` : When station names are too long or confusing ( or multiple
-> results for the same name ) use the station's uuid to play . --uuid gets the
-> greater priority than --station. example: 96444e20-0601-11e8-ae97-52543be04c81
+> `--uuid`,`-U` : When station names are too long or confusing (or multiple
+> results for the same name) use the station's uuid to play . --uuid gets the
+> greater priority than --station. Example: 96444e20-0601-11e8-ae97-52543be04c81
 
 > `--log-level`, `-L` : don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug` 
 
-> `-F` : Add current station to your favourite list. Example: `-F my_fav_1`
+> `-F` : Add current station to your favorite list. Example: `-F my_fav_1`
 
-> `-A`: Add any staions to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream. 
+> `-A`: Add any stations to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream. 
 
 ### Extra
 
-If you ever face a situation where radio-active quits but the audio (ffplay) runs in the background. kill the proces ID (PID) of ffplay. Run `ps -al` get the PID of ffplay and `kill [PID]`. I know you Know that :)
+If you ever face a situation where radio-active quits but the audio (ffplay) runs in the background. Kill the process ID (PID) of ffplay. Run `ps -al` get the PID of ffplay and `kill [PID]`. I know you Know that :)
 
 
 ### Support

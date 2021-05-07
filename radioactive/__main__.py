@@ -146,7 +146,7 @@ def main():
 
         if is_alias:
             alias.found = True  # save on last_play as an alias too!
-            # last stattion was an alias, don't save it again
+            # last station was an alias, don't save it again
             skip_saving_current_station = True
             station_uuid_or_url = last_station_info["uuid_or_url"]
             if station_uuid_or_url.find("://") != -1:
@@ -256,7 +256,7 @@ def main():
     if not skip_saving_current_station:
         last_station.save_info(last_played_station)
 
-    # TODO: handle error when favouriting last played (aliased) station (BUG) (LOW PRIORITY)
+    # TODO: handle error when favouring last played (aliased) station (BUG) (LOW PRIORITY)
     if add_to_favourite:
         alias.add_entry(add_to_favourite, handler.target_station["url"])
 

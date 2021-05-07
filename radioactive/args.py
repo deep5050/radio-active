@@ -91,9 +91,9 @@ class Parser:
         self.parser.add_argument(
             "--random",
             "-R",
-            action="store",
+            action="store_true",
             dest="random",
-            default="Fasle",
+            default=False,
             help="Play a random station from your favourite list",
         )
 
