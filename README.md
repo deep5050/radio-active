@@ -118,5 +118,5 @@ the PID of ffplay and `kill [PID]`. I know you Know that :)
 <img src=https://forthebadge.com/images/badges/built-with-love.svg>
 
 <p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p>
-  
+
 </div>
