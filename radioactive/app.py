@@ -10,7 +10,7 @@ from zenlog import log
 
 class App:
     def __init__(self):
-        self.__VERSION__ = "2.1.3"
+        self.__VERSION__ = "2.2.0"
         self.pypi_api = "https://pypi.org/pypi/radio-active/json"
         self.remote_version = ""
 

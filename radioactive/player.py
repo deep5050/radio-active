@@ -40,7 +40,7 @@ class Player:
 
         log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
 
-        sleep(3)  # sleeping for 3 seconds wainting for ffplay to start properly
+        #sleep(3)  # sleeping for 3 seconds wainting for ffplay to start properly
 
         if self.is_active():
             self.is_playing = True
