@@ -1,10 +1,10 @@
-from setuptools import find_packages
-from setuptools import setup
+from setuptools import find_packages, setup
+from radioactive.app import App
 
-from radioactive.app_version import get_version
+app = App()
 
 DESCRIPTION = "Play any radio around the globe right from the terminal"
-VERSION = get_version()
+VERSION = app.get_version()
 
 
 def readme():
