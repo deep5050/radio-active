@@ -115,7 +115,7 @@ If you ever face a situation where radio-active quits but the audio (ffplay) run
 <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
 <div align=center>
-<img src=images/footer.png height=400px>
+<img src=images/footer.png>
 <p align=center> Happy Listening </p>
 <img src=https://forthebadge.com/images/badges/built-with-love.svg>
 
