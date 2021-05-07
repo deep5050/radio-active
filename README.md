@@ -52,6 +52,8 @@ ffmpeg is required for this program to work correctly. Install ffmpeg by followi
 
 Just run: `pip3 install --upgrade radio-active`
 
+I encourage you to install with pipx: `pipx install radio-active`
+
 ### Run
 
 Run with `radioactive --station [STATION_NAME]`
