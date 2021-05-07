@@ -56,7 +56,7 @@ I encourage you to install with pipx: `pipx install radio-active`
 
 ### Run
 
-Run with `radioactive --station [STATION_NAME]`
+Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` :zap:
 
 ### Demo
 
