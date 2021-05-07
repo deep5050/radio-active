@@ -66,6 +66,7 @@ def show_help():
         "False",
         "Optional",
     )
-    table.add_row("--flush,", "no", "Clear your favourite list", "False", "Optional")
+    table.add_row("--flush,", "no", "Clear your favourite list",
+                  "False", "Optional")
 
     console.print(table)
