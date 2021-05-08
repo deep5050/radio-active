@@ -22,6 +22,7 @@
 - [x] Favorite stations (Aliasing)
 - [x] Supports user-added stations
 - [x] Looks minimal and user-friendly
+- [x] Runs on Raspberry-Pi
 - [ ] Finds nearby stations
 - [ ] No external dependencies!
 
