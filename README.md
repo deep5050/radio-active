@@ -59,6 +59,12 @@ I encourage you to install with pipx: `pipx install radio-active`
 
 Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` :zap:
 
+
+### Note !!
+
+This uses [sentry](https://sentry.io) to collect un-handled exceptions only (As it is under heavy development). Next mojor release will remove this.
+Make sure you are okay with this ⚠️
+
 ### Demo
 
 
