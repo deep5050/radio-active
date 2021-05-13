@@ -26,6 +26,8 @@
 - [ ] Finds nearby stations
 - [ ] No external dependencies!
 
+> See my progress [here](https://github.com/deep5050/radio-active/projects/1)
+
 
 ### External Dependency
 
@@ -102,6 +104,10 @@ Make sure you are okay with this ⚠️
 
 > `-A`: Add any stations to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream. 
 
+
+### Changes
+
+see [CHANGELOG](./CHANGELOG.md)
 
 ### Community
 
