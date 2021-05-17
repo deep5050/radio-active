@@ -1,3 +1,15 @@
+## 2.3.0
+
+1. Discover stations by country 
+2. Discover stations by state
+3. Discover stations by genre/tags
+4. Discover stations by language
+5. More info on multiple results for a stations name
+6. Shows currently playing radio info as box
+7. sentry-SDK removed
+8. Help table improved
+9. Other minor bugs fixed
+
 ## 2.2.0
 
 1. Pretty Print welcome message using Rich

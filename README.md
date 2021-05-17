@@ -23,7 +23,10 @@
 - [x] Supports user-added stations
 - [x] Looks minimal and user-friendly
 - [x] Runs on Raspberry-Pi
-- [ ] Finds nearby stations
+- [x] Finds nearby stations
+- [x] Discovers stations by genre
+- [x] Discovers statations by language
+- [ ] I'm feeling lucky ! Play Random stations
 - [ ] No external dependencies!
 
 > See my progress [here](https://github.com/deep5050/radio-active/projects/1)
@@ -62,10 +65,10 @@ I encourage you to install with pipx: `pipx install radio-active`
 Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` :zap:
 
 
-### Note !!
+<!-- ### Note !!
 
 This uses [sentry](https://sentry.io) to collect un-handled exceptions only (As it is under heavy development). Next mojor release will remove this.
-Make sure you are okay with this ⚠️
+Make sure you are okay with this ⚠️ -->
 
 ### Demo
 
@@ -77,15 +80,21 @@ Make sure you are okay with this ⚠️
 ### Options
 
 
-| Argument                     | Note                                 | Description                          | Default |
-| ---------------------------- | ------------------------------------ | ------------------------------------ | ------- |
-| `--station`, `-S`            | Required ( Optional from second run) | Station name                         | None    |
-| `--uuid`, `-U`               | Optional                             | ID of the station                    | None    |
-| `--log-level`, `-L`          | Optional                             | Log level of the program             | info    |
-| `--add-station` , `-A`       | Optional                             | Add an entry to fav list             | False   |
-| `--show-favourite-list`,`-W` | Optional                             | Show fav list                        | False   |
-| `--add-to-favourite`,`-F`    | Optional                             | Add current station to fav list      | False   |
-| `--flush`                    | Optional                             | Remove all the entries from fav list | False   |
+| Argument                     | Note                                 | Description                                  | Default |
+| ---------------------------- | ------------------------------------ | -------------------------------------------- | ------- |
+| `--station`, `-S`            | Required ( Optional from second run) | Station name                                 | None    |
+| `--uuid`, `-U`               | Optional                             | ID of the station                            | None    |
+| `--log-level`, `-L`          | Optional                             | Log level of the program                     | info    |
+| `--add-station` , `-A`       | Optional                             | Add an entry to fav list                     | False   |
+| `--show-favourite-list`,`-W` | Optional                             | Show fav list                                | False   |
+| `--add-to-favourite`,`-F`    | Optional                             | Add current station to fav list              | False   |
+| `--flush`                    | Optional                             | Remove all the entries from fav list         | False   |
+| `--discover-by-country`,`-D` | Optional                             | Discover stations by country code            | false   |
+| `--discover-by-state`        | Optioanl                             | Discover stations by country state           | false   |
+| `--discover-by-tag`          | Optional                             | Discover stations by tags/genre              | fasle   |
+| `--discover-by-language`     | optional                             | Discover stations by                         | false   |
+| `--limit`                    | Optional                             | Limit the # of results in the discover table | 100     |
+
 
 <hr>
 

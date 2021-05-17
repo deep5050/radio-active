@@ -22,9 +22,9 @@ def show_help():
     console.print(welcome)
 
     table = Table(show_header=True, header_style="bold magenta")
-    table.add_column("Arguments", justify="center")
+    table.add_column("Arguments", justify="left")
     table.add_column("Expects value", justify="center")
-    table.add_column("Description", justify="center")
+    table.add_column("Description", justify="left")
     table.add_column("Default", justify="center")
     table.add_column("Note", justify="center")
 
@@ -59,6 +59,8 @@ def show_help():
         "False",
         "Optional",
     )
+
+
     table.add_row(
         "--show-favourite-list, -W ",
         "no",
@@ -66,6 +68,55 @@ def show_help():
         "False",
         "Optional",
     )
-    table.add_row("--flush,", "no", "Clear your favourite list", "False", "Optional")
+
+    table.add_row(
+        "--discover-by-country, -D",
+        "yes",
+        "Discover stations by country code",
+        "False",
+        "Optional",
+    )
+
+    table.add_row(
+        "--discover-by-state",
+        "yes",
+        "Discover stations by country state",
+        "False",
+        "Optional",
+    )
+
+    table.add_row(
+        "--discover-by-tag",
+        "yes",
+        "Discover stations by tags/genre",
+        "False",
+        "Optional",
+    )
+
+    table.add_row(
+        "--discover-by-language",
+        "yes",
+        "Discover stations by language",
+        "False",
+        "Optional",
+    )
+
+    table.add_row(
+        "--limit",
+        "yes",
+        "Limit the number of results in discover result table",
+        "100",
+        "Optional",
+    )
+
+    table.add_row("--flush", "no", "Clear your favourite list", "False", "Optional")
+
+
+
+
+
+
+
+
 
     console.print(table)
