@@ -55,11 +55,39 @@ class Parser:
         )
 
         self.parser.add_argument(
-            "--discover",
+            "--discover-by-country",
             "-D",
             action="store",
-            dest="discover",
-            help="Discover stations in your country",
+            dest="discover_country_code",
+            help="Discover stations with country code",
+        )
+
+        self.parser.add_argument(
+            "--discover-by-tag",
+            action="store",
+            dest="discover_tag",
+            help="Discover stations with tag",
+        )
+
+        self.parser.add_argument(
+            "--discover-by-state",
+            action="store",
+            dest="discover_state",
+            help="Discover stations with state name",
+        )
+        
+        self.parser.add_argument(
+            "--discover-by-language",
+            action="store",
+            dest="discover_language",
+            help="Discover stations with state name",
+        )
+        self.parser.add_argument(
+            "--limit",
+            action="store",
+            dest="limit",
+            default=100,
+            help="Limit of entries in discover table",
         )
 
         self.parser.add_argument(

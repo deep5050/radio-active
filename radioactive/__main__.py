@@ -2,10 +2,11 @@
 import signal
 import sys
 
-import sentry_sdk
+# import sentry_sdk
 from rich import print
 from rich.console import Console
 from rich.panel import Panel
+from rich.text import Text
 from rich.table import Table
 from zenlog import log
 
@@ -23,11 +24,12 @@ player = None
 
 
 def main():
-    sentry_sdk.init(
-        "https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
-        traces_sample_rate=1.0,
-        debug=False,
-    )
+    # removing sentry from 2.3.0
+    # sentry_sdk.init(
+    #     "https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
+    #     traces_sample_rate=1.0,
+    #     debug=False,
+    # )
 
     log.level("info")
 
@@ -40,7 +42,13 @@ def main():
     station_name = args.station_name
     station_uuid = args.station_uuid
     log_level = args.log_level
-    discover = args.discover
+
+    discover_country_code = args.discover_country_code
+    discover_state = args.discover_state
+    discover_language = args.discover_language
+    discover_tag = args.discover_tag
+
+    limit = args.limit
     add_station = args.new_station
     add_to_favourite = args.add_to_favourite
     show_favourite_list = args.show_favourite_list
@@ -129,6 +137,36 @@ def main():
         log.info("New entry: {}={} added\n".format(left, right))
         sys.exit(0)
 
+
+# ------------------ discover ------------------ #
+    _limit = int(limit) if limit else 100
+
+    if discover_country_code:
+        # search for stations in your country 
+        handler.discover_by_country(discover_country_code,_limit)
+    
+    if discover_state:
+        handler.discover_by_state(discover_state,_limit)
+
+    if discover_language:
+        handler.discover_by_language(discover_language,_limit)
+    
+    if discover_tag:
+        handler.discover_by_tag(discover_tag,_limit)
+
+
+
+
+
+
+
+
+# -------------------------------------------------- #
+
+
+
+
+
     # -------------------- NOTHING PROVIDED --------------------- #
     # if neither of --station and --uuid provided , look in last_station file
 
@@ -149,6 +187,7 @@ def main():
             # last station was an alias, don't save it again
             skip_saving_current_station = True
             station_uuid_or_url = last_station_info["uuid_or_url"]
+            station_name = last_station_info['name'] # here we are setting the name but will not be used for API call
             if station_uuid_or_url.find("://") != -1:
                 # Its a URL
                 log.debug(
@@ -235,7 +274,10 @@ def main():
         if mode_of_search == "uuid":
             handler.play_by_station_uuid(station_uuid)
         else:
-            handler.play_by_station_name(station_name)
+            if not alias.found:
+                # when alias was found, we have set the station name to print it correctly,
+                # not to do an API call
+                handler.play_by_station_name(station_name)
 
     global player
 
@@ -260,6 +302,12 @@ def main():
     if add_to_favourite:
         alias.add_entry(add_to_favourite, handler.target_station["url"])
 
+
+    curr_station_name =  "\n" + station_name if alias.found else handler.target_station['name'] + "/n"
+    panel_station_name = Text(curr_station_name,justify="center")
+
+    station_panel = Panel(panel_station_name,title="[blink]:radio:[/blink]",width=85)
+    console.print(station_panel)
     signal.pause()
 
 
