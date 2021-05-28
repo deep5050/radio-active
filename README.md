@@ -10,10 +10,10 @@
 <img alt="PyPI" src="https://img.shields.io/pypi/v/radio-active?style=for-the-badge">
 <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/radio-active?style=for-the-badge">
 <img alt="CodeFactor Grade" src="https://img.shields.io/codefactor/grade/github/deep5050/radio-active/main?style=for-the-badge">
-<img alt="Discord" src="https://img.shields.io/discord/847703568949051392?style=for-the-badge">
+<a href=https://discord.gg/53rfebFyqK><img alt="Discord" src="https://img.shields.io/discord/847703568949051392?style=for-the-badge"></a>
 </p>
 
-<p align=center> <img alt="YouTube Video Likes and Dislikes" src="https://img.shields.io/youtube/likes/X-NfK5XbM90?style=social&withDislikes"></p>
+<p align=center> <a href=https://www.youtube.com/watch?v=X-NfK5XbM90><img alt="YouTube Video Likes and Dislikes" src="https://img.shields.io/youtube/likes/X-NfK5XbM90?style=social&withDislikes"></a></p>
 <p align=center> <a href=https://discord.gg/53rfebFyqK> Join Discord Server </a></p>
 
 </div>
