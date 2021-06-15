@@ -28,7 +28,7 @@
 - [x] Runs on Raspberry-Pi
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
-- [x] Discovers statations by language
+- [x] Discovers stations by language
 - [ ] I'm feeling lucky ! Play Random stations
 - [ ] No external dependencies!
 
