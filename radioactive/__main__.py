@@ -2,7 +2,6 @@
 import signal
 import sys
 
-# import sentry_sdk
 from rich import print
 from rich.console import Console
 from rich.panel import Panel
@@ -24,15 +23,7 @@ player = None
 
 
 def main():
-    # removing sentry from 2.3.0
-    # sentry_sdk.init(
-    #     "https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
-    #     traces_sample_rate=1.0,
-    #     debug=False,
-    # )
-
     log.level("info")
-
     parser = Parser()
     app = App()
     args = parser.parse()
@@ -92,7 +83,7 @@ def main():
         :star: Show some love by starring the project on GitHub [red][blink]:heart:[/blink][/red]
         :x: Press Ctrl+C to quit
         """,
-        title="[rgb(250,0,0)]RADIO[rgb(0,255,0)]ACTIVE",
+        title="[b][rgb(250,0,0)]RADIO[rgb(0,255,0)]ACTIVE[/b]",
         width=85,
     )
     print(welcome)
@@ -155,18 +146,6 @@ def main():
         handler.discover_by_tag(discover_tag,_limit)
 
 
-
-
-
-
-
-
-# -------------------------------------------------- #
-
-
-
-
-
     # -------------------- NOTHING PROVIDED --------------------- #
     # if neither of --station and --uuid provided , look in last_station file
 
@@ -203,27 +182,11 @@ def main():
             # was not an alias
             station_uuid = last_station_info["stationuuid"]
 
-        # getting last station details, getting the UUID
-        # station_uuid_or_url = last_station.get_info()
-        # station_name =
-        # if station_uuid_or_url.find("://") != -1:
-        #     # Its a URL
-        #     log.debug("Last station was an alias and contains a URL, Direct play set to True")
-        #     direct_play = True
-        #     direct_play_url = station_uuid_or_url
-        # else:
-        #     log.debug("Last station was an alias and contains UUID")
-        #     station_uuid = station_uuid_or_url
-
-    # ------------------------------------------------------------ #
-
     # --------------------ONLY UUID PROVIDED --------------------- #
     # if --uuid provided call directly
     result = None
     if station_uuid is not None:
         mode_of_search = "uuid"
-
-    # ------------------------------------------------------------ #
 
     # ------------------- ONLY STATION PROVIDED ------------------ #
 
@@ -243,8 +206,6 @@ def main():
                     direct_play = True
                     # assigning url and name directly
                     direct_play_url = result["uuid_or_url"]
-                    # handler.target_station['name'] = result["name"]
-                    # handler.target_station["url"] = result["uuid_or_url"]
                 else:
                     log.debug("Entry contains a UUID")
                     # mode_of_search = "uuid"
@@ -253,8 +214,6 @@ def main():
             except:
                 log.warning("Station found in favourite list but seems to be invalid")
                 log.warning("Looking on the web instead")
-                # log.warning("URL or UUID missing for the entry in favourite list, looking in the web instead")
-                # sys.exit(1)
                 alias.found = False
 
         if alias.found:
@@ -265,9 +224,6 @@ def main():
         else:
             log.debug("Alias not found, using normal API search")
             mode_of_search = "name"
-    # ------------------------------------------------------------ #
-
-    # log.debug("Mode of search: {}".format(mode_of_search))
 
     if not direct_play:
         # avoid extra API calls since target url is given
@@ -303,7 +259,7 @@ def main():
         alias.add_entry(add_to_favourite, handler.target_station["url"])
 
 
-    curr_station_name =  "\n" + station_name if alias.found else handler.target_station['name'] + "/n"
+    curr_station_name =   station_name if alias.found else handler.target_station['name']
     panel_station_name = Text(curr_station_name,justify="center")
 
     station_panel = Panel(panel_station_name,title="[blink]:radio:[/blink]",width=85)
