@@ -30,7 +30,7 @@
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
 - [ ] I'm feeling lucky ! Play Random stations
-- [ ] No external dependencies!
+- [ ] No external media player dependency!
 
 > See my progress [here](https://github.com/deep5050/radio-active/projects/1)
 
