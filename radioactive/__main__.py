@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import signal
 import sys
+import os
+from time import sleep
 
 from rich import print
 from rich.console import Console
@@ -264,7 +266,15 @@ def main():
 
     station_panel = Panel(panel_station_name,title="[blink]:radio:[/blink]",width=85)
     console.print(station_panel)
-    signal.pause()
+
+    if os.name == "nt":
+        while True:
+            sleep(5)
+    else:
+        try:
+            signal.pause()
+        except:
+            pass
 
 
 def signal_handler(sig, frame):
