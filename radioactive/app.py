@@ -2,7 +2,6 @@
     Version of the current program, (in development mode it needs to be updated in every realease)
     and to check if an updated version available for the app or not
 """
-
 import json
 
 import requests
