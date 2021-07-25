@@ -3,6 +3,10 @@
 <h1 align=center> RADIO-ACTIVE </h1>
 <p align=center> Play any radios around the globe right from your terminal </p>
 
+<a href="https://www.producthunt.com/posts/radio-active?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-radio-active" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=305380&theme=dark" alt="radio-active - Play more than 30K radio stations from your terminal | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+  
+  
+  
 <p align=center>
 <img align=center src=images/example.png >
 <hr>
@@ -67,15 +71,16 @@ I encourage you to install with pipx: `pipx install radio-active`
 
 Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` :zap:
 
+### Tips
 
-<!-- ### Note !!
+1. Use a modern terminal emulator, otherwise the UI might break! (gets too ugly sometimes)
+2. On windows, instead of default Command Prompt, use the new Windows Terminal or web-based emulators like hyper,Cmdr,Terminus etc. for better UI
+3. Let the app run for atleast 5 seconds (not a serious issue though, for better performance)
 
-This uses [sentry](https://sentry.io) to collect un-handled exceptions only (As it is under heavy development). Next mojor release will remove this.
-Make sure you are okay with this ⚠️ -->
 
 ### Demo
 
-<a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src="https://yt-embed.herokuapp.com/embed?v=X-NfK5XbM90" /> </a>
+<a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src=images/maxresdefault.jpg/> </a>
 <hr>
 <a align=center href="https://asciinema.org/a/412285" target="_blank"><img src="https://asciinema.org/a/412285.svg" /></a>
 
