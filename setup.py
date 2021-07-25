@@ -1,4 +1,6 @@
-from setuptools import find_packages, setup
+from setuptools import find_packages
+from setuptools import setup
+
 from radioactive.app import App
 
 app = App()
@@ -8,12 +10,12 @@ VERSION = app.get_version()
 
 
 def readme():
-    with open("README.md",'r', encoding='utf-8') as f:
+    with open("README.md", "r", encoding="utf-8") as f:
         return f.read()
 
 
 def required():
-    with open("requirements",'r', encoding='utf-8') as f:
+    with open("requirements", "r", encoding="utf-8") as f:
         return f.read().splitlines()
 
 
