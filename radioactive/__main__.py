@@ -130,8 +130,7 @@ def main():
         log.info("New entry: {}={} added\n".format(left, right))
         sys.exit(0)
 
-
-# ------------------ discover ------------------ #
+    # ------------------ discover ------------------ #
     _limit = int(limit) if limit else 100
 
     if discover_country_code:
@@ -168,7 +167,7 @@ def main():
             skip_saving_current_station = True
             station_uuid_or_url = last_station_info["uuid_or_url"]
             # here we are setting the name but will not be used for API call
-            station_name = last_station_info['name']
+            station_name = last_station_info["name"]
             if station_uuid_or_url.find("://") != -1:
                 # Its a URL
                 log.debug(
@@ -176,8 +175,7 @@ def main():
                 )
                 direct_play = True
                 direct_play_url = station_uuid_or_url
-                log.info("Current station: {}".format(
-                    last_station_info["name"]))
+                log.info("Current station: {}".format(last_station_info["name"]))
             else:
                 # an UUID
                 station_uuid = last_station_info["uuid_or_url"]
@@ -215,8 +213,7 @@ def main():
                     station_uuid = result["uuid_or_url"]  # its a UUID
 
             except:
-                log.warning(
-                    "Station found in favourite list but seems to be invalid")
+                log.warning("Station found in favourite list but seems to be invalid")
                 log.warning("Looking on the web instead")
                 alias.found = False
 
@@ -262,11 +259,10 @@ def main():
     if add_to_favourite:
         alias.add_entry(add_to_favourite, handler.target_station["url"])
 
-    curr_station_name = station_name if alias.found else handler.target_station['name']
+    curr_station_name = station_name if alias.found else handler.target_station["name"]
     panel_station_name = Text(curr_station_name, justify="center")
 
-    station_panel = Panel(panel_station_name,
-                          title="[blink]:radio:[/blink]", width=85)
+    station_panel = Panel(panel_station_name, title="[blink]:radio:[/blink]", width=85)
     console.print(station_panel)
 
     if os.name == "nt":
