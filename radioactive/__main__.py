@@ -1,14 +1,14 @@
 #!/usr/bin/env python
+import os
 import signal
 import sys
-import os
 from time import sleep
 
 from rich import print
 from rich.console import Console
 from rich.panel import Panel
-from rich.text import Text
 from rich.table import Table
+from rich.text import Text
 from zenlog import log
 
 from radioactive.alias import Alias
