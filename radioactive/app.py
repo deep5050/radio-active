@@ -2,15 +2,15 @@
     Version of the current program, (in development mode it needs to be updated in every realease)
     and to check if an updated version available for the app or not
 """
-
 import json
+
 import requests
 from zenlog import log
 
 
 class App:
     def __init__(self):
-        self.__VERSION__ = "2.3.0" # change this on every update #
+        self.__VERSION__ = "2.4.0"  # change this on every update #
         self.pypi_api = "https://pypi.org/pypi/radio-active/json"
         self.remote_version = ""
 
