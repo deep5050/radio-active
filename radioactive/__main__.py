@@ -60,7 +60,8 @@ def main():
     if log_level in ["info", "error", "warning", "debug"]:
         log.level(log_level)
     else:
-        log.warning("Correct log levels are: error,warning,info(default),debug")
+        log.warning(
+            "Correct log levels are: error,warning,info(default),debug")
 
     handler = Handler()
     alias = Alias()
@@ -93,9 +94,7 @@ def main():
     if app.is_update_available():
         update_msg = (
             "\t[blink]An update available, run [green][italic]pip install radio-active=="
-            + app.get_remote_version()
-            + "[/italic][/green][/blink]"
-        )
+            + app.get_remote_version() + "[/italic][/green][/blink]")
         update_panel = Panel(
             update_msg,
             width=85,
@@ -151,7 +150,8 @@ def main():
 
     if station_name is None and station_uuid is None:
         # try to fetch the last played station's information
-        log.warn("No station information provided, trying to play the last station")
+        log.warn(
+            "No station information provided, trying to play the last station")
 
         last_station_info = last_station.get_info()
 
@@ -175,7 +175,8 @@ def main():
                 )
                 direct_play = True
                 direct_play_url = station_uuid_or_url
-                log.info("Current station: {}".format(last_station_info["name"]))
+                log.info("Current station: {}".format(
+                    last_station_info["name"]))
             else:
                 # an UUID
                 station_uuid = last_station_info["uuid_or_url"]
@@ -213,7 +214,8 @@ def main():
                     station_uuid = result["uuid_or_url"]  # its a UUID
 
             except:
-                log.warning("Station found in favourite list but seems to be invalid")
+                log.warning(
+                    "Station found in favourite list but seems to be invalid")
                 log.warning("Looking on the web instead")
                 alias.found = False
 
@@ -238,7 +240,8 @@ def main():
 
     global player
 
-    target_url = direct_play_url if direct_play else handler.target_station["url"]
+    target_url = direct_play_url if direct_play else handler.target_station[
+        "url"]
     player = Player(target_url)
 
     # writing the station name to a file, next time if user
@@ -259,10 +262,13 @@ def main():
     if add_to_favourite:
         alias.add_entry(add_to_favourite, handler.target_station["url"])
 
-    curr_station_name = station_name if alias.found else handler.target_station["name"]
+    curr_station_name = station_name if alias.found else handler.target_station[
+        "name"]
     panel_station_name = Text(curr_station_name, justify="center")
 
-    station_panel = Panel(panel_station_name, title="[blink]:radio:[/blink]", width=85)
+    station_panel = Panel(panel_station_name,
+                          title="[blink]:radio:[/blink]",
+                          width=85)
     console.print(station_panel)
 
     if os.name == "nt":
