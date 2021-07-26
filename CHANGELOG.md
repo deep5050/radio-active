@@ -1,3 +1,8 @@
+## 2.4.0
+
+1. Crashes on Windows fixed
+2. Fixed setup related issues (development purpose)
+
 ## 2.3.0
 
 1. Discover stations by country 
