@@ -17,8 +17,9 @@ class Player:
     FFmepg required to be installed seperately
     """
 
-    def __init__(self, URL):
+    def __init__(self, URL, volume):
         self.url = URL
+        self.volume = volume
         self.is_playing = False
         self.process = None
         self.exe_path = None
@@ -34,7 +35,7 @@ class Player:
             sys.exit(1)
 
         self.process = Popen(
-            [self.exe_path, "-nodisp", "-nostats", "-loglevel", "0", self.url],
+            [self.exe_path, "-nodisp", "-nostats", "-loglevel", "0", "-volume", f"{self.volume}", self.url],
             shell=False,
         )
 
