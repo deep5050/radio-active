@@ -35,8 +35,16 @@ class Player:
             sys.exit(1)
 
         self.process = Popen(
-            [self.exe_path, "-nodisp", "-nostats", "-loglevel",
-                "0", "-volume", f"{self.volume}", self.url],
+            [
+                self.exe_path,
+                "-nodisp",
+                "-nostats",
+                "-loglevel",
+                "0",
+                "-volume",
+                f"{self.volume}",
+                self.url,
+            ],
             shell=False,
         )
 
