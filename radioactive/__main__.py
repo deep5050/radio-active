@@ -242,7 +242,7 @@ def main():
 
     target_url = direct_play_url if direct_play else handler.target_station[
         "url"]
-    player = Player(target_url)
+    player = Player(target_url, args.volume)
 
     # writing the station name to a file, next time if user
     # don't specify anything, it will try to start the last station
