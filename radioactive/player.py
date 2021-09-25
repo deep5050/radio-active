@@ -1,5 +1,4 @@
 """ FFplay proess handler """
-
 import os
 import sys
 from shutil import which
@@ -12,13 +11,12 @@ from zenlog import log
 
 
 class Player:
-
     """FFPlayer handler, it holds all the attributes to properly execute ffplay
     FFmepg required to be installed seperately
     """
-
-    def __init__(self, URL):
+    def __init__(self, URL, volume):
         self.url = URL
+        self.volume = volume
         self.is_playing = False
         self.process = None
         self.exe_path = None
@@ -34,13 +32,23 @@ class Player:
             sys.exit(1)
 
         self.process = Popen(
-            [self.exe_path, "-nodisp", "-nostats", "-loglevel", "0", self.url],
+            [
+                self.exe_path,
+                "-nodisp",
+                "-nostats",
+                "-loglevel",
+                "0",
+                "-volume",
+                f"{self.volume}",
+                self.url,
+            ],
             shell=False,
         )
 
-        log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
+        log.debug("player: ffplay => PID {} initiated".format(
+            self.process.pid))
 
-        #sleep(3)  # sleeping for 3 seconds wainting for ffplay to start properly
+        # sleep(3)  # sleeping for 3 seconds wainting for ffplay to start properly
 
         if self.is_active():
             self.is_playing = True

@@ -1,12 +1,11 @@
 import argparse
 import sys
+
 from zenlog import log
 
 
 class Parser:
-
     """Parse the command-line args and retrun result to the __main__"""
-
     def __init__(self):
         self.parser = None
         self.result = None
@@ -17,9 +16,11 @@ class Parser:
             add_help=False,
         )
 
-        self.parser.add_argument(
-            "--version", "-V", action="store_true", dest="version", default=False
-        )
+        self.parser.add_argument("--version",
+                                 "-V",
+                                 action="store_true",
+                                 dest="version",
+                                 default=False)
         self.parser.add_argument(
             "--help",
             "-H",
@@ -75,7 +76,7 @@ class Parser:
             dest="discover_state",
             help="Discover stations with state name",
         )
-        
+
         self.parser.add_argument(
             "--discover-by-language",
             action="store",
@@ -131,6 +132,16 @@ class Parser:
             dest="flush",
             default=False,
             help="Flush your favourite list",
+        )
+
+        self.parser.add_argument(
+            "--volume",
+            action="store",
+            dest="volume",
+            default=50,
+            type=int,
+            choices=range(0, 100),
+            help="Volume to pass down to ffplay",
         )
 
     def parse(self):
