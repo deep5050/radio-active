@@ -4,11 +4,10 @@
 <p align=center> Play any radios around the globe right from your terminal </p>
 
 <a href="https://www.producthunt.com/posts/radio-active?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-radio-active" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=305380&theme=dark" alt="radio-active - Play more than 30K radio stations from your terminal | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-  
- <p> Support the development of this app, please help me through UPI (for my Indian users only) !! </p>
- 
- <img width="200" alt="image" src="https://user-images.githubusercontent.com/27947066/235475896-597f3ff4-5fd2-4780-a92a-753e2c58ad3b.png">
-<img width="170" alt="UPI" src="https://user-images.githubusercontent.com/27947066/235476330-b597936a-00bb-45c1-8240-4939b1b55381.png">
+ <p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p> 
+ <p>
+<img width="500px" alt="UPI" src="https://user-images.githubusercontent.com/27947066/235618869-8c9d9bce-096d-469e-8f61-c29cc01eacc3.png">
+</p>
 
 
 <p align=center>
@@ -150,11 +149,11 @@ If you ever face a situation where radio-active quits but the audio (ffplay) run
 <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
 <div align=center>
-<img src=images/footer.png>
+<img src=images/footer.png width=400px >
 <p align=center> Happy Listening </p>
 <img src=https://forthebadge.com/images/badges/built-with-love.svg>
 
-<p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p>
+
   
 </div>
 
