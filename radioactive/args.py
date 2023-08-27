@@ -139,7 +139,7 @@ class Parser:
             dest="volume",
             default=50,
             type=int,
-            choices=range(0,100),
+            choices=range(0,101,10),
             help="Volume to pass down to ffplay",
         )
 
