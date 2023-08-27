@@ -75,7 +75,7 @@ class Parser:
             dest="discover_state",
             help="Discover stations with state name",
         )
-        
+
         self.parser.add_argument(
             "--discover-by-language",
             action="store",
@@ -131,6 +131,16 @@ class Parser:
             dest="flush",
             default=False,
             help="Flush your favourite list",
+        )
+
+        self.parser.add_argument(
+            "--volume",
+            action="store",
+            dest="volume",
+            default=50,
+            type=int,
+            choices=range(0,101,10),
+            help="Volume to pass down to ffplay",
         )
 
     def parse(self):
