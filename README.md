@@ -1,7 +1,4 @@
 <div align=center>
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 <p align=center><img src=images/logo.png width=250px></p>
 <h1 align=center> RADIO-ACTIVE </h1>
 <p align=center> Play any radios around the globe right from your terminal </p>
