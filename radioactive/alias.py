@@ -58,10 +58,12 @@ class Alias:
         """Adds a new entry to the fav list"""
         if self.search(left) is not None:
             log.warning("An entry with same name already exists, try another name")
+            return False
         else:
             with open(self.alias_path, "a+") as f:
                 f.write("{}=={}\n".format(left.strip(), right.strip()))
-                log.info("Current station added to your favourite list")
+                log.info("Current station added to your favorite list")
+            return True
 
     def flush(self):
         """deletes all the entries in the fav list"""

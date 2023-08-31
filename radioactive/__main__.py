@@ -263,14 +263,19 @@ def main():
     if add_to_favorite:
         alias.add_entry(add_to_favorite, handler.target_station["url"])
 
-    curr_station_name = station_name if alias.found else handler.target_station[
-        "name"]
-    panel_station_name = Text(curr_station_name, justify="center")
+    curr_station_name = station_name if alias.found else handler.target_station["name"]
 
-    station_panel = Panel(panel_station_name,
-                          title="[blink]:radio:[/blink]",
-                          width=85)
-    console.print(station_panel)
+    try:
+        # TODO fix this. when aliasing a station with an existing name curr_station_name is being None
+        panel_station_name = Text(curr_station_name, justify="center")
+
+        station_panel = Panel(panel_station_name,
+                            title="[blink]:radio:[/blink]",
+                            width=85)
+        console.print(station_panel)
+    except:
+        # TODO handle exception
+        pass
 
     if os.name == "nt":
         while True:
