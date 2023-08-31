@@ -73,7 +73,7 @@ class Player:
 
             # Handle other process states if needed
 
-            logging.warning("Process is not in an expected state")
+            log.warning("Process is not in an expected state")
             return False
         except psutil.NoSuchProcess:
             log.debug("Process not found")
@@ -84,7 +84,7 @@ class Player:
 
 
     def play(self):
-        """Nothing"""
+        """Play a station"""
         if not self.is_playing:
             pass  # call the init function again ?
 
