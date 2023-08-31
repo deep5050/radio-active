@@ -5,12 +5,12 @@
 import json
 
 import requests
-from zenlog import log
+
 
 
 class App:
     def __init__(self):
-        self.__VERSION__ = "2.4.0"  # change this on every update #
+        self.__VERSION__ = "2.4.1"  # change this on every update #
         self.pypi_api = "https://pypi.org/pypi/radio-active/json"
         self.remote_version = ""
 
@@ -41,8 +41,5 @@ class App:
             return False
 
         except:
-            log.debug("Could not fetch remote version number")
+            print("Could not fetch remote version number")
 
-
-# if __name__ == "__main__":
-#     get_version()
