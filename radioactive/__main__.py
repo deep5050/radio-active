@@ -43,8 +43,8 @@ def main():
 
     limit = args.limit
     add_station = args.new_station
-    add_to_favourite = args.add_to_favourite
-    show_favourite_list = args.show_favourite_list
+    add_to_favorite = args.add_to_favorite
+    show_favorite_list = args.show_favorite_list
     flush_fav_list = args.flush
     ########################################
 
@@ -78,7 +78,7 @@ def main():
         """
         :radio: Play any radios around the globe right from this Terminal [yellow][blink]:zap:[/blink][/yellow]!
         :smile: Author: Dipankar Pal
-        :question: Type '--help' for more details on avaliable commands.
+        :question: Type '--help' for more details on available commands.
         :bug: Visit https://github.com/deep5050/radio-active to submit issues
         :star: Show some love by starring the project on GitHub [red][blink]:heart:[/blink][/red]
         :x: Press Ctrl+C to quit
@@ -107,8 +107,8 @@ def main():
     if flush_fav_list:
         alias.flush()
 
-    if show_favourite_list:
-        log.info("Your favourite station list is below")
+    if show_favorite_list:
+        log.info("Your favorite station list is below")
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("Station", justify="left")
         table.add_column("URL / UUID", justify="center")
@@ -117,7 +117,7 @@ def main():
                 table.add_row(entry["name"], entry["uuid_or_url"])
             console.print(table)
         else:
-            log.info("You have no favourite station list")
+            log.info("You have no favorite station list")
         sys.exit(0)
 
     if add_station:
@@ -216,7 +216,7 @@ def main():
 
             except:
                 log.warning(
-                    "Station found in favourite list but seems to be invalid")
+                    "Station found in favorite list but seems to be invalid")
                 log.warning("Looking on the web instead")
                 alias.found = False
 
@@ -260,8 +260,8 @@ def main():
         last_station.save_info(last_played_station)
 
     # TODO: handle error when favouring last played (aliased) station (BUG) (LOW PRIORITY)
-    if add_to_favourite:
-        alias.add_entry(add_to_favourite, handler.target_station["url"])
+    if add_to_favorite:
+        alias.add_entry(add_to_favorite, handler.target_station["url"])
 
     curr_station_name = station_name if alias.found else handler.target_station[
         "name"]
