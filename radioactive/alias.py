@@ -26,15 +26,15 @@ class Alias:
 
                 # log.debug(json.dumps(alias_map, indent=3))
             except Exception as e:
-                log.warning("could not get / parse alias data")
+                log.debug("could not get / parse alias data")
             # log.debug(json.dumps(self.alias_map))
         else:
-            log.warning("Alias file does not exist")
+            log.debug("Alias file does not exist")
 
         # log.debug(json.dumps(self.alias_map, indent=3))
 
     def search(self, entry):
-        """searchs for an entry in the fav list with the name
+        """searches for an entry in the fav list with the name
         the right side may contain both url or uuid , need to check properly
         """
         if len(self.alias_map) > 0:
