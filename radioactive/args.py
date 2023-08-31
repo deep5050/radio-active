@@ -5,7 +5,7 @@ from zenlog import log
 
 class Parser:
 
-    """Parse the command-line args and retrun result to the __main__"""
+    """Parse the command-line args and return result to the __main__"""
 
     def __init__(self):
         self.parser = None
@@ -96,24 +96,24 @@ class Parser:
             action="store_true",
             default=False,
             dest="new_station",
-            help="Add an entry to your favourite station",
+            help="Add an entry to your favorite station",
         )
 
         self.parser.add_argument(
-            "--add-to-favourite",
+            "--add-to-favorite",
             "-F",
             action="store",
-            dest="add_to_favourite",
-            help="Save current station to your favourite list",
+            dest="add_to_favorite",
+            help="Save current station to your favorite list",
         )
 
         self.parser.add_argument(
-            "--show-favourite-list",
+            "--show-favorite-list",
             "-W",
             action="store_true",
-            dest="show_favourite_list",
+            dest="show_favorite_list",
             default=False,
-            help="Show your favourite list in table format",
+            help="Show your favorite list in table format",
         )
 
         self.parser.add_argument(
@@ -122,7 +122,7 @@ class Parser:
             action="store_true",
             dest="random",
             default=False,
-            help="Play a random station from your favourite list",
+            help="Play a random station from your favorite list",
         )
 
         self.parser.add_argument(
@@ -130,7 +130,7 @@ class Parser:
             action="store_true",
             dest="flush",
             default=False,
-            help="Flush your favourite list",
+            help="Flush your favorite list",
         )
 
         self.parser.add_argument(
