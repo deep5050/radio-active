@@ -64,9 +64,6 @@ def main():
             "Correct log levels are: error,warning,info(default),debug")
 
     handler = Handler()
-    alias = Alias()
-    alias.generate_map()
-    last_station = Last_station()
 
     mode_of_search = ""
     direct_play = False
@@ -90,6 +87,10 @@ def main():
         width=85,
     )
     print(welcome)
+
+    alias = Alias()
+    alias.generate_map()
+    last_station = Last_station()
 
     if app.is_update_available():
         update_msg = (
