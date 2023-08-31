@@ -96,15 +96,15 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 | ---------------------------- | ------------------------------------ | -------------------------------------------- | ------- |
 | `--station`, `-S`            | Required (Optional from second run) | Station name                                 | None    |
 | `--uuid`, `-U`               | Optional                             | ID of the station                            | None    |
-| `--log-level`, `-L`          | Optional                             | Log level of the program                     | info    |
+| `--log-level`, `-L`          | Optional                             | Log level of the program                     | Info    |
 | `--add-station` , `-A`       | Optional                             | Add an entry to fav list                     | False   |
 | `--show-favorite-list`,`-W` | Optional                             | Show fav list                                | False   |
 | `--add-to-favorite`,`-F`    | Optional                             | Add current station to fav list              | False   |
 | `--flush`                    | Optional                             | Remove all the entries from fav list         | False   |
-| `--discover-by-country`,`-D` | Optional                             | Discover stations by country code            | false   |
-| `--discover-by-state`        | Optional                             | Discover stations by country state           | false   |
-| `--discover-by-tag`          | Optional                             | Discover stations by tags/genre              | false   |
-| `--discover-by-language`     | optional                             | Discover stations by                         | false   |
+| `--discover-by-country`,`-D` | Optional                             | Discover stations by country code            | False   |
+| `--discover-by-state`        | Optional                             | Discover stations by country state           | False   |
+| `--discover-by-tag`          | Optional                             | Discover stations by tags/genre              | False   |
+| `--discover-by-language`     | optional                             | Discover stations by                         | False   |
 | `--limit`                    | Optional                             | Limit the # of results in the Discover table | 100     |
 | `--volume`                   | Optional                             | Change the volume passed into ffplay         | 50      |
 
