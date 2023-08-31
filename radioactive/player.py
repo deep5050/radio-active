@@ -1,10 +1,9 @@
-""" FFplay proess handler """
+""" FFplay process handler """
 
 import os
 import sys
 from shutil import which
-from signal import SIGTERM
-from subprocess import Popen
+import subprocess
 from time import sleep
 
 import psutil
@@ -14,7 +13,7 @@ from zenlog import log
 class Player:
 
     """FFPlayer handler, it holds all the attributes to properly execute ffplay
-    FFmepg required to be installed seperately
+    FFmepg required to be installed separately
     """
 
     def __init__(self, URL, volume):
@@ -34,30 +33,55 @@ class Player:
             log.critical("FFplay not found, install it first please")
             sys.exit(1)
 
-        self.process = Popen(
-            [self.exe_path, "-nodisp", "-nostats", "-loglevel", "0", "-volume", f"{self.volume}", self.url],
-            shell=False,
-        )
+        try:
+            self.process = subprocess.Popen(
+                [self.exe_path, "-nodisp", "-nostats", "-loglevel", "0", "-volume", f"{self.volume}", self.url],
+                shell=False,
+            )
 
-        log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
+            log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
 
-        #sleep(3)  # sleeping for 3 seconds wainting for ffplay to start properly
+            #sleep(3)  # sleeping for 3 seconds waiting for ffplay to start properly
 
-        if self.is_active():
-            self.is_playing = True
-            log.info("Radio started successfully")
-        else:
-            log.error("Radio could not be stared, may be a dead station")
-            sys.exit(0)
+            if self.is_active():
+                self.is_playing = True
+                log.info("Radio started successfully")
+            else:
+                log.error("Radio could not be stared, may be a dead station")
+                raise RuntimeError("Radio startup failed")
+            
+        except subprocess.CalledProcessError as e:
+            log.error("Error while starting radio: {}".format(e))
 
     def is_active(self):
-        """checks for if the ffplay is still active or not,
-        will be used to terminate FFPLAY when the radioactive terminates"""
-
-        proc = psutil.Process(self.process.pid)
-        if proc.status() == psutil.STATUS_ZOMBIE:
+        """Check if the ffplay process is still active."""
+        if not self.process:
+            log.warning("Process is not initialized")
             return False
-        return True
+        try:
+            proc = psutil.Process(self.process.pid)
+            if proc.status() == psutil.STATUS_ZOMBIE:
+                log.debug("Process is a zombie")
+                return False
+
+            if proc.status() == psutil.STATUS_RUNNING:
+                return True
+
+            if proc.status() == psutil.STATUS_SLEEPING:
+                log.debug("Process is sleeping")
+                return True  # Sleeping is considered active for our purpose
+
+            # Handle other process states if needed
+
+            logging.warning("Process is not in an expected state")
+            return False
+        except psutil.NoSuchProcess:
+            log.debug("Process not found")
+            return False
+        except Exception as e:
+            log.error("Error while checking process status: {}".format(e))
+            return False
+
 
     def play(self):
         """Nothing"""
@@ -65,10 +89,21 @@ class Player:
             pass  # call the init function again ?
 
     def stop(self):
-        """sends a SIGTERM to the process id of the current FFPLAY"""
+        """stop the ffplayer """
 
         if self.is_playing:
-            log.debug("Killing ffplay PID: {}".format(self.process.pid))
-            os.kill(self.process.pid, SIGTERM)
+            try:
+                self.process.terminate()  # Terminate the process gracefully
+                self.process.wait(timeout=5)  # Wait for process to finish
+                log.info("Radio playback stopped successfully")
+            except subprocess.TimeoutExpired:
+                log.warning("Radio process did not terminate, killing...")
+                self.process.kill()  # Kill the process forcefully
+            except Exception as e:
+                log.error("Error while stopping radio: {}".format(e))
+                raise
+            finally:
+                self.is_playing = False
+                self.process = None
         else:
-            log.warn("Player: radio is not playing")
+            log.warning("Radio is not currently playing")
