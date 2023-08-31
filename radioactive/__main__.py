@@ -19,6 +19,16 @@ from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player
 
+# using sentry to gather unhandled errors at production.
+import sentry_sdk
+sentry_sdk.init(
+    dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+)
 # globally needed as signal handler needs it
 # to terminate main() properly
 player = None
