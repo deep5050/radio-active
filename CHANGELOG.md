@@ -1,3 +1,11 @@
+## 2.5.1
+
+1. Fixed RuntimeError with empty selection menu on no options provided to radio.
+2. Display current station name as a panel while starting the radio with `--uuid`
+3. Minor typo fixed in help message.
+4. Station names does not contain any unnecessary spaces now
+5. Do not play any station while `--flush` is given. Just delete the list and exit.
+
 ## 2.5.0
 
 1. Added a selection menu while no station information is provided. This will include the last played station and the favorite list.
@@ -52,7 +60,7 @@
 1. Fixed bugs in last station
 2. Typos fixed
 3. Formatted codebase
-4. Logiing issued fixed
+4. Logging issued fixed
 5. Sentry Added to collect unhandled Exceptions logs only
 
 
