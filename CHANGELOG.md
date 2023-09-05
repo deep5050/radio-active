@@ -1,3 +1,15 @@
+## 2.5.0
+
+1. Added a selection menu while no station information is provided. This will include the last played station and the favorite list.
+2. Added `--volume` option to the player. Now you can can pass volume level to the player.
+3. ffplay initialization errors handled. Better logic to stop the PID of ffplay
+4. Some unhandled errors are now handled
+5. Minor typos fixed
+6. sentry-sdk added to gater errors (will be removed on next major release)
+7. About section updated to show donation link
+8. Upgrade message will now point to this changelog file
+9. Updated documentation
+
 ## 2.4.0
 
 1. Crashes on Windows fixed
