@@ -111,7 +111,7 @@ def main():
     if app.is_update_available():
         update_msg = (
             "\t[blink]An update available, run [green][italic]pip install radio-active=="
-            + app.get_remote_version() + "[/italic][/green][/blink]")
+            + app.get_remote_version() + "[/italic][/green][/blink]\n See the changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md")
         update_panel = Panel(
             update_msg,
             width=85,
