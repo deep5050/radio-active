@@ -10,6 +10,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 from zenlog import log
+from pick import pick
 
 from radioactive.alias import Alias
 from radioactive.app import App
@@ -20,15 +21,15 @@ from radioactive.last_station import Last_station
 from radioactive.player import Player
 
 # using sentry to gather unhandled errors at production.
-import sentry_sdk
-sentry_sdk.init(
-    dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
+# import sentry_sdk
+# sentry_sdk.init(
+#     dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
 
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production.
-    traces_sample_rate=1.0,
-)
+#     # Set traces_sample_rate to 1.0 to capture 100%
+#     # of transactions for performance monitoring.
+#     # We recommend adjusting this value in production.
+#     traces_sample_rate=1.0,
+# )
 # globally needed as signal handler needs it
 # to terminate main() properly
 player = None
@@ -160,40 +161,77 @@ def main():
     # if neither of --station and --uuid provided , look in last_station file
 
     if station_name is None and station_uuid is None:
+        # Add a selection list here. first entry must be the last played station
         # try to fetch the last played station's information
-        log.warn(
-            "No station information provided, trying to play the last station")
+        # log.warn(
+        #     "No station information provided, trying to play the last station")
 
         last_station_info = last_station.get_info()
+        # print(last_station_info)
+        log.info("you can search for a station on internet using the --station option")
+        title = 'Please select a station from your favorite list:'
+        station_selection_names = []
+        station_selection_urls = []
 
+
+        # add last played station first
+        station_selection_names.append(f"{last_station_info['name']} (last played station)")
         try:
-            if last_station_info["alias"]:
-                is_alias = True
+            station_selection_urls.append(last_station_info["stationuuid"])
         except:
-            pass
+            station_selection_urls.append(last_station_info["uuid_or_url"])
 
-        if is_alias:
-            alias.found = True  # save on last_play as an alias too!
-            # last station was an alias, don't save it again
-            skip_saving_current_station = True
-            station_uuid_or_url = last_station_info["uuid_or_url"]
-            # here we are setting the name but will not be used for API call
-            station_name = last_station_info["name"]
-            if station_uuid_or_url.find("://") != -1:
-                # Its a URL
-                log.debug(
-                    "Last station was an alias and contains a URL, Direct play set to True"
-                )
-                direct_play = True
-                direct_play_url = station_uuid_or_url
-                log.info("Current station: {}".format(
-                    last_station_info["name"]))
-            else:
-                # an UUID
-                station_uuid = last_station_info["uuid_or_url"]
+        fav_stations = alias.alias_map
+        for entry in fav_stations:
+            station_selection_names.append(entry["name"])
+            station_selection_urls.append(entry["uuid_or_url"])
+        
+        options = station_selection_names
+        option, index = pick(options, title,indicator="-->")
+
+        # check if there is direct URL or just UUID
+        station_option_url = station_selection_urls[index]
+        station_name = station_selection_names[index]
+        if station_option_url.find("://") != -1:
+            # set direct play to TRUE
+            direct_play = True
+            direct_play_url = station_option_url
         else:
-            # was not an alias
-            station_uuid = last_station_info["stationuuid"]
+            # UUID
+            station_uuid = station_option_url
+
+##################################
+
+        # try:
+        #     if last_station_info["alias"]:
+        #         is_alias = True
+        # except:
+        #     pass
+
+        # if is_alias:
+        #     alias.found = True  # save on last_play as an alias too!
+        #     # last station was an alias, don't save it again
+        #     skip_saving_current_station = True
+        #     station_uuid_or_url = last_station_info["uuid_or_url"]
+        #     # here we are setting the name but will not be used for API call
+        #     station_name = last_station_info["name"]
+        #     if station_uuid_or_url.find("://") != -1:
+        #         # Its a URL
+        #         log.debug(
+        #             "Last station was an alias and contains a URL, Direct play set to True"
+        #         )
+        #         direct_play = True
+        #         direct_play_url = station_uuid_or_url
+        #         log.info("Current station: {}".format(
+        #             last_station_info["name"]))
+        #     else:
+        #         # an UUID
+        #         station_uuid = last_station_info["uuid_or_url"]
+        # else:
+        #     # was not an alias
+        #     station_uuid = last_station_info["stationuuid"]
+############################################
+
 
     # --------------------ONLY UUID PROVIDED --------------------- #
     # if --uuid provided call directly
@@ -301,7 +339,7 @@ def signal_handler(sig, frame):
     global player
     log.debug("You pressed Ctrl+C!")
     log.debug("Stopping the radio")
-    if player.is_playing:
+    if player and player.is_playing:
         player.stop()
     log.info("Exiting now")
     sys.exit(0)
