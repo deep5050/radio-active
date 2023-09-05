@@ -8,5 +8,11 @@
         "psutil",
         "pyradios",
         "stationuuid"
+    ],
+    "grammarly.selectors": [
+        {
+            "language": "markdown",
+            "scheme": "file"
+        }
     ]
 }
