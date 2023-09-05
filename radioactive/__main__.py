@@ -20,16 +20,20 @@ from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player
 
-# using sentry to gather unhandled errors at production.
-# import sentry_sdk
-# sentry_sdk.init(
-#     dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
 
-#     # Set traces_sample_rate to 1.0 to capture 100%
-#     # of transactions for performance monitoring.
-#     # We recommend adjusting this value in production.
-#     traces_sample_rate=1.0,
-# )
+# using sentry to gather unhandled errors at production and will be removed on next major update.
+# I respect your concerns but need this to improve radioactive.
+import sentry_sdk
+sentry_sdk.init(
+    dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+)
+
+
 # globally needed as signal handler needs it
 # to terminate main() properly
 player = None
@@ -92,6 +96,7 @@ def main():
         :question: Type '--help' for more details on available commands.
         :bug: Visit https://github.com/deep5050/radio-active to submit issues
         :star: Show some love by starring the project on GitHub [red][blink]:heart:[/blink][/red]
+        :dollar: You can donate me at https://deep5050.github.io/payme/
         :x: Press Ctrl+C to quit
         """,
         title="[b][rgb(250,0,0)]RADIO[rgb(0,255,0)]ACTIVE[/b]",
@@ -165,21 +170,25 @@ def main():
         # try to fetch the last played station's information
         # log.warn(
         #     "No station information provided, trying to play the last station")
-
-        last_station_info = last_station.get_info()
+        try:
+            last_station_info = last_station.get_info()
+        except:
+            # no last station??
+            pass
         # print(last_station_info)
-        log.info("you can search for a station on internet using the --station option")
+        log.info("You can search for a station on internet using the --station option")
         title = 'Please select a station from your favorite list:'
         station_selection_names = []
         station_selection_urls = []
 
 
         # add last played station first
-        station_selection_names.append(f"{last_station_info['name']} (last played station)")
-        try:
-            station_selection_urls.append(last_station_info["stationuuid"])
-        except:
-            station_selection_urls.append(last_station_info["uuid_or_url"])
+        if last_station_info:
+            station_selection_names.append(f"{last_station_info['name']} (last played station)")
+            try:
+                station_selection_urls.append(last_station_info["stationuuid"])
+            except:
+                station_selection_urls.append(last_station_info["uuid_or_url"])
 
         fav_stations = alias.alias_map
         for entry in fav_stations:
@@ -253,7 +262,7 @@ def main():
                     # its a URL
                     log.debug("Entry contains a URL")
                     log.debug("Direct play set to True ")
-                    log.info("current station: {}".format(result["name"]))
+                    log.info("Current station: {}".format(result["name"]))
                     direct_play = True
                     # assigning url and name directly
                     direct_play_url = result["uuid_or_url"]
@@ -311,7 +320,7 @@ def main():
     if add_to_favorite:
         alias.add_entry(add_to_favorite, handler.target_station["url"])
 
-    curr_station_name = station_name if alias.found else handler.target_station["name"]
+    curr_station_name = station_name
 
     try:
         # TODO fix this. when aliasing a station with an existing name curr_station_name is being None
