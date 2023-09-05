@@ -15,6 +15,15 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "salehjafarli",
+      "name": "salehjafarli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81613563?v=4",
+      "profile": "https://github.com/salehjafarli",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -22,5 +31,7 @@
   "projectOwner": "deep5050",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs",
+  "commitConvention": "angular"
 }
