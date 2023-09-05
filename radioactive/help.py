@@ -109,6 +109,14 @@ def show_help():
         "Optional",
     )
 
+    table.add_row(
+        "--volume",
+        "yes",
+        "Volume of radio between 0 and 100",
+        "50",
+        "Optional",
+    )
+
     table.add_row("--flush", "no", "Clear your favourite list", "False", "Optional")
 
 
