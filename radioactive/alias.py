@@ -69,4 +69,4 @@ class Alias:
         """deletes all the entries in the fav list"""
         with open(self.alias_path, "w") as f:
             f.flush()
-        log.info("All entries deleted in your favourite list")
+        log.info("All entries deleted in your favorite list")
