@@ -12,9 +12,10 @@ def show_help():
         """
         :radio: Play any radios around the globe right from this Terminal [yellow][blink]:zap:[/blink][/yellow]!
         :smile: Author: Dipankar Pal
-        :question: Type '--help' for more details on avaliable commands.
+        :question: Type '--help' for more details on available commands.
         :bug: Visit https://github.com/deep5050/radio-active to submit issues
         :star: Show some love by starring the project on GitHub [red][blink]:heart:[/blink][/red]
+        :dollar: You can donate me at https://deep5050.github.io/payme/
         """,
         title="[rgb(250,0,0)]RADIO[rgb(0,255,0)]ACTIVE",
         width=85,
@@ -31,12 +32,16 @@ def show_help():
     table.add_row(
         "--station , -S",
         "yes",
-        "A station name to play",
+        "A station name to search on the internet",
         "",
         "Optional from second run",
     )
     table.add_row(
-        "--uuid , -U", "yes", "A station UUID to play", "", "Optional from second run"
+        "--uuid , -U",
+        "yes",
+        "A station UUID to play it directly",
+        "",
+        "Optional from second run",
     )
     table.add_row(
         "--log-level , -L",
@@ -48,23 +53,22 @@ def show_help():
     table.add_row(
         "--add-station , -A",
         "no",
-        "Add a  station to your favourite list",
+        "Add a  station to your favorite list",
         "False",
         "Optional",
     )
     table.add_row(
-        "--add-to-favourite, -F ",
+        "--add-to-favorite, -F ",
         "yes",
-        "Add current station to favourite list with custom name",
+        "Add current station to favorite list with custom name",
         "False",
         "Optional",
     )
 
-
     table.add_row(
-        "--show-favourite-list, -W ",
+        "--show-favorite-list, -W ",
         "no",
-        "Show your favourite list",
+        "Show your favorite list",
         "False",
         "Optional",
     )
@@ -112,19 +116,11 @@ def show_help():
     table.add_row(
         "--volume",
         "yes",
-        "Volume of radio between 0 and 100",
+        "Volume of the radio between 0 and 100",
         "50",
         "Optional",
     )
 
-    table.add_row("--flush", "no", "Clear your favourite list", "False", "Optional")
-
-
-
-
-
-
-
-
+    table.add_row("--flush", "no", "Clear your favorite list", "False", "Optional")
 
     console.print(table)
