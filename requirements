@@ -5,3 +5,4 @@ urllib3
 zenlog
 rich
 pick
+sentry-sdk
