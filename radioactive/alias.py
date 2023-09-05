@@ -1,6 +1,7 @@
 import os.path
 from zenlog import log
 
+
 class Alias:
     def __init__(self):
         self.alias_map = []
@@ -67,6 +68,11 @@ class Alias:
 
     def flush(self):
         """deletes all the entries in the fav list"""
-        with open(self.alias_path, "w") as f:
-            f.flush()
-        log.info("All entries deleted in your favorite list")
+        try:
+            with open(self.alias_path, "w") as f:
+                f.flush()
+            log.info("All entries deleted in your favorite list")
+            return 0
+        except:
+            log.error("could not delete your favorite list. something went wrong")
+            return 1
