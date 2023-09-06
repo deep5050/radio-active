@@ -72,11 +72,13 @@ class Handler:
 
         # when exactly one response found
         if len(self.response) == 1:
-            log.info("Station found: {}".format(self.response[0]["name"]))
+            log.info("Station found: {}".format(self.response[0]["name"].strip()))
             log.debug(json.dumps(self.response[0], indent=3))
             self.target_station = self.response[0]
             # register a valid click to increase its popularity
             self.API.click_counter(self.target_station["stationuuid"])
+            # return name
+            return self.response[0]["name"].strip()
 
     def play_by_station_name(self, _name=None):
         """search and play a station by its name"""
@@ -90,7 +92,7 @@ class Handler:
     def play_by_station_uuid(self, _uuid):
         """search and play station by its stationuuid"""
         self.response = self.API.station_by_uuid(_uuid)
-        self.station_validator()
+        return self.station_validator() # should return a station name also
 
     def discover_by_country(self, _country_code, _limit):
         try:

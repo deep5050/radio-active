@@ -47,8 +47,8 @@ class Player:
                 self.is_playing = True
                 log.info("Radio started successfully")
             else:
-                log.error("Radio could not be stared, may be a dead station")
-                raise RuntimeError("Radio startup failed")
+                log.error("Radio could not be stared, may be a dead station. please try again")
+                sys.exit(1)
             
         except subprocess.CalledProcessError as e:
             log.error("Error while starting radio: {}".format(e))

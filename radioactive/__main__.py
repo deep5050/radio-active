@@ -24,15 +24,17 @@ from radioactive.player import Player
 # using sentry to gather unhandled errors at production and will be removed on next major update.
 # I respect your concerns but need this to improve radioactive.
 import sentry_sdk
+
 sentry_sdk.init(
     dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
-
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0,
 )
 
+RED_COLOR = "\033[91m"
+END_COLOR = "\033[0m"
 
 # globally needed as signal handler needs it
 # to terminate main() properly
@@ -75,8 +77,7 @@ def main():
     if log_level in ["info", "error", "warning", "debug"]:
         log.level(log_level)
     else:
-        log.warning(
-            "Correct log levels are: error,warning,info(default),debug")
+        log.warning("Correct log levels are: error,warning,info(default),debug")
 
     handler = Handler()
 
@@ -111,7 +112,9 @@ def main():
     if app.is_update_available():
         update_msg = (
             "\t[blink]An update available, run [green][italic]pip install radio-active=="
-            + app.get_remote_version() + "[/italic][/green][/blink]\n See the changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md")
+            + app.get_remote_version()
+            + "[/italic][/green][/blink]\n See the changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md"
+        )
         update_panel = Panel(
             update_msg,
             width=85,
@@ -121,7 +124,8 @@ def main():
         log.debug("Update not available")
 
     if flush_fav_list:
-        alias.flush()
+        # exit radio after deleting fav stations
+        sys.exit(alias.flush())
 
     if show_favorite_list:
         log.info("Your favorite station list is below")
@@ -177,14 +181,15 @@ def main():
             pass
         # print(last_station_info)
         log.info("You can search for a station on internet using the --station option")
-        title = 'Please select a station from your favorite list:'
+        title = "Please select a station from your favorite list:"
         station_selection_names = []
         station_selection_urls = []
 
-
         # add last played station first
         if last_station_info:
-            station_selection_names.append(f"{last_station_info['name']} (last played station)")
+            station_selection_names.append(
+                f"{last_station_info['name'].strip()} (last played station)"
+            )
             try:
                 station_selection_urls.append(last_station_info["stationuuid"])
             except:
@@ -192,15 +197,24 @@ def main():
 
         fav_stations = alias.alias_map
         for entry in fav_stations:
-            station_selection_names.append(entry["name"])
+            station_selection_names.append(entry["name"].strip())
             station_selection_urls.append(entry["uuid_or_url"])
-        
+
         options = station_selection_names
-        option, index = pick(options, title,indicator="-->")
+        if len(options) == 0:
+            # setting message color to red. technically it is not an error though.
+            # doing it just to catch user attention :)
+            log.info(
+                f"{RED_COLOR}No stations to play. please search for a station first!{END_COLOR}"
+            )
+            sys.exit(0)
+
+        _ , index = pick(options, title, indicator="-->")
 
         # check if there is direct URL or just UUID
         station_option_url = station_selection_urls[index]
         station_name = station_selection_names[index]
+
         if station_option_url.find("://") != -1:
             # set direct play to TRUE
             direct_play = True
@@ -209,38 +223,37 @@ def main():
             # UUID
             station_uuid = station_option_url
 
-##################################
+    ##################################
 
-        # try:
-        #     if last_station_info["alias"]:
-        #         is_alias = True
-        # except:
-        #     pass
+    # try:
+    #     if last_station_info["alias"]:
+    #         is_alias = True
+    # except:
+    #     pass
 
-        # if is_alias:
-        #     alias.found = True  # save on last_play as an alias too!
-        #     # last station was an alias, don't save it again
-        #     skip_saving_current_station = True
-        #     station_uuid_or_url = last_station_info["uuid_or_url"]
-        #     # here we are setting the name but will not be used for API call
-        #     station_name = last_station_info["name"]
-        #     if station_uuid_or_url.find("://") != -1:
-        #         # Its a URL
-        #         log.debug(
-        #             "Last station was an alias and contains a URL, Direct play set to True"
-        #         )
-        #         direct_play = True
-        #         direct_play_url = station_uuid_or_url
-        #         log.info("Current station: {}".format(
-        #             last_station_info["name"]))
-        #     else:
-        #         # an UUID
-        #         station_uuid = last_station_info["uuid_or_url"]
-        # else:
-        #     # was not an alias
-        #     station_uuid = last_station_info["stationuuid"]
-############################################
-
+    # if is_alias:
+    #     alias.found = True  # save on last_play as an alias too!
+    #     # last station was an alias, don't save it again
+    #     skip_saving_current_station = True
+    #     station_uuid_or_url = last_station_info["uuid_or_url"]
+    #     # here we are setting the name but will not be used for API call
+    #     station_name = last_station_info["name"]
+    #     if station_uuid_or_url.find("://") != -1:
+    #         # Its a URL
+    #         log.debug(
+    #             "Last station was an alias and contains a URL, Direct play set to True"
+    #         )
+    #         direct_play = True
+    #         direct_play_url = station_uuid_or_url
+    #         log.info("Current station: {}".format(
+    #             last_station_info["name"]))
+    #     else:
+    #         # an UUID
+    #         station_uuid = last_station_info["uuid_or_url"]
+    # else:
+    #     # was not an alias
+    #     station_uuid = last_station_info["stationuuid"]
+    ############################################
 
     # --------------------ONLY UUID PROVIDED --------------------- #
     # if --uuid provided call directly
@@ -272,8 +285,7 @@ def main():
                     station_uuid = result["uuid_or_url"]  # its a UUID
 
             except:
-                log.warning(
-                    "Station found in favorite list but seems to be invalid")
+                log.warning("Station found in favorite list but seems to be invalid")
                 log.warning("Looking on the web instead")
                 alias.found = False
 
@@ -289,7 +301,8 @@ def main():
     if not direct_play:
         # avoid extra API calls since target url is given
         if mode_of_search == "uuid":
-            handler.play_by_station_uuid(station_uuid)
+            _station_name = handler.play_by_station_uuid(station_uuid)
+            station_name = _station_name
         else:
             if not alias.found:
                 # when alias was found, we have set the station name to print it correctly,
@@ -298,8 +311,7 @@ def main():
 
     global player
 
-    target_url = direct_play_url if direct_play else handler.target_station[
-        "url"]
+    target_url = direct_play_url if direct_play else handler.target_station["url"]
     player = Player(target_url, args.volume)
 
     # writing the station name to a file, next time if user
@@ -326,9 +338,9 @@ def main():
         # TODO fix this. when aliasing a station with an existing name curr_station_name is being None
         panel_station_name = Text(curr_station_name, justify="center")
 
-        station_panel = Panel(panel_station_name,
-                            title="[blink]:radio:[/blink]",
-                            width=85)
+        station_panel = Panel(
+            panel_station_name, title="[blink]:radio:[/blink]", width=85
+        )
         console.print(station_panel)
     except:
         # TODO handle exception
