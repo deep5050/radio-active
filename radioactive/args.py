@@ -137,12 +137,18 @@ class Parser:
             "--volume",
             action="store",
             dest="volume",
-            default=50,
+            default=80,
             type=int,
             choices=range(0,101,10),
             help="Volume to pass down to ffplay",
         )
-
+        self.parser.add_argument(
+            "--kill",
+            action="store_true",
+            dest="kill_ffplays",
+            default=False,
+            help="kill all the ffplay process initiated by radioactive",
+        )
     def parse(self):
         self.result = self.parser.parse_args()
 

@@ -18,20 +18,20 @@ from radioactive.args import Parser
 from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
-from radioactive.player import Player
+from radioactive.player import Player, kill_background_ffplays
 
 
 # using sentry to gather unhandled errors at production and will be removed on next major update.
 # I respect your concerns but need this to improve radioactive.
-import sentry_sdk
+# import sentry_sdk
 
-sentry_sdk.init(
-    dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production.
-    traces_sample_rate=1.0,
-)
+# sentry_sdk.init(
+#     dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
+#     # Set traces_sample_rate to 1.0 to capture 100%
+#     # of transactions for performance monitoring.
+#     # We recommend adjusting this value in production.
+#     traces_sample_rate=1.0,
+# )
 
 RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
@@ -63,6 +63,7 @@ def main():
     add_to_favorite = args.add_to_favorite
     show_favorite_list = args.show_favorite_list
     flush_fav_list = args.flush
+    kill_ffplays = args.kill_ffplays
     ########################################
 
     VERSION = app.get_version()
@@ -123,10 +124,20 @@ def main():
     else:
         log.debug("Update not available")
 
+    # flush ?
     if flush_fav_list:
         # exit radio after deleting fav stations
         sys.exit(alias.flush())
 
+    # -------------- kill background ffplay PIDs --------------------#
+    # sometimes radio exits while ffplay is still running.
+    # actively trying to prevent these scenarios. until then use this
+
+    if kill_ffplays:
+        kill_background_ffplays()
+        sys.exit(0)
+
+    # ----------------- favorite list ---------------- #
     if show_favorite_list:
         log.info("Your favorite station list is below")
         table = Table(show_header=True, header_style="bold magenta")
@@ -140,6 +151,7 @@ def main():
             log.info("You have no favorite station list")
         sys.exit(0)
 
+    # --------------------------- add a station --------------------------#
     if add_station:
         left = input("Enter station name:")
         right = input("Enter station stream-url or radio-browser uuid:")
@@ -172,8 +184,7 @@ def main():
     if station_name is None and station_uuid is None:
         # Add a selection list here. first entry must be the last played station
         # try to fetch the last played station's information
-        # log.warn(
-        #     "No station information provided, trying to play the last station")
+
         try:
             last_station_info = last_station.get_info()
         except:
@@ -209,7 +220,7 @@ def main():
             )
             sys.exit(0)
 
-        _ , index = pick(options, title, indicator="-->")
+        _, index = pick(options, title, indicator="-->")
 
         # check if there is direct URL or just UUID
         station_option_url = station_selection_urls[index]
