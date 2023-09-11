@@ -15,7 +15,7 @@ def readme():
 
 
 def required():
-    with open("requirements", "r", encoding="utf-8") as f:
+    with open("requirements.txt", "r", encoding="utf-8") as f:
         return f.read().splitlines()
 
 
