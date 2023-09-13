@@ -1,5 +1,5 @@
 <div align=center>
-<p align=center><img src=images/logo.png width=250px></p>
+<p align=center><img src=https://user-images.githubusercontent.com/27947066/267328833-3e81a98e-2acb-4291-89cb-f3f9bed6c299.png width=250px></p>
 <h1 align=center> RADIO-ACTIVE </h1>
 <p align=center> Play any radios around the globe right from your terminal </p>
 
@@ -11,7 +11,7 @@
 </p>
 
 <p align=center>
-<img align=center src=images/example.png >
+<img align=center src=https://github.com/deep5050/random-shits-happen-here/assets/27947066/250dcd05-c142-442a-a9a3-66347adb69c5 >
 <hr>
 <img alt="GitHub" src="https://img.shields.io/github/license/deep5050/radio-active?style=for-the-badge">
 <img alt="PyPI" src="https://img.shields.io/pypi/v/radio-active?style=for-the-badge">
@@ -37,7 +37,7 @@
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
 - [ ] I'm feeling lucky ! Play Random stations
-- [ ] No external media player dependency!
+
 
 > See my progress [here](https://github.com/deep5050/radio-active/projects/1)
 
@@ -83,7 +83,7 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 
 ### Demo
 
-<a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src=images/maxresdefault.jpg/> </a>
+<a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src=https://user-images.githubusercontent.com/27947066/267328820-f7264e02-edc1-46f3-9548-5dfb50a6627d.jpg /> </a>
 <hr>
 <a align=center href="https://asciinema.org/a/412285" target="_blank"><img src="https://asciinema.org/a/412285.svg" /></a>
 
@@ -92,22 +92,22 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 ### Options
 
 
-| Argument                     | Note                                 | Description                                  | Default |
-| ---------------------------- | ------------------------------------ | -------------------------------------------- | ------- |
+| Argument                     | Note                                | Description                                  | Default |
+| ---------------------------- | ----------------------------------- | -------------------------------------------- | ------- |
 | `--station`, `-S`            | Required (Optional from second run) | Station name                                 | None    |
-| `--uuid`, `-U`               | Optional                             | ID of the station                            | None    |
-| `--log-level`, `-L`          | Optional                             | Log level of the program                     | Info    |
-| `--add-station` , `-A`       | Optional                             | Add an entry to fav list                     | False   |
-| `--show-favorite-list`,`-W` | Optional                             | Show fav list                                | False   |
-| `--add-to-favorite`,`-F`    | Optional                             | Add current station to fav list              | False   |
-| `--flush`                    | Optional                             | Remove all the entries from fav list         | False   |
-| `--discover-by-country`,`-D` | Optional                             | Discover stations by country code            | False   |
-| `--discover-by-state`        | Optional                             | Discover stations by country state           | False   |
-| `--discover-by-tag`          | Optional                             | Discover stations by tags/genre              | False   |
-| `--discover-by-language`     | optional                             | Discover stations by                         | False   |
-| `--limit`                    | Optional                             | Limit the # of results in the Discover table | 100     |
-| `--volume`                   | Optional                             | Change the volume passed into ffplay         | 50      |
-
+| `--uuid`, `-U`               | Optional                            | ID of the station                            | None    |
+| `--log-level`, `-L`          | Optional                            | Log level of the program                     | Info    |
+| `--add-station` , `-A`       | Optional                            | Add an entry to fav list                     | False   |
+| `--show-favorite-list`,`-W`  | Optional                            | Show fav list                                | False   |
+| `--add-to-favorite`,`-F`     | Optional                            | Add current station to fav list              | False   |
+| `--flush`                    | Optional                            | Remove all the entries from fav list         | False   |
+| `--discover-by-country`,`-D` | Optional                            | Discover stations by country code            | False   |
+| `--discover-by-state`        | Optional                            | Discover stations by country state           | False   |
+| `--discover-by-tag`          | Optional                            | Discover stations by tags/genre              | False   |
+| `--discover-by-language`     | optional                            | Discover stations by                         | False   |
+| `--limit`                    | Optional                            | Limit the # of results in the Discover table | 100     |
+| `--volume`                   | Optional                            | Change the volume passed into ffplay         | 50      |
+| `--kill`                     | Optional                            | Kill background radios.                      | False   |
 
 <hr>
 
@@ -143,17 +143,20 @@ If you ever face a situation where radio-active quits but the audio (ffplay) run
 
 
 ### Support
+
+<p> 
+<a href=https://deep5050.github.io/payme>Visit my contribution page for more payment options.
+</p>
 <p align=center><a href="https://www.buymeacoffee.com/deep5050" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 117px !important;" ></a></p>
 
 ### Acknowledgements
 
 <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
-<div align=center>
-<img src=images/footer.png width=400px >
-<p align=center> Happy Listening </p>
-<img src=https://forthebadge.com/images/badges/built-with-love.svg>
 
+<div align=center>
+<img src=https://github.com/deep5050/random-shits-happen-here/assets/27947066/83d08065-c209-4012-abb7-9c0aa64d761b width=400px >
+<p align=center> Happy Listening </p>
 
 </div>
 

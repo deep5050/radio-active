@@ -1,3 +1,11 @@
+## 2.5.2
+
+1. Added `--kill` option to stop background radios if any.
+2. Project restructured.
+3. Fixed saving empty last station information.
+
+
+
 ## 2.5.1
 
 1. Fixed RuntimeError with empty selection menu on no options provided to radio.

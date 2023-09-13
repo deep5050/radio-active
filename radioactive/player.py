@@ -10,6 +10,28 @@ import psutil
 from zenlog import log
 
 
+def kill_background_ffplays():
+    all_processes = psutil.process_iter(attrs=["pid", "name"])
+    count = 0
+    # Iterate through the processes and terminate those named "ffplay"
+    for process in all_processes:
+        try:
+            if process.info["name"] == "ffplay":
+                pid = process.info["pid"]
+                p = psutil.Process(pid)
+                p.terminate()
+                count += 1
+                log.info(f"Terminated ffplay process with PID {pid}")
+                if p.is_running():
+                    p.kill()
+                    log.debug(f"Forcefully killing ffplay process with PID {pid}")
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            # Handle exceptions, such as processes that no longer exist or access denied
+            log.debug("Could not terminate a ffplay processes!")
+    if count == 0:
+        log.info("No background radios are running!")
+
+
 class Player:
 
     """FFPlayer handler, it holds all the attributes to properly execute ffplay
@@ -35,21 +57,32 @@ class Player:
 
         try:
             self.process = subprocess.Popen(
-                [self.exe_path, "-nodisp", "-nostats", "-loglevel", "0", "-volume", f"{self.volume}", self.url],
+                [
+                    self.exe_path,
+                    "-nodisp",
+                    "-nostats",
+                    "-loglevel",
+                    "0",
+                    "-volume",
+                    f"{self.volume}",
+                    self.url,
+                ],
                 shell=False,
             )
 
             log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
 
-            #sleep(3)  # sleeping for 3 seconds waiting for ffplay to start properly
+            # sleep(3)  # sleeping for 3 seconds waiting for ffplay to start properly
 
             if self.is_active():
                 self.is_playing = True
                 log.info("Radio started successfully")
             else:
-                log.error("Radio could not be stared, may be a dead station. please try again")
+                log.error(
+                    "Radio could not be stared, may be a dead station. please try again"
+                )
                 sys.exit(1)
-            
+
         except subprocess.CalledProcessError as e:
             log.error("Error while starting radio: {}".format(e))
 
@@ -82,14 +115,13 @@ class Player:
             log.error("Error while checking process status: {}".format(e))
             return False
 
-
     def play(self):
         """Play a station"""
         if not self.is_playing:
             pass  # call the init function again ?
 
     def stop(self):
-        """stop the ffplayer """
+        """stop the ffplayer"""
 
         if self.is_playing:
             try:

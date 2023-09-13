@@ -2,6 +2,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 from radioactive.app import App
+import io
 
 app = App()
 
@@ -10,12 +11,12 @@ VERSION = app.get_version()
 
 
 def readme():
-    with open("README.md", "r", encoding="utf-8") as f:
+    with io.open("README.md", "r", encoding="utf-8") as f:
         return f.read()
 
 
-def required():
-    with open("requirements", "r", encoding="utf-8") as f:
+def required(sfx=''):
+    with io.open(f"requirements{sfx}.txt",encoding="utf-8") as f:
         return f.read().splitlines()
 
 
@@ -36,8 +37,9 @@ setup(
             "radio = radioactive.__main__:main",
         ]
     },
-    packages=find_packages(),
+    packages=find_packages(exclude=["test*"]),
     install_requires=required(),
+    extras_require={'dev': required('-dev')},
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Development Status :: 5 - Production/Stable",

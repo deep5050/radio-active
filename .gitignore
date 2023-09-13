@@ -130,7 +130,6 @@ dmypy.json
 last_station.json
 build.sh
 deploy.sh
-Makefile
 
 pylint.txt
 .gitpod.yml

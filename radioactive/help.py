@@ -117,10 +117,11 @@ def show_help():
         "--volume",
         "yes",
         "Volume of the radio between 0 and 100",
-        "50",
+        "80",
         "Optional",
     )
 
     table.add_row("--flush", "no", "Clear your favorite list", "False", "Optional")
+    table.add_row("--kill", "no", "Stop background radios", "False", "Optional")
 
     console.print(table)
