@@ -337,7 +337,9 @@ def main():
         last_played_station["alias"] = True
 
     if not skip_saving_current_station:
-        last_station.save_info(last_played_station)
+        log.debug(f"Saving the current station: {last_played_station}")
+        if last_played_station:
+            last_station.save_info(last_played_station)
 
     # TODO: handle error when favouring last played (aliased) station (BUG) (LOW PRIORITY)
     if add_to_favorite:
