@@ -3,7 +3,6 @@
 """
 
 import json
-from logging import exception
 import sys
 
 from pyradios import RadioBrowser
@@ -48,7 +47,6 @@ class Handler:
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
 
-
             log.warn(
                 "{} stations found by the name, select one and run with UUID instead".format(
                     len(self.response)
@@ -56,17 +54,18 @@ class Handler:
             )
 
             for station in self.response:
-                # data = {}
-                # data["name"] = station["name"]
-                # data["uuid"] = station["stationuuid"]
-                # data["country"] = station["country"]
-                # log.info(json.dumps(data, indent=3))
                 table.add_row(
-                    station["name"], station["stationuuid"],station["countrycode"],station['tags']
+                    station["name"],
+                    station["stationuuid"],
+                    station["countrycode"],
+                    station["tags"],
                 )
 
             console.print(table)
-            log.info("If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry")
+            log.info(
+                "If the table does not fit into your screen, \
+                \ntry to maximize the window , decrease the font by a bit and retry"
+            )
 
             sys.exit(1)
 
@@ -80,26 +79,35 @@ class Handler:
             # return name
             return self.response[0]["name"].strip()
 
+    # ---------------------------- NAME -------------------------------- #
     def play_by_station_name(self, _name=None):
         """search and play a station by its name"""
+        # TODO: handle exact error
+        try:
+            self.response = self.API.search(name=_name, name_exact=False)
+            self.station_validator()
+        except:
+            log.error("Something went wrong. please try again.")
+            sys.exit(1)
 
-        self.response = self.API.search(name=_name, name_exact=False)
-        self.station_validator()
-
-
-# ------------------ by uuid ---------------
-
+    # ------------------------------- UUID ------------------------------ #
     def play_by_station_uuid(self, _uuid):
         """search and play station by its stationuuid"""
-        self.response = self.API.station_by_uuid(_uuid)
-        return self.station_validator() # should return a station name also
+        # TODO: handle exact error
+        try:
+            self.response = self.API.station_by_uuid(_uuid)
+            return self.station_validator()  # should return a station name also
+        except:
+            log.error("Something went wrong. please try again.")
+            sys.exit(1)
 
+    # ----------------------- ------- COUNTRY -------------------------#
     def discover_by_country(self, _country_code, _limit):
         try:
             discover_result = self.API.search(countrycode=_country_code, limit=_limit)
         except Exception as e:
             # print(e)
-            log.error("Something went wrong")
+            log.error("Something went wrong. please try again.")
             sys.exit(1)
 
         if len(discover_result) > 1:
@@ -113,24 +121,30 @@ class Handler:
 
             for res in discover_result:
                 table.add_row(
-                    res["name"], res["stationuuid"], res["state"],res["tags"],res["language"]
+                    res["name"],
+                    res["stationuuid"],
+                    res["state"],
+                    res["tags"],
+                    res["language"],
                 )
             console.print(table)
-            log.info("If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry")
+            log.info(
+                "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
+            )
 
             sys.exit(0)
         else:
             log.error("No stations found for the country code, recheck it")
             sys.exit(1)
 
-#------------------- by state ---------------------
+    # ------------------- by state ---------------------
 
     def discover_by_state(self, _state, _limit):
         try:
             discover_result = self.API.search(state=_state, limit=_limit)
         except Exception as e:
             # print(e)
-            log.error("Something went wrong")
+            log.error("Something went wrong. please try again.")
             sys.exit(1)
 
         if len(discover_result) > 1:
@@ -143,24 +157,30 @@ class Handler:
 
             for res in discover_result:
                 table.add_row(
-                    res["name"], res["stationuuid"], res["country"],res["tags"],res["language"]
+                    res["name"],
+                    res["stationuuid"],
+                    res["country"],
+                    res["tags"],
+                    res["language"],
                 )
             console.print(table)
-            log.info("If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry")
+            log.info(
+                "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
+            )
 
             sys.exit(0)
         else:
             log.error("No stations found for the state, recheck it")
             sys.exit(1)
 
-# -----------------by language --------------------
+    # -----------------by language --------------------
 
     def discover_by_language(self, _language, _limit):
         try:
             discover_result = self.API.search(language=_language, limit=_limit)
         except Exception as e:
             # print(e)
-            log.error("Something went wrong")
+            log.error("Something went wrong. please try again.")
             sys.exit(1)
 
         if len(discover_result) > 1:
@@ -172,27 +192,26 @@ class Handler:
 
             for res in discover_result:
                 table.add_row(
-                    res["name"], res["stationuuid"], res["country"],res["tags"]
+                    res["name"], res["stationuuid"], res["country"], res["tags"]
                 )
             console.print(table)
-            log.info("If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry")
+            log.info(
+                "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
+            )
 
             sys.exit(0)
         else:
             log.error("No stations found for the language, recheck it")
             sys.exit(1)
 
-
-
-
-# -------------------- by tag ----------------------
+    # -------------------- by tag ----------------------
 
     def discover_by_tag(self, _tag, _limit):
         try:
             discover_result = self.API.search(tag=_tag, limit=_limit)
         except Exception as e:
             # print(e)
-            log.error("Something went wrong")
+            log.error("Something went wrong. please try again.")
             sys.exit(1)
 
         if len(discover_result) > 1:
@@ -204,12 +223,23 @@ class Handler:
 
             for res in discover_result:
                 table.add_row(
-                    res["name"], res["stationuuid"],res["country"],res["language"]
+                    res["name"], res["stationuuid"], res["country"], res["language"]
                 )
             console.print(table)
-            log.info("If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry")
+            log.info(
+                "If the table does not fit into your screen, \
+                \ntry to maximize the window , decrease the font by a bit and retry"
+            )
 
             sys.exit(0)
         else:
             log.error("No stations found for the tag, recheck it")
             sys.exit(1)
+
+    # ---- increase click count ------------- #
+    def vote_for_uuid(self, UUID):
+        try:
+            result = self.API.click_counter(UUID)
+            return result
+        except:
+            log.debug("Something went wrong during increasing click count")
