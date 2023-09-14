@@ -4,7 +4,8 @@ import os
 import sys
 from shutil import which
 import subprocess
-from time import sleep
+import threading
+import signal
 
 import psutil
 from zenlog import log
@@ -55,6 +56,41 @@ class Player:
             log.critical("FFplay not found, install it first please")
             sys.exit(1)
 
+        self.start_process()
+
+    #     try:
+    #         self.process = subprocess.Popen(
+    #             [
+    #                 self.exe_path,
+    #                 "-nodisp",
+    #                 "-nostats",
+    #                 "-loglevel",
+    #                 "0",
+    #                 "-volume",
+    #                 f"{self.volume}",
+    #                 self.url,
+    #             ],
+    #             shell=False,
+    #         )
+
+    #         log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
+
+    #         # sleep(3)  # sleeping for 3 seconds waiting for ffplay to start properly
+
+    #         if self.is_active():
+    #             self.is_playing = True
+    #             log.info("Radio started successfully")
+    #         else:
+    #             log.error(
+    #                 "Radio could not be stared, may be a dead station. please try again"
+    #             )
+    #             sys.exit(1)
+
+    #     except subprocess.CalledProcessError as e:
+    #         log.error("Error while starting radio: {}".format(e))
+    #    self.is_running = False
+
+    def start_process(self):
         try:
             self.process = subprocess.Popen(
                 [
@@ -62,29 +98,42 @@ class Player:
                     "-nodisp",
                     "-nostats",
                     "-loglevel",
-                    "0",
+                    "error",
                     "-volume",
                     f"{self.volume}",
                     self.url,
                 ],
                 shell=False,
+                stdout=subprocess.PIPE,  # Capture standard output
+                stderr=subprocess.PIPE,  # Capture standard error
+                text=True,  # Use text mode to capture strings
             )
-
+            self.is_running = True
             log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
+            # Create a thread to continuously capture and check error output
+            error_thread = threading.Thread(target=self.check_error_output)
+            error_thread.daemon = True
+            error_thread.start()
 
-            # sleep(3)  # sleeping for 3 seconds waiting for ffplay to start properly
-
-            if self.is_active():
-                self.is_playing = True
-                log.info("Radio started successfully")
-            else:
-                log.error(
-                    "Radio could not be stared, may be a dead station. please try again"
-                )
-                sys.exit(1)
-
-        except subprocess.CalledProcessError as e:
+        except Exception as e:
+            # Handle exceptions that might occur during process setup
             log.error("Error while starting radio: {}".format(e))
+
+    def check_error_output(self):
+        while self.is_running:
+            stderr_result = self.process.stderr.readline()
+            if stderr_result:
+                log.error("Could not connect to the station")
+                log.debug(stderr_result)
+                # only showing the server response
+                log.error(stderr_result.split(": ")[1])
+                self.is_running = False
+                self.stop()
+
+    def terminate_parent_process(self):
+        parent_pid = os.getppid()
+        print(parent_pid)
+        os.kill(parent_pid, signal.SIGINT)
 
     def is_active(self):
         """Check if the ffplay process is still active."""
@@ -138,4 +187,6 @@ class Player:
                 self.is_playing = False
                 self.process = None
         else:
-            log.warning("Radio is not currently playing")
+            log.debug("Radio is not currently playing")
+            current_pid = os.getpid()
+            os.kill(current_pid, signal.SIGINT)
