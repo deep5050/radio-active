@@ -5,7 +5,8 @@ FLAKE8_EXCLUDE = venv,.venv,.eggs,.tox,.git,__pycache__,*.pyc
 SRC_DIR = "radioactive"
 TEST_DIR = "test"
 
-all: clean install-dev test
+.PHONY: all clean isort check dist deploy test-deploy help build install install-dev test
+all: clean build install
 
 check:
 	${PYTHON} -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude ${FLAKE8_EXCLUDE}
@@ -37,19 +38,25 @@ help:
 	@echo "        Remove python artifacts and build artifacts."
 	@echo "    isort"
 	@echo "			Sort import statements."
+	@echo "    build"
+	@echo "         Build the target app"
+	@echo "   install"
+	@echo "        Install the target app"
 	@echo "    check"
 	@echo "        Check style with flake8."
 	@echo "    test"
 	@echo "        Run pytest"
+	@echo "    todo"
+	@echo "        Finding lines with 'TODO'"
 
 isort:
 	@echo "Sorting imports..."
 	isort $(SRC_DIR) $(TEST_DIR)
 
 build:
-	python3 setup.py build
+	${PYTHON} setup.py build
 
-install:
+install: build
 	pip install -e .
 
 install-dev: install
@@ -58,3 +65,7 @@ install-dev: install
 
 test: 
 	${PYTHON} -m pytest ${TEST_PATH}
+
+todo:
+	@echo "Finding lines with 'TODO:' in current directory..."
+	@grep -rn --exclude=Makefile 'TODO:' .
