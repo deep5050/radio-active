@@ -13,26 +13,28 @@ class Alias:
         """parses the fav list file and generates a list"""
         # create alias map
         if os.path.exists(self.alias_path):
-            # log.debug("Alias file exists")
+            log.debug(f"Alias file at: {self.alias_path}")
             try:
                 with open(self.alias_path, "r+") as f:
-                    alias_data = f.read()
+                    alias_data = f.read().strip()
+                    if alias_data == "":
+                        log.debug("Empty alias list")
+                        return
                     alias_list = alias_data.splitlines()
                     for alias in alias_list:
+                        if alias.strip() == "":
+                            # empty line pass
+                            continue
                         temp = alias.split("==")
                         left = temp[0]
                         right = temp[1]
                         # may contain both URL and UUID
                         self.alias_map.append({"name": left, "uuid_or_url": right})
-
-                # log.debug(json.dumps(alias_map, indent=3))
             except Exception as e:
-                log.debug("could not get / parse alias data")
-            # log.debug(json.dumps(self.alias_map))
+                log.debug(f"could not get / parse alias data: {e}")
+
         else:
             log.debug("Alias file does not exist")
-
-        # log.debug(json.dumps(self.alias_map, indent=3))
 
     def search(self, entry):
         """searches for an entry in the fav list with the name
@@ -41,7 +43,7 @@ class Alias:
         if len(self.alias_map) > 0:
             log.debug("looking under alias file")
             for alias in self.alias_map:
-                if alias["name"] == entry:
+                if alias["name"].strip() == entry.strip():
                     log.debug(
                         "Alias found: {} == {}".format(
                             alias["name"], alias["uuid_or_url"]
