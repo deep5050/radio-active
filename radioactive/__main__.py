@@ -23,12 +23,12 @@ from radioactive.player import Player, kill_background_ffplays
 
 # using sentry to gather unhandled errors at production and will be removed on next major update.
 # I respect your concerns but need this to improve radioactive.
-import sentry_sdk
+# import sentry_sdk
 
-sentry_sdk.init(
-    dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
-    traces_sample_rate=1.0,
-)
+# sentry_sdk.init(
+#     dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
+#     traces_sample_rate=1.0,
+# )
 
 RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
@@ -83,7 +83,6 @@ def main():
     direct_play = False
     direct_play_url = ""
     skip_saving_current_station = False
-    is_alias = False
 
     ################################# RICH ##################
     console = Console()
@@ -92,13 +91,13 @@ def main():
         """
         :radio: Play any radios around the globe right from this Terminal [yellow][blink]:zap:[/blink][/yellow]!
         :smile: Author: Dipankar Pal
-        :question: Type '--help' for more details on available commands.
-        :bug: Visit https://github.com/deep5050/radio-active to submit issues
+        :question: Type '--help' for more details on available commands
+        :bug: Visit: https://github.com/deep5050/radio-active to submit issues
         :star: Show some love by starring the project on GitHub [red][blink]:heart:[/blink][/red]
         :dollar: You can donate me at https://deep5050.github.io/payme/
         :x: Press Ctrl+C to quit
         """,
-        title="[b][rgb(250,0,0)]RADIO[rgb(0,255,0)]ACTIVE[/b]",
+        title="[b]RADIOACTIVE[/b]",
         width=85,
     )
     print(welcome)
@@ -111,7 +110,7 @@ def main():
         update_msg = (
             "\t[blink]An update available, run [green][italic]pip install radio-active=="
             + app.get_remote_version()
-            + "[/italic][/green][/blink]\n See the changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md"
+            + "[/italic][/green][/blink]\nSee the changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md"
         )
         update_panel = Panel(
             update_msg,
@@ -144,6 +143,7 @@ def main():
             for entry in alias.alias_map:
                 table.add_row(entry["name"], entry["uuid_or_url"])
             console.print(table)
+            log.info(f"Your favorite stations are saved in {alias.alias_path}")
         else:
             log.info("You have no favorite station list")
         sys.exit(0)
@@ -163,7 +163,6 @@ def main():
     _limit = int(limit) if limit else 100
 
     if discover_country_code:
-        # search for stations in your country
         handler.discover_by_country(discover_country_code, _limit)
 
     if discover_state:
@@ -187,7 +186,7 @@ def main():
         except:
             # no last station??
             pass
-        # print(last_station_info)
+
         log.info("You can search for a station on internet using the --station option")
         title = "Please select a station from your favorite list:"
         station_selection_names = []
@@ -221,7 +220,9 @@ def main():
 
         # check if there is direct URL or just UUID
         station_option_url = station_selection_urls[index]
-        station_name = station_selection_names[index]
+        station_name = station_selection_names[index].replace(
+            "(last played station)", ""
+        )
 
         if station_option_url.find("://") != -1:
             # set direct play to TRUE
@@ -231,43 +232,14 @@ def main():
             # UUID
             station_uuid = station_option_url
 
-    ##################################
-
-    # try:
-    #     if last_station_info["alias"]:
-    #         is_alias = True
-    # except:
-    #     pass
-
-    # if is_alias:
-    #     alias.found = True  # save on last_play as an alias too!
-    #     # last station was an alias, don't save it again
-    #     skip_saving_current_station = True
-    #     station_uuid_or_url = last_station_info["uuid_or_url"]
-    #     # here we are setting the name but will not be used for API call
-    #     station_name = last_station_info["name"]
-    #     if station_uuid_or_url.find("://") != -1:
-    #         # Its a URL
-    #         log.debug(
-    #             "Last station was an alias and contains a URL, Direct play set to True"
-    #         )
-    #         direct_play = True
-    #         direct_play_url = station_uuid_or_url
-    #         log.info("Current station: {}".format(
-    #             last_station_info["name"]))
-    #     else:
-    #         # an UUID
-    #         station_uuid = last_station_info["uuid_or_url"]
-    # else:
-    #     # was not an alias
-    #     station_uuid = last_station_info["stationuuid"]
-    ############################################
-
     # --------------------ONLY UUID PROVIDED --------------------- #
     # if --uuid provided call directly
     result = None
     if station_uuid is not None:
         mode_of_search = "uuid"
+        # TODO: vote?
+        log.debug("increased click count for: {}".format(station_uuid))
+        handler.vote_for_uuid(station_uuid)
 
     # ------------------- ONLY STATION PROVIDED ------------------ #
 
@@ -291,6 +263,8 @@ def main():
                     log.debug("Entry contains a UUID")
                     # mode_of_search = "uuid"
                     station_uuid = result["uuid_or_url"]  # its a UUID
+                    # TODO: vote?
+                    handler.vote_for_uuid(station_uuid)
 
             except:
                 log.warning("Station found in favorite list but seems to be invalid")
