@@ -1,5 +1,5 @@
 psutil
-pyradios==0.0.22
+pyradios==1.0.2
 requests
 urllib3
 zenlog
