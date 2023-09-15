@@ -237,7 +237,6 @@ def main():
     result = None
     if station_uuid is not None:
         mode_of_search = "uuid"
-        # TODO: vote?
         log.debug("increased click count for: {}".format(station_uuid))
         handler.vote_for_uuid(station_uuid)
 
@@ -263,7 +262,6 @@ def main():
                     log.debug("Entry contains a UUID")
                     # mode_of_search = "uuid"
                     station_uuid = result["uuid_or_url"]  # its a UUID
-                    # TODO: vote?
                     handler.vote_for_uuid(station_uuid)
 
             except:
