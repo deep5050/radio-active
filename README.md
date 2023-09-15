@@ -106,7 +106,7 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 | `--discover-by-tag`          | Optional                            | Discover stations by tags/genre              | False   |
 | `--discover-by-language`     | optional                            | Discover stations by                         | False   |
 | `--limit`                    | Optional                            | Limit the # of results in the Discover table | 100     |
-| `--volume`                   | Optional                            | Change the volume passed into ffplay         | 50      |
+| `--volume`                   | Optional                            | Change the volume passed into ffplay         | 80      |
 | `--kill`                     | Optional                            | Kill background radios.                      | False   |
 
 <hr>
