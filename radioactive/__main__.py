@@ -312,7 +312,10 @@ def main():
 
     # TODO: handle error when favouring last played (aliased) station (BUG) (LOW PRIORITY)
     if add_to_favorite:
-        alias.add_entry(add_to_favorite, handler.target_station["url"])
+        try:
+            alias.add_entry(add_to_favorite, handler.target_station["url"])
+        except:
+            log.error("Could not add to favorite. Already in list?")
 
     curr_station_name = station_name
 
