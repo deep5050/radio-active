@@ -58,38 +58,6 @@ class Player:
 
         self.start_process()
 
-    #     try:
-    #         self.process = subprocess.Popen(
-    #             [
-    #                 self.exe_path,
-    #                 "-nodisp",
-    #                 "-nostats",
-    #                 "-loglevel",
-    #                 "0",
-    #                 "-volume",
-    #                 f"{self.volume}",
-    #                 self.url,
-    #             ],
-    #             shell=False,
-    #         )
-
-    #         log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
-
-    #         # sleep(3)  # sleeping for 3 seconds waiting for ffplay to start properly
-
-    #         if self.is_active():
-    #             self.is_playing = True
-    #             log.info("Radio started successfully")
-    #         else:
-    #             log.error(
-    #                 "Radio could not be stared, may be a dead station. please try again"
-    #             )
-    #             sys.exit(1)
-
-    #     except subprocess.CalledProcessError as e:
-    #         log.error("Error while starting radio: {}".format(e))
-    #    self.is_running = False
-
     def start_process(self):
         try:
             self.process = subprocess.Popen(
