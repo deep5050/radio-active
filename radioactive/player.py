@@ -1,11 +1,11 @@
 """ FFplay process handler """
 
 import os
-import sys
-from shutil import which
-import subprocess
-import threading
 import signal
+import subprocess
+import sys
+import threading
+from shutil import which
 
 import psutil
 from zenlog import log

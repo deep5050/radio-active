@@ -7,7 +7,6 @@ import json
 import requests
 
 
-
 class App:
     def __init__(self):
         self.__VERSION__ = "2.6.0"  # change this on every update #
@@ -42,4 +41,3 @@ class App:
 
         except:
             print("Could not fetch remote version number")
-

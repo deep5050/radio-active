@@ -4,13 +4,13 @@ import signal
 import sys
 from time import sleep
 
+from pick import pick
 from rich import print
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 from zenlog import log
-from pick import pick
 
 from radioactive.alias import Alias
 from radioactive.app import App
@@ -19,16 +19,6 @@ from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player, kill_background_ffplays
-
-
-# using sentry to gather unhandled errors at production and will be removed on next major update.
-# I respect your concerns but need this to improve radioactive.
-# import sentry_sdk
-
-# sentry_sdk.init(
-#     dsn="https://e3c430f3b03f49b6bd9e9d61e7b3dc37@o615507.ingest.sentry.io/5749950",
-#     traces_sample_rate=1.0,
-# )
 
 RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
