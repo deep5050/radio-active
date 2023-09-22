@@ -34,7 +34,7 @@ def main():
     app = App()
     args = parser.parse()
 
-    ############ all the args ############
+    # ----------------- all the args ------------- #
     show_help_table = args.help
     station_name = args.station_name
     station_uuid = args.station_uuid
@@ -51,7 +51,6 @@ def main():
     show_favorite_list = args.show_favorite_list
     flush_fav_list = args.flush
     kill_ffplays = args.kill_ffplays
-    ########################################
 
     VERSION = app.get_version()
     if args.version:
@@ -74,7 +73,7 @@ def main():
     direct_play_url = ""
     skip_saving_current_station = False
 
-    ################################# RICH ##################
+    # --------------- RICH ------------------- #
     console = Console()
 
     welcome = Panel(
@@ -90,6 +89,7 @@ def main():
         title="[b]RADIOACTIVE[/b]",
         width=85,
     )
+
     print(welcome)
 
     alias = Alias()
@@ -150,19 +150,19 @@ def main():
         sys.exit(0)
 
     # ------------------ discover ------------------ #
-    _limit = int(limit) if limit else 100
+    _limit_ = int(limit) if limit else 100
 
     if discover_country_code:
-        handler.discover_by_country(discover_country_code, _limit)
+        handler.discover_by_country(discover_country_code, _limit_)
 
     if discover_state:
-        handler.discover_by_state(discover_state, _limit)
+        handler.discover_by_state(discover_state, _limit_)
 
     if discover_language:
-        handler.discover_by_language(discover_language, _limit)
+        handler.discover_by_language(discover_language, _limit_)
 
     if discover_tag:
-        handler.discover_by_tag(discover_tag, _limit)
+        handler.discover_by_tag(discover_tag, _limit_)
 
     # -------------------- NOTHING PROVIDED --------------------- #
     # if neither of --station and --uuid provided , look in last_station file
