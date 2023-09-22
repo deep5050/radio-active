@@ -1,8 +1,7 @@
-psutil
-pyradios==1.0.2
 requests
 urllib3
-zenlog
+psutil
+pyradios==1.0.2
 rich
 pick
-sentry-sdk
+zenlog
