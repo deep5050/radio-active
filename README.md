@@ -6,7 +6,7 @@
 
 <a href="https://www.producthunt.com/posts/radio-active?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-radio-active" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=305380&theme=dark" alt="radio-active - Play more than 30K radio stations from your terminal | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
- <p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p> 
+ <p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p>
  <p>
 <img width="500px" alt="UPI" src="https://user-images.githubusercontent.com/27947066/235618869-8c9d9bce-096d-469e-8f61-c29cc01eacc3.png">
 </p>
@@ -28,16 +28,18 @@
 
 ### Features
 
-- [x] Supports more than 30K stations !!
+- [x] Supports more than 40K stations !! :radio:
 - [x] Saves last station information
-- [x] Favorite stations (Aliasing)
-- [x] Supports user-added stations
+- [x] Favorite stations (Aliasing) :heart:
+- [x] Selection menu for favorite stations
+- [x] Supports user-added stations :wrench:
 - [x] Looks minimal and user-friendly
 - [x] Runs on Raspberry-Pi
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
 - [ ] I'm feeling lucky ! Play Random stations
+- [ ] Record audio from live radio on demand :zap:
 
 
 > See my progress [here](https://github.com/deep5050/radio-active/projects/1)
@@ -121,11 +123,11 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 > results for the same name) use the station's uuid to play . --uuid gets the
 > greater priority than --station. Example: 96444e20-0601-11e8-ae97-52543be04c81
 
-> `--log-level`, `-L` : don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug` 
+> `--log-level`, `-L` : don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug`
 
 > `-F` : Add current station to your favorite list. Example: `-F my_fav_1`
 
-> `-A`: Add any stations to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream. 
+> `-A`: Add any stations to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream.
 
 
 ### Changes
@@ -145,7 +147,7 @@ If you ever face a situation where radio-active quits but the audio (ffplay) run
 
 ### Support
 
-<p> 
+<p>
 <a href=https://deep5050.github.io/payme>Visit my contribution page for more payment options.
 </p>
 <p align=center><a href="https://www.buymeacoffee.com/deep5050" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 117px !important;" ></a></p>
