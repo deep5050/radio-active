@@ -6,6 +6,7 @@ import subprocess
 import sys
 import threading
 from shutil import which
+from time import sleep
 
 import psutil
 from zenlog import log
@@ -92,11 +93,17 @@ class Player:
             stderr_result = self.process.stderr.readline()
             if stderr_result:
                 log.error("Could not connect to the station")
-                log.debug(stderr_result)
-                # only showing the server response
-                log.error(stderr_result.split(": ")[1])
+                try:
+                    # try to show the debug info
+                    log.debug(stderr_result)
+                    # only showing the server response
+                    log.error(stderr_result.split(": ")[1])
+                except:
+                    pass
+
                 self.is_running = False
                 self.stop()
+            sleep(2)
 
     def terminate_parent_process(self):
         parent_pid = os.getppid()
