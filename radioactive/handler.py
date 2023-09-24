@@ -26,13 +26,12 @@ class Handler:
         # When RadioBrowser can not be initiated properly due to no internet (probably)
         try:
             self.API = RadioBrowser()
-        except IndexError as e:
-            log.critical("Something wrong with your internet connection")
-            log.debug(e)
+        except:
+            log.critical("Something is wrong with your internet connection")
             sys.exit(1)
 
     def station_validator(self):
-        """Validate a response from the API and takes appropriate decision"""
+        """Validates a response from the API and takes appropriate decision"""
 
         # when no response from the API
         if not self.response:

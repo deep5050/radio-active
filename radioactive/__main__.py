@@ -53,6 +53,7 @@ def main():
     kill_ffplays = args.kill_ffplays
 
     VERSION = app.get_version()
+
     if args.version:
         log.info("RADIO-ACTIVE : version {}".format(VERSION))
         sys.exit(0)
@@ -65,8 +66,6 @@ def main():
         log.level(log_level)
     else:
         log.warning("Correct log levels are: error,warning,info(default),debug")
-
-    handler = Handler()
 
     mode_of_search = ""
     direct_play = False
@@ -92,6 +91,7 @@ def main():
 
     print(welcome)
 
+    handler = Handler()
     alias = Alias()
     alias.generate_map()
     last_station = Last_station()
