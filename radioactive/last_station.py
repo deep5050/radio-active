@@ -3,7 +3,7 @@ and loads the data when no arguments are provide """
 
 import json
 import os.path
-import sys
+
 from zenlog import log
 
 

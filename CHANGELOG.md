@@ -1,3 +1,14 @@
+## 2.6.0
+
+1. Detect errors while trying to play a dead station or encountering other connection errors. 
+2. Playing a station will increase the click (vote) counter for that station on the server.
+3. Fixed bugs that occurred when there was a blank entry in the favorite station file.
+4. Fixed bugs that caused empty last stations.
+5. Handled errors related to connection issues when attempting to search for a station.
+6. Improved `ffplay` process handling by introducing a thread to monitor runtime errors from the process.
+7. `pyradios` module updated to latest version.
+
+
 ## 2.5.2
 
 1. Added `--kill` option to stop background radios if any.

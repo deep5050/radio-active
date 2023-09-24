@@ -15,8 +15,8 @@ def readme():
         return f.read()
 
 
-def required(sfx=''):
-    with io.open(f"requirements{sfx}.txt",encoding="utf-8") as f:
+def required(sfx=""):
+    with io.open(f"requirements{sfx}.txt", encoding="utf-8") as f:
         return f.read().splitlines()
 
 
@@ -39,7 +39,7 @@ setup(
     },
     packages=find_packages(exclude=["test*"]),
     install_requires=required(),
-    extras_require={'dev': required('-dev')},
+    extras_require={"dev": required("-dev")},
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Development Status :: 5 - Production/Stable",

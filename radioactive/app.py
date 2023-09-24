@@ -7,10 +7,9 @@ import json
 import requests
 
 
-
 class App:
     def __init__(self):
-        self.__VERSION__ = "2.5.2"  # change this on every update #
+        self.__VERSION__ = "2.6.0"  # change this on every update #
         self.pypi_api = "https://pypi.org/pypi/radio-active/json"
         self.remote_version = ""
 
@@ -40,6 +39,5 @@ class App:
                 return True
             return False
 
-        except:
+        except Exception:
             print("Could not fetch remote version number")
-

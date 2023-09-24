@@ -1,7 +1,6 @@
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from zenlog import log
 
 
 def show_help():
@@ -17,7 +16,7 @@ def show_help():
         :star: Show some love by starring the project on GitHub [red][blink]:heart:[/blink][/red]
         :dollar: You can donate me at https://deep5050.github.io/payme/
         """,
-        title="[rgb(250,0,0)]RADIO[rgb(0,255,0)]ACTIVE",
+        title="[b]RADIOACTIVE[/b]",
         width=85,
     )
     console.print(welcome)

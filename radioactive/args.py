@@ -1,5 +1,6 @@
 import argparse
 import sys
+
 from zenlog import log
 
 
@@ -139,7 +140,7 @@ class Parser:
             dest="volume",
             default=80,
             type=int,
-            choices=range(0,101,10),
+            choices=range(0, 101, 10),
             help="Volume to pass down to ffplay",
         )
         self.parser.add_argument(
@@ -149,6 +150,7 @@ class Parser:
             default=False,
             help="kill all the ffplay process initiated by radioactive",
         )
+
     def parse(self):
         self.result = self.parser.parse_args()
 
