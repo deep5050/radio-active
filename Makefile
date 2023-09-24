@@ -27,7 +27,7 @@ clean:
 dist: clean
 	${PYTHON} setup.py sdist bdist_wheel
 
-deploy:
+deploy: dist
 	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 
 test-deploy: dist
