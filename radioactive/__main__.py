@@ -173,7 +173,8 @@ def main():
 
         try:
             last_station_info = last_station.get_info()
-        except:
+        except Exception as e:
+            log.debug("Error: {}".format(e))
             # no last station??
             pass
 
@@ -189,7 +190,8 @@ def main():
             )
             try:
                 station_selection_urls.append(last_station_info["stationuuid"])
-            except:
+            except Exception as e:
+                log.debug("Error: {}".format(e))
                 station_selection_urls.append(last_station_info["uuid_or_url"])
 
         fav_stations = alias.alias_map
@@ -254,7 +256,8 @@ def main():
                     station_uuid = result["uuid_or_url"]  # its a UUID
                     handler.vote_for_uuid(station_uuid)
 
-            except:
+            except Exception as e:
+                log.debug("Error: {}".format(e))
                 log.warning("Station found in favorite list but seems to be invalid")
                 log.warning("Looking on the web instead")
                 alias.found = False
@@ -304,20 +307,23 @@ def main():
     if add_to_favorite:
         try:
             alias.add_entry(add_to_favorite, handler.target_station["url"])
-        except:
+        except Exception as e:
+            log.debug("Error: {}".format(e))
             log.error("Could not add to favorite. Already in list?")
 
     curr_station_name = station_name
 
     try:
-        # TODO fix this. when aliasing a station with an existing name curr_station_name is being None
+        # TODO fix this. when aliasing a station with an existing name
+        # curr_station_name is being None
         panel_station_name = Text(curr_station_name, justify="center")
 
         station_panel = Panel(
             panel_station_name, title="[blink]:radio:[/blink]", width=85
         )
         console.print(station_panel)
-    except:
+    except Exception as e:
+        log.debug("Error: {}".format(e))
         # TODO handle exception
         pass
 
@@ -327,7 +333,8 @@ def main():
     else:
         try:
             signal.pause()
-        except:
+        except Exception as e:
+            log.debug("Error: {}".format(e))
             pass
 
 

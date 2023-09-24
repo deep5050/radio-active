@@ -26,7 +26,8 @@ class Handler:
         # When RadioBrowser can not be initiated properly due to no internet (probably)
         try:
             self.API = RadioBrowser()
-        except:
+        except Exception as e:
+            log.debug("Error: {}".format(e))
             log.critical("Something is wrong with your internet connection")
             sys.exit(1)
 
@@ -85,7 +86,8 @@ class Handler:
         try:
             self.response = self.API.search(name=_name, name_exact=False)
             self.station_validator()
-        except:
+        except Exception as e:
+            log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
@@ -96,7 +98,8 @@ class Handler:
         try:
             self.response = self.API.station_by_uuid(_uuid)
             return self.station_validator()  # should return a station name also
-        except:
+        except Exception as e:
+            log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
@@ -105,7 +108,7 @@ class Handler:
         try:
             discover_result = self.API.search(countrycode=_country_code, limit=_limit)
         except Exception as e:
-            # print(e)
+            log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
@@ -128,7 +131,8 @@ class Handler:
                 )
             console.print(table)
             log.info(
-                "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
+                "If the table does not fit into your screen,\
+                    \ntry to maximize the window , decrease the font by a bit and retry"
             )
 
             sys.exit(0)
@@ -141,7 +145,7 @@ class Handler:
     def discover_by_state(self, _state, _limit):
         try:
             discover_result = self.API.search(state=_state, limit=_limit)
-        except Exception as e:
+        except Exception:
             # print(e)
             log.error("Something went wrong. please try again.")
             sys.exit(1)
@@ -178,7 +182,7 @@ class Handler:
         try:
             discover_result = self.API.search(language=_language, limit=_limit)
         except Exception as e:
-            # print(e)
+            log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
@@ -209,7 +213,7 @@ class Handler:
         try:
             discover_result = self.API.search(tag=_tag, limit=_limit)
         except Exception as e:
-            # print(e)
+            log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
@@ -240,5 +244,5 @@ class Handler:
         try:
             result = self.API.click_counter(UUID)
             return result
-        except:
-            log.debug("Something went wrong during increasing click count")
+        except Exception as e:
+            log.debug("Something went wrong during increasing click count:{}".format(e))

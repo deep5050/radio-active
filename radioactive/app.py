@@ -39,5 +39,5 @@ class App:
                 return True
             return False
 
-        except:
+        except Exception:
             print("Could not fetch remote version number")

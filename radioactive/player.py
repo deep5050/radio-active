@@ -98,7 +98,8 @@ class Player:
                     log.debug(stderr_result)
                     # only showing the server response
                     log.error(stderr_result.split(": ")[1])
-                except:
+                except Exception as e:
+                    log.debug("Error: {}".format(e))
                     pass
 
                 self.is_running = False

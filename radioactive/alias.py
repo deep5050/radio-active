@@ -76,6 +76,7 @@ class Alias:
                 f.flush()
             log.info("All entries deleted in your favorite list")
             return 0
-        except:
+        except Exception as e:
+            log.debug("Error: {}".format(e))
             log.error("could not delete your favorite list. something went wrong")
             return 1
