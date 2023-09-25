@@ -80,7 +80,7 @@ class Handler:
             return self.response[0]["name"].strip()
 
     # ---------------------------- NAME -------------------------------- #
-    def play_by_station_name(self, _name=None, limit=100):
+    def search_by_station_name(self, _name=None, limit=100):
         """search and play a station by its name"""
         # TODO: handle exact error
         try:
@@ -104,9 +104,9 @@ class Handler:
             sys.exit(1)
 
     # ----------------------- ------- COUNTRY -------------------------#
-    def discover_by_country(self, _country_code, limit):
+    def discover_by_country(self, country_code, limit):
         try:
-            discover_result = self.API.search(countrycode=_country_code, limit=limit)
+            discover_result = self.API.search(countrycode=country_code, limit=limit)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -142,11 +142,10 @@ class Handler:
 
     # ------------------- by state ---------------------
 
-    def discover_by_state(self, _state, limit):
+    def discover_by_state(self, state, limit):
         try:
-            discover_result = self.API.search(state=_state, limit=limit)
+            discover_result = self.API.search(state=state, limit=limit)
         except Exception:
-            # print(e)
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
@@ -178,9 +177,9 @@ class Handler:
 
     # -----------------by language --------------------
 
-    def discover_by_language(self, _language, limit):
+    def discover_by_language(self, language, limit):
         try:
-            discover_result = self.API.search(language=_language, limit=limit)
+            discover_result = self.API.search(language=language, limit=limit)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -199,7 +198,7 @@ class Handler:
                 )
             console.print(table)
             log.info(
-                "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
+                "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit and retry"
             )
 
             sys.exit(0)
@@ -207,11 +206,11 @@ class Handler:
             log.error("No stations found for the language, recheck it")
             sys.exit(1)
 
-    # -------------------- by tag ----------------------
+    # -------------------- by tag ---------------------- #
 
-    def discover_by_tag(self, _tag, limit):
+    def discover_by_tag(self, tag, limit):
         try:
-            discover_result = self.API.search(tag=_tag, limit=limit)
+            discover_result = self.API.search(tag=tag, limit=limit)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
