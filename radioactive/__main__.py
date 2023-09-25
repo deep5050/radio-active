@@ -67,14 +67,6 @@ def main():
 
     VERSION = app.get_version()
 
-    if args.version:
-        log.info("RADIO-ACTIVE : version {}".format(VERSION))
-        sys.exit(0)
-
-    if show_help_table:
-        show_help()
-        sys.exit(0)
-
     mode_of_search = ""
     direct_play = False
     direct_play_url = ""
@@ -88,6 +80,14 @@ def main():
 
     # --------------- app logic starts here ------------------- #
     handle_welcome_screen()
+
+    if args.version:
+        log.info("RADIO-ACTIVE : version {}".format(VERSION))
+        sys.exit(0)
+
+    if show_help_table:
+        show_help()
+        sys.exit(0)
     handle_log_level(args)
 
     if flush_fav_list:

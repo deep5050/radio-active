@@ -7,20 +7,6 @@ def show_help():
     """Show help message as table"""
     console = Console()
 
-    welcome = Panel(
-        """
-        :radio: Play any radios around the globe right from this Terminal [yellow][blink]:zap:[/blink][/yellow]!
-        :smile: Author: Dipankar Pal
-        :question: Type '--help' for more details on available commands.
-        :bug: Visit https://github.com/deep5050/radio-active to submit issues
-        :star: Show some love by starring the project on GitHub [red][blink]:heart:[/blink][/red]
-        :dollar: You can donate me at https://deep5050.github.io/payme/
-        """,
-        title="[b]RADIOACTIVE[/b]",
-        width=85,
-    )
-    console.print(welcome)
-
     table = Table(show_header=True, header_style="bold magenta")
     table.add_column("Arguments", justify="left")
     table.add_column("Expects value", justify="center")
