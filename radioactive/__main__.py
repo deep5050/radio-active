@@ -4,11 +4,8 @@ import signal
 import sys
 from time import sleep
 
-from pick import pick
-from rich import print
 from rich.console import Console
 from rich.panel import Panel
-from rich.table import Table
 from rich.text import Text
 from zenlog import log
 
@@ -19,18 +16,14 @@ from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player, kill_background_ffplays
-from radioactive.utilities import (
-    handle_add_station,
-    handle_add_to_favorite,
-    handle_favorite_table,
-    handle_log_level,
-    handle_record,
-    handle_update_screen,
-    handle_welcome_screen,
-)
-
-RED_COLOR = "\033[91m"
-END_COLOR = "\033[0m"
+from radioactive.utilities import (handle_add_station, handle_add_to_favorite,
+                                   handle_favorite_table,
+                                   handle_listen_keypress, handle_log_level,
+                                   handle_record, handle_save_last_station,
+                                   handle_search_stations,
+                                   handle_station_selection_menu,
+                                   handle_station_uuid_play,
+                                   handle_update_screen, handle_welcome_screen)
 
 # globally needed as signal handler needs it
 # to terminate main() properly
@@ -45,8 +38,8 @@ def main():
 
     # ----------------- all the args ------------- #
     show_help_table = args.help
-    station_name = args.station_name
-    station_uuid = args.station_uuid
+    search_station_name = args.search_station_name
+    search_station_uuid = args.search_station_uuid
 
     discover_country_code = args.discover_country_code
     discover_state = args.discover_state
@@ -65,12 +58,10 @@ def main():
     record_stream = args.record_stream
     record_file = args.record_file
 
+    target_url = ""
+
     VERSION = app.get_version()
 
-    mode_of_search = ""
-    direct_play = False
-    direct_play_url = ""
-    skip_saving_current_station = False
     console = Console()
 
     handler = Handler()
@@ -99,6 +90,7 @@ def main():
 
     if show_favorite_list:
         handle_favorite_table(alias)
+        sys.exit(0)
 
     if add_station:
         handle_add_station(alias)
@@ -118,168 +110,49 @@ def main():
         handler.discover_by_tag(discover_tag, limit)
 
     # -------------------- NOTHING PROVIDED --------------------- #
-    # if neither of --station and --uuid provided , look in last_station file
-
-    if station_name is None and station_uuid is None:
-        # Add a selection list here. first entry must be the last played station
-        # try to fetch the last played station's information
-
-        try:
-            last_station_info = last_station.get_info()
-        except Exception as e:
-            log.debug("Error: {}".format(e))
-            # no last station??
-            pass
-
-        log.info("You can search for a station on internet using the --station option")
-        title = "Please select a station from your favorite list:"
-        station_selection_names = []
-        station_selection_urls = []
-
-        # add last played station first
-        if last_station_info:
-            station_selection_names.append(
-                f"{last_station_info['name'].strip()} (last played station)"
-            )
-            try:
-                station_selection_urls.append(last_station_info["stationuuid"])
-            except Exception as e:
-                log.debug("Error: {}".format(e))
-                station_selection_urls.append(last_station_info["uuid_or_url"])
-
-        fav_stations = alias.alias_map
-        for entry in fav_stations:
-            station_selection_names.append(entry["name"].strip())
-            station_selection_urls.append(entry["uuid_or_url"])
-
-        options = station_selection_names
-        if len(options) == 0:
-            # setting message color to red. technically it is not an error though.
-            # doing it just to catch user attention :)
-            log.info(
-                f"{RED_COLOR}No stations to play. please search for a station first!{END_COLOR}"
-            )
-            sys.exit(0)
-
-        _, index = pick(options, title, indicator="-->")
-
-        # check if there is direct URL or just UUID
-        station_option_url = station_selection_urls[index]
-        station_name = station_selection_names[index].replace(
-            "(last played station)", ""
+    # if neither of --station and --uuid provided
+    if search_station_name is None and search_station_uuid is None:
+        curr_station_name, target_url = handle_station_selection_menu(
+            handler, last_station, alias
         )
 
-        if station_option_url.find("://") != -1:
-            # set direct play to TRUE
-            direct_play = True
-            direct_play_url = station_option_url
-        else:
-            # UUID
-            station_uuid = station_option_url
-
     # --------------------ONLY UUID PROVIDED --------------------- #
-    # if --uuid provided call directly
-    result = None
-    if station_uuid is not None:
-        mode_of_search = "uuid"
-        log.debug("increased click count for: {}".format(station_uuid))
-        handler.vote_for_uuid(station_uuid)
+
+    if search_station_uuid is not None:
+        curr_station_name, target_url = handle_station_uuid_play(
+            handler, search_station_uuid
+        )
 
     # ------------------- ONLY STATION PROVIDED ------------------ #
 
-    elif station_name is not None and station_uuid is None:
-        # got station name only, looking in alias (if any)
-
-        result = alias.search(station_name)
-        if result is not None and alias.found:
-            try:
-                station_uuid_or_url = result["uuid_or_url"]
-                # check if it is a url or a uuid
-                if station_uuid_or_url.find("://") != -1:
-                    # its a URL
-                    log.debug("Entry contains a URL")
-                    log.debug("Direct play set to True ")
-                    log.info("Current station: {}".format(result["name"]))
-                    direct_play = True
-                    # assigning url and name directly
-                    direct_play_url = result["uuid_or_url"]
-                else:
-                    log.debug("Entry contains a UUID")
-                    # mode_of_search = "uuid"
-                    station_uuid = result["uuid_or_url"]  # its a UUID
-                    handler.vote_for_uuid(station_uuid)
-
-            except Exception as e:
-                log.debug("Error: {}".format(e))
-                log.warning("Station found in favorite list but seems to be invalid")
-                log.warning("Looking on the web instead")
-                alias.found = False
-
-        if alias.found:
-            mode_of_search = "uuid"
-            if not direct_play:
-                log.debug("Looking on the web for given UUID")
-
-        else:
-            log.debug("Alias not found, using normal API search")
-            mode_of_search = "name"
-
-    if not direct_play:
-        # avoid extra API calls since target url is given
-        if mode_of_search == "uuid":
-            _station_name = handler.play_by_station_uuid(station_uuid)
-            station_name = _station_name
-        else:
-            if not alias.found:
-                # when alias was found, we have set the station name to print it correctly,
-                # not to do an API call
-                handler.play_by_station_name(station_name, limit)
+    elif search_station_name is not None and search_station_uuid is None:
+        handle_search_stations(handler, search_station_name, limit)
+        sys.exit(0)
 
     global player
-
-    target_url = direct_play_url if direct_play else handler.target_station["url"]
     player = Player(target_url, args.volume)
 
-    # writing the station name to a file, next time if user
-    # don't specify anything, it will try to start the last station
-    last_played_station = {}
-    if not alias.found:
-        # station was not in the alias file
-        last_played_station = handler.target_station
-    else:
-        last_played_station["name"] = station_name
-        last_played_station["uuid_or_url"] = station_uuid_or_url
-        last_played_station["alias"] = True
+    handle_save_last_station(last_station, curr_station_name, target_url)
 
-    if not skip_saving_current_station:
-        log.debug(f"Saving the current station: {last_played_station}")
-        if last_played_station:
-            last_station.save_info(last_played_station)
-
-    # TODO: handle error when favouring last played (aliased) station (BUG) (LOW PRIORITY)
     if add_to_favorite:
-        handle_add_to_favorite(add_to_favorite, alias, handler)
+        handle_add_to_favorite(alias, curr_station_name, target_url)
 
-    curr_station_name = station_name
+    panel_station_name = Text(curr_station_name, justify="center")
 
-    try:
-        # TODO fix this. when aliasing a station with an existing name
-        # curr_station_name is being None
-        panel_station_name = Text(curr_station_name, justify="center")
+    station_panel = Panel(panel_station_name, title="[blink]:radio:[/blink]", width=85)
 
-        station_panel = Panel(
-            panel_station_name, title="[blink]:radio:[/blink]", width=85
-        )
+    console.print(station_panel)
 
-        console.print(station_panel)
+    if record_stream:
+        handle_record(target_url, curr_station_name, record_file)
 
-        if record_stream:
-            handle_record(target_url, curr_station_name, record_file)
-
-    except Exception as e:
-        log.debug("Error: {}".format(e))
-        # TODO handle exception
-        pass
+    handle_listen_keypress(
+        alias=alias,
+        target_url=target_url,
+        station_name=curr_station_name,
+        station_url=target_url,
+        record_file=record_file,
+    )
 
     if os.name == "nt":
         while True:
