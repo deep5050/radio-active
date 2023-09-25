@@ -133,3 +133,7 @@ deploy.sh
 
 pylint.txt
 .gitpod.yml
+tests/
+tests/
+
+*.mp3
