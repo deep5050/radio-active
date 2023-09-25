@@ -118,15 +118,6 @@ class Parser:
         )
 
         self.parser.add_argument(
-            "--random",
-            "-R",
-            action="store_true",
-            dest="random",
-            default=False,
-            help="Play a random station from your favorite list",
-        )
-
-        self.parser.add_argument(
             "--flush",
             action="store_true",
             dest="flush",
@@ -143,6 +134,7 @@ class Parser:
             choices=range(0, 101, 10),
             help="Volume to pass down to ffplay",
         )
+
         self.parser.add_argument(
             "--kill",
             action="store_true",
@@ -151,9 +143,25 @@ class Parser:
             help="kill all the ffplay process initiated by radioactive",
         )
 
+        self.parser.add_argument(
+            "--record",
+            "-R",
+            action="store_true",
+            dest="record_stream",
+            default=False,
+            help="record a station and save as audio file",
+        )
+
+        self.parser.add_argument(
+            "--filename",
+            action="store",
+            dest="record_file",
+            default="",
+            help="specify the output filename of the recorded audio",
+        )
+
     def parse(self):
         self.result = self.parser.parse_args()
-
         if self.result is None:
             log.error("Could not parse the arguments properly")
             sys.exit(1)
