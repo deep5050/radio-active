@@ -31,10 +31,10 @@ class Parser:
         )
 
         self.parser.add_argument(
-            "--station",
+            "--search",
             "-S",
             action="store",
-            dest="station_name",
+            dest="search_station_name",
             help="Specify a station name",
         )
 
@@ -42,7 +42,7 @@ class Parser:
             "--uuid",
             "-U",
             action="store",
-            dest="station_uuid",
+            dest="search_station_uuid",
             help="Specify a station UUID",
         )
 
