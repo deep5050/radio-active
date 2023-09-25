@@ -19,6 +19,15 @@ from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player, kill_background_ffplays
+from radioactive.utilities import (
+    handle_add_station,
+    handle_add_to_favorite,
+    handle_favorite_table,
+    handle_log_level,
+    handle_record,
+    handle_update_screen,
+    handle_welcome_screen,
+)
 
 RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
@@ -38,7 +47,6 @@ def main():
     show_help_table = args.help
     station_name = args.station_name
     station_uuid = args.station_uuid
-    log_level = args.log_level
 
     discover_country_code = args.discover_country_code
     discover_state = args.discover_state
@@ -46,11 +54,16 @@ def main():
     discover_tag = args.discover_tag
 
     limit = args.limit
+    limit = int(limit) if limit else 100
+    log.debug("limit is set to: {}".format(limit))
+
     add_station = args.new_station
     add_to_favorite = args.add_to_favorite
     show_favorite_list = args.show_favorite_list
     flush_fav_list = args.flush
     kill_ffplays = args.kill_ffplays
+    record_stream = args.record_stream
+    record_file = args.record_file
 
     VERSION = app.get_version()
 
@@ -62,107 +75,47 @@ def main():
         show_help()
         sys.exit(0)
 
-    if log_level in ["info", "error", "warning", "debug"]:
-        log.level(log_level)
-    else:
-        log.warning("Correct log levels are: error,warning,info(default),debug")
-
     mode_of_search = ""
     direct_play = False
     direct_play_url = ""
     skip_saving_current_station = False
-
-    # --------------- RICH ------------------- #
     console = Console()
-
-    welcome = Panel(
-        """
-        :radio: Play any radios around the globe right from this Terminal [yellow][blink]:zap:[/blink][/yellow]!
-        :smile: Author: Dipankar Pal
-        :question: Type '--help' for more details on available commands
-        :bug: Visit: https://github.com/deep5050/radio-active to submit issues
-        :star: Show some love by starring the project on GitHub [red][blink]:heart:[/blink][/red]
-        :dollar: You can donate me at https://deep5050.github.io/payme/
-        :x: Press Ctrl+C to quit
-        """,
-        title="[b]RADIOACTIVE[/b]",
-        width=85,
-    )
-
-    print(welcome)
 
     handler = Handler()
     alias = Alias()
     alias.generate_map()
     last_station = Last_station()
 
-    if app.is_update_available():
-        update_msg = (
-            "\t[blink]An update available, run [green][italic]pip install radio-active=="
-            + app.get_remote_version()
-            + "[/italic][/green][/blink]\nSee the changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md"
-        )
-        update_panel = Panel(
-            update_msg,
-            width=85,
-        )
-        print(update_panel)
-    else:
-        log.debug("Update not available")
+    # --------------- app logic starts here ------------------- #
+    handle_welcome_screen()
+    handle_log_level(args)
 
-    # flush ?
     if flush_fav_list:
-        # exit radio after deleting fav stations
         sys.exit(alias.flush())
-
-    # -------------- kill background ffplay PIDs --------------------#
-    # sometimes radio exits while ffplay is still running.
-    # actively trying to prevent these scenarios. until then use this
 
     if kill_ffplays:
         kill_background_ffplays()
         sys.exit(0)
 
-    # ----------------- favorite list ---------------- #
     if show_favorite_list:
-        log.info("Your favorite station list is below")
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Station", justify="left")
-        table.add_column("URL / UUID", justify="center")
-        if len(alias.alias_map) > 0:
-            for entry in alias.alias_map:
-                table.add_row(entry["name"], entry["uuid_or_url"])
-            console.print(table)
-            log.info(f"Your favorite stations are saved in {alias.alias_path}")
-        else:
-            log.info("You have no favorite station list")
-        sys.exit(0)
+        handle_favorite_table(alias)
 
-    # --------------------------- add a station --------------------------#
     if add_station:
-        left = input("Enter station name:")
-        right = input("Enter station stream-url or radio-browser uuid:")
-        if left.strip() == "" or right.strip() == "":
-            log.error("Empty inputs not allowed")
-            sys.exit(1)
-        alias.add_entry(left, right)
-        log.info("New entry: {}={} added\n".format(left, right))
-        sys.exit(0)
+        handle_add_station(alias)
 
-    # ------------------ discover ------------------ #
-    _limit_ = int(limit) if limit else 100
+    handle_update_screen(app)
 
     if discover_country_code:
-        handler.discover_by_country(discover_country_code, _limit_)
+        handler.discover_by_country(discover_country_code, limit)
 
     if discover_state:
-        handler.discover_by_state(discover_state, _limit_)
+        handler.discover_by_state(discover_state, limit)
 
     if discover_language:
-        handler.discover_by_language(discover_language, _limit_)
+        handler.discover_by_language(discover_language, limit)
 
     if discover_tag:
-        handler.discover_by_tag(discover_tag, _limit_)
+        handler.discover_by_tag(discover_tag, limit)
 
     # -------------------- NOTHING PROVIDED --------------------- #
     # if neither of --station and --uuid provided , look in last_station file
@@ -280,7 +233,7 @@ def main():
             if not alias.found:
                 # when alias was found, we have set the station name to print it correctly,
                 # not to do an API call
-                handler.play_by_station_name(station_name)
+                handler.play_by_station_name(station_name, limit)
 
     global player
 
@@ -305,11 +258,7 @@ def main():
 
     # TODO: handle error when favouring last played (aliased) station (BUG) (LOW PRIORITY)
     if add_to_favorite:
-        try:
-            alias.add_entry(add_to_favorite, handler.target_station["url"])
-        except Exception as e:
-            log.debug("Error: {}".format(e))
-            log.error("Could not add to favorite. Already in list?")
+        handle_add_to_favorite(add_to_favorite, alias, handler)
 
     curr_station_name = station_name
 
@@ -321,7 +270,12 @@ def main():
         station_panel = Panel(
             panel_station_name, title="[blink]:radio:[/blink]", width=85
         )
+
         console.print(station_panel)
+
+        if record_stream:
+            handle_record(target_url, curr_station_name, record_file)
+
     except Exception as e:
         log.debug("Error: {}".format(e))
         # TODO handle exception
