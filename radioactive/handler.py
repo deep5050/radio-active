@@ -80,11 +80,11 @@ class Handler:
             return self.response[0]["name"].strip()
 
     # ---------------------------- NAME -------------------------------- #
-    def play_by_station_name(self, _name=None):
+    def play_by_station_name(self, _name=None, limit=100):
         """search and play a station by its name"""
         # TODO: handle exact error
         try:
-            self.response = self.API.search(name=_name, name_exact=False)
+            self.response = self.API.search(name=_name, name_exact=False, limit=limit)
             self.station_validator()
         except Exception as e:
             log.debug("Error: {}".format(e))
@@ -104,9 +104,9 @@ class Handler:
             sys.exit(1)
 
     # ----------------------- ------- COUNTRY -------------------------#
-    def discover_by_country(self, _country_code, _limit):
+    def discover_by_country(self, _country_code, limit):
         try:
-            discover_result = self.API.search(countrycode=_country_code, limit=_limit)
+            discover_result = self.API.search(countrycode=_country_code, limit=limit)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -142,9 +142,9 @@ class Handler:
 
     # ------------------- by state ---------------------
 
-    def discover_by_state(self, _state, _limit):
+    def discover_by_state(self, _state, limit):
         try:
-            discover_result = self.API.search(state=_state, limit=_limit)
+            discover_result = self.API.search(state=_state, limit=limit)
         except Exception:
             # print(e)
             log.error("Something went wrong. please try again.")
@@ -178,9 +178,9 @@ class Handler:
 
     # -----------------by language --------------------
 
-    def discover_by_language(self, _language, _limit):
+    def discover_by_language(self, _language, limit):
         try:
-            discover_result = self.API.search(language=_language, limit=_limit)
+            discover_result = self.API.search(language=_language, limit=limit)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -209,9 +209,9 @@ class Handler:
 
     # -------------------- by tag ----------------------
 
-    def discover_by_tag(self, _tag, _limit):
+    def discover_by_tag(self, _tag, limit):
         try:
-            discover_result = self.API.search(tag=_tag, limit=_limit)
+            discover_result = self.API.search(tag=_tag, limit=limit)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
