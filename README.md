@@ -12,7 +12,7 @@
 </p>
 
 <p align=center>
-<img align=center src=https://github.com/deep5050/random-shits-happen-here/assets/27947066/250dcd05-c142-442a-a9a3-66347adb69c5 >
+<img align=center src=https://user-images.githubusercontent.com/27947066/270680629-c235780d-47e9-4a37-b4a8-ca7fb5d001e3.png  width=550px>
 <hr>
 <img alt="GitHub" src="https://img.shields.io/github/license/deep5050/radio-active?style=for-the-badge">
 <img alt="PyPI" src="https://img.shields.io/pypi/v/radio-active?style=for-the-badge">
@@ -95,27 +95,29 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 ### Options
 
 
-| Argument                     | Note                                | Description                                  | Default |
-| ---------------------------- | ----------------------------------- | -------------------------------------------- | ------- |
-| `--station`, `-S`            | Required (Optional from second run) | Station name                                 | None    |
-| `--uuid`, `-U`               | Optional                            | ID of the station                            | None    |
-| `--log-level`, `-L`          | Optional                            | Log level of the program                     | Info    |
-| `--add-station` , `-A`       | Optional                            | Add an entry to fav list                     | False   |
-| `--show-favorite-list`,`-W`  | Optional                            | Show fav list                                | False   |
-| `--add-to-favorite`,`-F`     | Optional                            | Add current station to fav list              | False   |
-| `--flush`                    | Optional                            | Remove all the entries from fav list         | False   |
-| `--discover-by-country`,`-D` | Optional                            | Discover stations by country code            | False   |
-| `--discover-by-state`        | Optional                            | Discover stations by country state           | False   |
-| `--discover-by-tag`          | Optional                            | Discover stations by tags/genre              | False   |
-| `--discover-by-language`     | optional                            | Discover stations by                         | False   |
-| `--limit`                    | Optional                            | Limit the # of results in the Discover table | 100     |
-| `--volume`                   | Optional                            | Change the volume passed into ffplay         | 80      |
-| `--kill`                     | Optional                            | Kill background radios.                      | False   |
+| Argument                      | Note                                | Description                                  | Default |
+| ----------------------------- | ----------------------------------- | -------------------------------------------- | ------- |
+| `--search`, `-S`              | Required (Optional from second run) | Station name                                 | None    |
+| `--uuid`, `-U`                | Optional                            | ID of the station                            | None    |
+| `--loglevel`                  | Optional                            | Log level of the program                     | Info    |
+| `--add-station` , `-A`        | Optional                            | Add an entry to fav list                     | False   |
+| `--show-favorite-list`, `-W`  | Optional                            | Show fav list                                | False   |
+| `--add-to-favorite`, `-F`     | Optional                            | Add current station to fav list              | False   |
+| `--flush`                     | Optional                            | Remove all the entries from fav list         | False   |
+| `--discover-by-country`, `-D` | Optional                            | Discover stations by country code            | False   |
+| `--discover-by-state`         | Optional                            | Discover stations by country state           | False   |
+| `--discover-by-tag`           | Optional                            | Discover stations by tags/genre              | False   |
+| `--discover-by-language`      | optional                            | Discover stations by                         | False   |
+| `--limit`                     | Optional                            | Limit the # of results in the Discover table | 100     |
+| `--volume` , `-V`             | Optional                            | Change the volume passed into ffplay         | 80      |
+| `--kill` , `-K`               | Optional                            | Kill background radios.                      | False   |
+| `--record` , `-R`             | Optional                            | Record a station and save to file            | False   |
+| `--filename`, `-N`            | Optional                            | Filename to used to save the recorded audio  | None    |
 
 <hr>
 
 
-> `--station`, `-S` : Expects a station name to be played (if not provided it
+> `--search`, `-S` : Expects a station name to be played (if not provided it
 > will try to get the last played station). Example: "pehla nasha" ,
 > pehla_nasha, bbc_radio
 
@@ -123,12 +125,25 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 > results for the same name) use the station's uuid to play . --uuid gets the
 > greater priority than --station. Example: 96444e20-0601-11e8-ae97-52543be04c81
 
-> `--log-level`, `-L` : don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug`
+> `--loglevel`, : don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug`
 
 > `-F` : Add current station to your favorite list. Example: `-F my_fav_1`
 
 > `-A`: Add any stations to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream.
 
+### Runtime Commands
+
+Input a command during the radio playback to perform an action. Available commands are:
+
+```
+Enter a command to perform an action: ?
+
+q/Q/x/quit: Quit radioactive
+h/H/help/?: Show this help message
+r/R/record: Record a station
+f/F/fav: Add station to favorite list
+rf/RF/recordfile: Speficy a filename for the recording
+```
 
 ### Changes
 
