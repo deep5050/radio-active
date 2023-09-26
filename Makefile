@@ -23,6 +23,7 @@ clean:
 	rm -rf *.egg-info
 	rm -f *.sqlite
 	rm -rf .cache
+	rm -rf *.mp3
 
 dist: clean
 	${PYTHON} setup.py sdist bdist_wheel
