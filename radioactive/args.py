@@ -19,7 +19,7 @@ class Parser:
         )
 
         self.parser.add_argument(
-            "--version", "-V", action="store_true", dest="version", default=False
+            "--version", action="store_true", dest="version", default=False
         )
         self.parser.add_argument(
             "--help",
@@ -47,8 +47,7 @@ class Parser:
         )
 
         self.parser.add_argument(
-            "--log-level",
-            "-L",
+            "--loglevel",
             action="store",
             default="info",
             dest="log_level",
@@ -85,6 +84,7 @@ class Parser:
         )
         self.parser.add_argument(
             "--limit",
+            "-L",
             action="store",
             dest="limit",
             default=100,
@@ -127,6 +127,7 @@ class Parser:
 
         self.parser.add_argument(
             "--volume",
+            "-V",
             action="store",
             dest="volume",
             default=80,
@@ -137,6 +138,7 @@ class Parser:
 
         self.parser.add_argument(
             "--kill",
+            "-K",
             action="store_true",
             dest="kill_ffplays",
             default=False,
@@ -154,6 +156,7 @@ class Parser:
 
         self.parser.add_argument(
             "--filename",
+            "-N",
             action="store",
             dest="record_file",
             default="",
