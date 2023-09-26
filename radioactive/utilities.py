@@ -5,12 +5,15 @@ import sys
 
 from pick import pick
 from rich import print
+from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+from rich.text import Text
 from zenlog import log
 
+
 from radioactive.last_station import Last_station
-from radioactive.player import Player, kill_background_ffplays
+from radioactive.player import kill_background_ffplays
 from radioactive.recorder import record_audio_from_url
 
 RED_COLOR = "\033[91m"
@@ -133,7 +136,8 @@ def handle_station_uuid_play(handler, station_uuid):
 def handle_search_stations(handler, station_name, limit):
     log.debug("Searching API for: {}".format(station_name))
 
-    handler.search_by_station_name(station_name, limit)
+    return handler.search_by_station_name(station_name, limit)
+    # TODO: ask user to play using a # number of the result
 
 
 def handle_station_selection_menu(handler, last_station, alias):
@@ -241,3 +245,51 @@ def handle_listen_keypress(alias, target_url, station_name, station_url, record_
             print("f/F/fav: Add station to favorite list")
             print("rf/RF/recordfile: Speficy a filename for the recording")
             print()
+
+
+def handle_current_play_panel(curr_station_name=""):
+    panel_station_name = Text(curr_station_name, justify="center")
+
+    station_panel = Panel(panel_station_name, title="[blink]:radio:[/blink]", width=85)
+    console = Console()
+    console.print(station_panel)
+
+
+def handle_user_choice_from_search_result(handler, response):
+    if not response:
+        log.debug("No result found!")
+        sys.exit(0)
+    if len(response) == 1:
+        # single station found
+        log.debug("Exactly one result found")
+
+        user_input = input("Want to play this station: y/n: ")
+        if user_input == ("y" or "Y"):
+            log.debug("Playing UUID from single response")
+        return handle_station_uuid_play(handler, response[0]["stationuuid"])
+    else:
+        # multiple station
+        log.debug("Asking for user input")
+
+        user_input = input("Type the result ID to play: ")
+        try:
+            user_input = int(user_input) - 1  # because ID starts from 1
+            if user_input in range(0, len(response)):
+                target_response = response[user_input]
+                log.debug("Selected: {}".format(target_response))
+                return handle_station_uuid_play(handler, target_response["stationuuid"])
+            else:
+                log.error("Please enter an ID within the range")
+                sys.exit(1)
+        except:
+            log.err("Please enter an valid ID number")
+            sys.exit(1)
+
+
+# def handle_direct_play(station_name="",station_uuidurl=""):
+#     """Play a station directly with UUID or direct stream URL"""
+#     if "http" in station_uuid_or_url.trim():
+#         # stream URL
+#         pass
+#     else:
+#         # UUID call
