@@ -9,6 +9,8 @@ from pyradios import RadioBrowser
 from rich.console import Console
 from rich.table import Table
 from zenlog import log
+import requests_cache
+import datetime
 
 console = Console()
 
@@ -25,7 +27,11 @@ class Handler:
 
         # When RadioBrowser can not be initiated properly due to no internet (probably)
         try:
-            self.API = RadioBrowser()
+            expire_after = datetime.timedelta(days=3)
+            session = requests_cache.CachedSession(
+                cache_name="cache", backend="sqlite", expire_after=expire_after
+            )
+            self.API = RadioBrowser(session=session)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.critical("Something is wrong with your internet connection")
