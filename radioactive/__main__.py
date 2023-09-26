@@ -5,8 +5,6 @@ import sys
 from time import sleep
 
 from rich.console import Console
-from rich.panel import Panel
-from rich.text import Text
 from zenlog import log
 
 from radioactive.alias import Alias
@@ -17,18 +15,20 @@ from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player, kill_background_ffplays
 from radioactive.utilities import (
-    handle_welcome_screen,
-    handle_update_screen,
-    handle_log_level,
-    handle_station_selection_menu,
-    handle_search_stations,
-    handle_station_uuid_play,
     handle_add_station,
     handle_add_to_favorite,
+    handle_current_play_panel,
     handle_favorite_table,
-    handle_save_last_station,
-    handle_record,
     handle_listen_keypress,
+    handle_log_level,
+    handle_record,
+    handle_save_last_station,
+    handle_search_stations,
+    handle_station_selection_menu,
+    handle_station_uuid_play,
+    handle_update_screen,
+    handle_user_choice_from_search_result,
+    handle_welcome_screen,
 )
 
 # globally needed as signal handler needs it
@@ -132,8 +132,14 @@ def main():
     # ------------------- ONLY STATION PROVIDED ------------------ #
 
     elif search_station_name is not None and search_station_uuid is None:
-        handle_search_stations(handler, search_station_name, limit)
-        sys.exit(0)
+        response = [{}]
+        response = handle_search_stations(handler, search_station_name, limit)
+        if response is not None:
+            curr_station_name, target_url = handle_user_choice_from_search_result(
+                handler, response
+            )
+        else:
+            sys.exit(0)
 
     global player
     player = Player(target_url, args.volume)
@@ -143,11 +149,7 @@ def main():
     if add_to_favorite:
         handle_add_to_favorite(alias, curr_station_name, target_url)
 
-    panel_station_name = Text(curr_station_name, justify="center")
-
-    station_panel = Panel(panel_station_name, title="[blink]:radio:[/blink]", width=85)
-
-    console.print(station_panel)
+    handle_current_play_panel(curr_station_name)
 
     if record_stream:
         handle_record(target_url, curr_station_name, record_file)
