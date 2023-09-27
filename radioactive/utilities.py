@@ -1,6 +1,7 @@
 """Handler functions for __main__.py"""
 
 import datetime
+import os
 import sys
 
 from pick import pick
@@ -10,7 +11,6 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 from zenlog import log
-
 
 from radioactive.last_station import Last_station
 from radioactive.player import kill_background_ffplays
@@ -28,25 +28,53 @@ def handle_log_level(args):
         log.warning("Correct log levels are: error,warning,info(default),debug")
 
 
-def handle_record(target_url, curr_station_name, record_file):
+def handle_record(
+    target_url, curr_station_name, record_file_path, record_file, record_file_format
+):
     log.info("Press 'q' to stop recording")
+
+    # check record path
+    if record_file_path and not os.path.exists(record_file_path):
+        log.debug("filepath: {}".format(record_file_path))
+        os.makedirs(record_file_path, exist_ok=True)
+
+    elif not record_file_path:
+        log.debug("filepath: fallback to default path")
+        record_file_path = os.path.join(os.path.expanduser("~"), "Music/radioactive")
+        try:
+            os.makedirs(record_file_path, exist_ok=True)
+        except Exception as e:
+            log.debug("{}".format(e))
+            sys.exit(1)
 
     now = datetime.datetime.now()
     month_name = now.strftime("%b").upper()
     # Format AM/PM as 'AM' or 'PM'
     am_pm = now.strftime("%p")
 
-    formatted_date_time = now.strftime(f"%d-{month_name}-%Y-%I-%M-{am_pm}")
+    formatted_date_time = now.strftime(f"%d-{month_name}-%Y@%I-%M-%S-{am_pm}")
     # formatted_date_time = now.strftime("%y-%m-%d-%H:%M:%S")
+
+    # check file format type. currently wav and mp3 supported
+    if record_file_format != ("mp3" and "wav"):
+        log.debug(
+            "Filetype: unknown type '{}'. falling back to mp3".format(
+                record_file_format
+            )
+        )
+        record_file_format = "mp3"
 
     if not record_file:
         record_file = "{}-{}".format(
             curr_station_name.strip(), formatted_date_time
         ).replace(" ", "-")
 
-    log.info(f"Recording will be saved as: {record_file}.mp3")
+    tmp_filename = f"{record_file}.{record_file_format}"
+    outfile_path = os.path.join(record_file_path, tmp_filename)
 
-    record_audio_from_url(target_url, f"{record_file}.mp3")
+    log.info(f"Recording will be saved as: {outfile_path}")
+
+    record_audio_from_url(target_url, outfile_path)
 
 
 def handle_welcome_screen():
@@ -127,8 +155,13 @@ def handle_station_uuid_play(handler, station_uuid):
     log.debug("increased click count for: {}".format(station_uuid))
 
     handler.vote_for_uuid(station_uuid)
-    station_name = handler.target_station["name"]
-    station_url = handler.target_station["url"]
+    try:
+        station_name = handler.target_station["name"]
+        station_url = handler.target_station["url"]
+    except Exception as e:
+        log.debug("{}".format(e))
+        log.error("Somethig went wrong")
+        sys.exit(1)
 
     return station_name, station_url
 
@@ -151,7 +184,7 @@ def handle_station_selection_menu(handler, last_station, alias):
         # no last station??
         pass
 
-    log.info("You can search for a station on internet using the --station option")
+    log.info("You can search for a station on internet using the --search option")
     title = "Please select a station from your favorite list:"
     station_selection_names = []
     station_selection_urls = []
@@ -207,15 +240,38 @@ def handle_save_last_station(last_station, station_name, station_url):
     last_station.save_info(last_played_station)
 
 
-def handle_listen_keypress(alias, target_url, station_name, station_url, record_file):
+def handle_listen_keypress(
+    alias,
+    target_url,
+    station_name,
+    station_url,
+    record_file_path,
+    record_file,
+    record_file_format,
+):
     while True:
         user_input = input("Enter a command to perform an action: ")
         if user_input == "r" or user_input == "R" or user_input == "record":
-            handle_record(target_url, station_name, record_file)
+            handle_record(
+                target_url,
+                station_name,
+                record_file_path,
+                record_file,
+                record_file_format,
+            )
         elif user_input == "rf" or user_input == "RF" or user_input == "recordfile":
             user_input = input("Enter output filename: ")
+            # try to get extension from filename
+            try:
+                file_name, file_ext = user_input.split(".")
+            except:
+                file_name = user_input
+                file_ext = ""  # set default
+
             if user_input.strip() != "":
-                handle_record(target_url, station_name, user_input)
+                handle_record(
+                    target_url, station_name, record_file_path, file_name, file_ext
+                )
 
         elif user_input == "f" or user_input == "F" or user_input == "fav":
             handle_add_to_favorite(alias, station_name, station_url)
@@ -286,10 +342,22 @@ def handle_user_choice_from_search_result(handler, response):
             sys.exit(1)
 
 
-# def handle_direct_play(station_name="",station_uuidurl=""):
-#     """Play a station directly with UUID or direct stream URL"""
-#     if "http" in station_uuid_or_url.trim():
-#         # stream URL
-#         pass
-#     else:
-#         # UUID call
+def handle_direct_play(alias, station_name_or_url=""):
+    """Play a station directly with UUID or direct stream URL"""
+    if "http" in station_name_or_url.strip():
+        log.debug("Direct play: URL provided")
+        # stream URL
+        # call using URL with no station name N/A
+        return "N/A", station_name_or_url
+    else:
+        log.debug("Direct play: station name provided")
+        # station name from fav list
+        # search for the station in fav list and return name and url
+
+        respone = alias.search(station_name_or_url)
+        if not respone:
+            log.error("No station found on your favorite list with the name")
+            sys.exit(1)
+        else:
+            log.debug("Direct play: {}".format(respone))
+            return respone["name"], respone["uuid_or_url"]
