@@ -14,22 +14,17 @@ from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player, kill_background_ffplays
-from radioactive.utilities import (
-    handle_add_station,
-    handle_add_to_favorite,
-    handle_current_play_panel,
-    handle_favorite_table,
-    handle_listen_keypress,
-    handle_log_level,
-    handle_record,
-    handle_save_last_station,
-    handle_search_stations,
-    handle_station_selection_menu,
-    handle_station_uuid_play,
-    handle_update_screen,
-    handle_user_choice_from_search_result,
-    handle_welcome_screen,
-)
+from radioactive.utilities import (handle_add_station, handle_add_to_favorite,
+                                   handle_current_play_panel,
+                                   handle_direct_play, handle_favorite_table,
+                                   handle_listen_keypress, handle_log_level,
+                                   handle_record, handle_save_last_station,
+                                   handle_search_stations,
+                                   handle_station_selection_menu,
+                                   handle_station_uuid_play,
+                                   handle_update_screen,
+                                   handle_user_choice_from_search_result,
+                                   handle_welcome_screen)
 
 # globally needed as signal handler needs it
 # to terminate main() properly
@@ -45,6 +40,7 @@ def main():
     # ----------------- all the args ------------- #
     show_help_table = args.help
     search_station_name = args.search_station_name
+    direct_play = args.direct_play
     search_station_uuid = args.search_station_uuid
 
     discover_country_code = args.discover_country_code
@@ -59,16 +55,18 @@ def main():
     add_station = args.new_station
     add_to_favorite = args.add_to_favorite
     show_favorite_list = args.show_favorite_list
+
     flush_fav_list = args.flush
     kill_ffplays = args.kill_ffplays
+
     record_stream = args.record_stream
     record_file = args.record_file
+    record_file_format = args.record_file_format
+    record_file_path = args.record_file_path
 
     target_url = ""
 
     VERSION = app.get_version()
-
-    console = Console()
 
     handler = Handler()
     alias = Alias()
@@ -116,8 +114,12 @@ def main():
         handler.discover_by_tag(discover_tag, limit)
 
     # -------------------- NOTHING PROVIDED --------------------- #
-    # if neither of --station and --uuid provided
-    if search_station_name is None and search_station_uuid is None:
+    # if neither of --search and --uuid provided
+    if (
+        search_station_name is None
+        and search_station_uuid is None
+        and direct_play is None
+    ):
         curr_station_name, target_url = handle_station_selection_menu(
             handler, last_station, alias
         )
@@ -131,7 +133,11 @@ def main():
 
     # ------------------- ONLY STATION PROVIDED ------------------ #
 
-    elif search_station_name is not None and search_station_uuid is None:
+    elif (
+        search_station_name is not None
+        and search_station_uuid is None
+        and direct_play is None
+    ):
         response = [{}]
         response = handle_search_stations(handler, search_station_name, limit)
         if response is not None:
@@ -140,6 +146,18 @@ def main():
             )
         else:
             sys.exit(0)
+    # ------------------------- direct play ------------------------#
+    if direct_play is not None:
+        curr_station_name, target_url = handle_direct_play(alias, direct_play)
+
+    # ---------------------- player ------------------------ #
+    # check target URL for the last time
+    if target_url.strip() == "":
+        log.error("something is wrong with the url")
+        sys.exit(1)
+
+    if curr_station_name.strip() == "":
+        curr_station_name = "N/A"
 
     global player
     player = Player(target_url, args.volume)
@@ -152,14 +170,22 @@ def main():
     handle_current_play_panel(curr_station_name)
 
     if record_stream:
-        handle_record(target_url, curr_station_name, record_file)
+        handle_record(
+            target_url,
+            curr_station_name,
+            record_file_path,
+            record_file,
+            record_file_format,
+        )
 
     handle_listen_keypress(
         alias=alias,
         target_url=target_url,
         station_name=curr_station_name,
         station_url=target_url,
+        record_file_path=record_file_path,
         record_file=record_file,
+        record_file_format=record_file_format,
     )
 
     if os.name == "nt":
