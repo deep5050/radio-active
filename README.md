@@ -38,8 +38,8 @@
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
+- [x] Record audio from live radio on demand :zap:
 - [ ] I'm feeling lucky ! Play Random stations
-- [ ] Record audio from live radio on demand :zap:
 
 
 > See my progress [here](https://github.com/deep5050/radio-active/projects/1)
@@ -75,7 +75,7 @@ I encourage you to install with pipx: `pipx install radio-active`
 
 ### Run
 
-Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` :zap:
+Run with `radioactive --search [STATION_NAME]` or as simply `radio -U [UUID] ` :zap:
 
 ### Tips
 
@@ -95,37 +95,41 @@ Run with `radioactive --station [STATION_NAME]` or as simply `radio -U [UUID] ` 
 ### Options
 
 
-| Argument                      | Note                                | Description                                  | Default |
-| ----------------------------- | ----------------------------------- | -------------------------------------------- | ------- |
-| `--search`, `-S`              | Required (Optional from second run) | Station name                                 | None    |
-| `--uuid`, `-U`                | Optional                            | ID of the station                            | None    |
-| `--loglevel`                  | Optional                            | Log level of the program                     | Info    |
-| `--add-station` , `-A`        | Optional                            | Add an entry to fav list                     | False   |
-| `--show-favorite-list`, `-W`  | Optional                            | Show fav list                                | False   |
-| `--add-to-favorite`, `-F`     | Optional                            | Add current station to fav list              | False   |
-| `--flush`                     | Optional                            | Remove all the entries from fav list         | False   |
-| `--discover-by-country`, `-D` | Optional                            | Discover stations by country code            | False   |
-| `--discover-by-state`         | Optional                            | Discover stations by country state           | False   |
-| `--discover-by-tag`           | Optional                            | Discover stations by tags/genre              | False   |
-| `--discover-by-language`      | optional                            | Discover stations by                         | False   |
-| `--limit`                     | Optional                            | Limit the # of results in the Discover table | 100     |
-| `--volume` , `-V`             | Optional                            | Change the volume passed into ffplay         | 80      |
-| `--kill` , `-K`               | Optional                            | Kill background radios.                      | False   |
-| `--record` , `-R`             | Optional                            | Record a station and save to file            | False   |
-| `--filename`, `-N`            | Optional                            | Filename to used to save the recorded audio  | None    |
-
+| Argument                      | Note                                | Description                                    | Default                |
+| ----------------------------- | ----------------------------------- | ---------------------------------------------- | ---------------------- |
+| `--search`, `-S`              | Required (Optional from second run) | Station name                                   | None                   |
+| `--play`, `-P`                | Optional                            | A station from fav list or url for direct play | None                   |
+| `--uuid`, `-U`                | Optional                            | ID of the station                              | None                   |
+| `--loglevel`                  | Optional                            | Log level of the program                       | Info                   |
+| `--add-station` , `-A`        | Optional                            | Add an entry to fav list                       | False                  |
+| `--show-favorite-list`, `-W`  | Optional                            | Show fav list                                  | False                  |
+| `--add-to-favorite`, `-F`     | Optional                            | Add current station to fav list                | False                  |
+| `--flush`                     | Optional                            | Remove all the entries from fav list           | False                  |
+| `--discover-by-country`, `-D` | Optional                            | Discover stations by country code              | False                  |
+| `--discover-by-state`         | Optional                            | Discover stations by country state             | False                  |
+| `--discover-by-tag`           | Optional                            | Discover stations by tags/genre                | False                  |
+| `--discover-by-language`      | optional                            | Discover stations by                           | False                  |
+| `--limit`                     | Optional                            | Limit the # of results in the Discover table   | 100                    |
+| `--volume` , `-V`             | Optional                            | Change the volume passed into ffplay           | 80                     |
+| `--kill` , `-K`               | Optional                            | Kill background radios.                        | False                  |
+| `--record` , `-R`             | Optional                            | Record a station and save to file              | False                  |
+| `--filename`, `-N`            | Optional                            | Filename to used to save the recorded audio    | None                   |
+| `--filepath`                  | Optional                            | Path to save the recordings                    | /User/Music/radioactive |
+| `--filetype`, `-T`            | Optional                            | Format of the recording (mp3/wav)              | mp3                    |
+|                               |                                     |                                                |                        |
 <hr>
 
 
-> `--search`, `-S` : Expects a station name to be played (if not provided it
-> will try to get the last played station). Example: "pehla nasha" ,
+> `--search`, `-S` : Expects a station name to be played . Example: "pehla nasha" ,
 > pehla_nasha, bbc_radio
+
+> `--play`, `-P`: You can pass an exact name from your favorite stations or alternatively pass any direct stream url. This would bypass any user slection menu (useful when running from another srcipt)
 
 > `--uuid`,`-U` : When station names are too long or confusing (or multiple
 > results for the same name) use the station's uuid to play . --uuid gets the
-> greater priority than --station. Example: 96444e20-0601-11e8-ae97-52543be04c81
+> greater priority than `--search`. Example: 96444e20-0601-11e8-ae97-52543be04c81
 
-> `--loglevel`, : don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug`
+> `--loglevel`, : Don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug`
 
 > `-F` : Add current station to your favorite list. Example: `-F my_fav_1`
 
@@ -145,6 +149,9 @@ f/F/fav: Add station to favorite list
 rf/RF/recordfile: Speficy a filename for the recording
 ```
 
+
+> **TIP**: when using `rf`: specify the format of the output using the name. for example: "new-show.mp3" or "new-show.wav"
+
 ### Changes
 
 see [CHANGELOG](./CHANGELOG.md)
@@ -154,10 +161,6 @@ see [CHANGELOG](./CHANGELOG.md)
 Share you favorite list with our community 🌐 ➡️ [Here](https://github.com/deep5050/radio-active/discussions/10)
 
 > Your favorite list `.radio-active-alias` is under your home directory as a hidden file :)
-
-### Extra
-
-If you ever face a situation where radio-active quits but the audio (ffplay) runs in the background. Kill the process ID (PID) of ffplay. Run `ps -al` get the PID of ffplay and `kill [PID]`. I know you Know that :)
 
 
 ### Support
