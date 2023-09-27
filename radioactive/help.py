@@ -18,6 +18,11 @@ def show_help():
         "",
     )
     table.add_row(
+        "--play , -P",
+        "A station name from fav list or a stream url",
+        "",
+    )
+    table.add_row(
         "--uuid , -U",
         "A station UUID to play it directly",
         "",
@@ -90,10 +95,22 @@ def show_help():
         "Record current stations audio",
         "False",
     )
+
+    table.add_row(
+        "--filepath",
+        "Path to save the recorded audio",
+        "<User/Music/radioactive>",
+    )
+
     table.add_row(
         "--filename, -N",
         "Filename to save the recorded audio",
-        "False",
+        "<station-timestamp>",
+    )
+    table.add_row(
+        "--filetype, -T",
+        "Type / format of target recording",
+        "mp3",
     )
 
     table.add_row(

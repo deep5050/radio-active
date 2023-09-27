@@ -37,7 +37,13 @@ class Parser:
             dest="search_station_name",
             help="Specify a station name",
         )
-
+        self.parser.add_argument(
+            "--play",
+            "-P",
+            action="store",
+            dest="direct_play",
+            help="Specify a station from fav list or direct url",
+        )
         self.parser.add_argument(
             "--uuid",
             "-U",
@@ -155,12 +161,29 @@ class Parser:
         )
 
         self.parser.add_argument(
+            "--filepath",
+            action="store",
+            dest="record_file_path",
+            default="",
+            help="specify the audio format for recording",
+        )
+
+        self.parser.add_argument(
             "--filename",
             "-N",
             action="store",
             dest="record_file",
             default="",
             help="specify the output filename of the recorded audio",
+        )
+
+        self.parser.add_argument(
+            "--filetype",
+            "-T",
+            action="store",
+            dest="record_file_format",
+            default="",
+            help="specify the audio format for recording",
         )
 
     def parse(self):
