@@ -3,7 +3,7 @@ import subprocess
 from zenlog import log
 
 
-def record_audio_from_url(input_url, output_file, codec="mp3"):
+def record_audio_from_url(input_url, output_file):
     try:
         # Construct the FFmpeg command
         ffmpeg_command = [
