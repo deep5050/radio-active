@@ -38,44 +38,44 @@ def show_help():
         "info",
     )
     table.add_row(
-        "--add-station , -A",
+        "--add , -A",
         "Add a station to your favorite list",
         "False",
     )
     table.add_row(
-        "--add-to-favorite, -F ",
+        "--favorite, -F ",
         "Add current station to favorite list",
         "False",
     )
 
     table.add_row(
-        "--show-favorite-list, -W ",
+        "--list",
         "Show your favorite list",
         "False",
     )
 
     table.add_row(
-        "--discover-by-country, -D",
+        "--country, -C",
         "Discover stations by country code",
-        "False",
+        "",
     )
 
     table.add_row(
-        "--discover-by-state",
+        "--state",
         "Discover stations by country state",
-        "False",
+        "",
     )
 
     table.add_row(
-        "--discover-by-tag",
+        "--tag",
         "Discover stations by tags/genre",
-        "False",
+        "",
     )
 
     table.add_row(
-        "--discover-by-language",
+        "--language",
         "Discover stations by language",
-        "False",
+        "",
     )
 
     table.add_row(
@@ -104,13 +104,13 @@ def show_help():
     table.add_row(
         "--filepath",
         "Path to save the recorded audio",
-        "<User/Music/radioactive>",
+        "/User/Music/radioactive",
     )
 
     table.add_row(
         "--filename, -N",
         "Filename to save the recorded audio",
-        "<station-timestamp>",
+        "<station-date@time>",
     )
     table.add_row(
         "--filetype, -T",

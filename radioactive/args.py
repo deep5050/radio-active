@@ -70,29 +70,29 @@ class Parser:
         )
 
         self.parser.add_argument(
-            "--discover-by-country",
-            "-D",
+            "--country",
+            "-C",
             action="store",
             dest="discover_country_code",
             help="Discover stations with country code",
         )
 
         self.parser.add_argument(
-            "--discover-by-tag",
+            "--tag",
             action="store",
             dest="discover_tag",
             help="Discover stations with tag",
         )
 
         self.parser.add_argument(
-            "--discover-by-state",
+            "--state",
             action="store",
             dest="discover_state",
             help="Discover stations with state name",
         )
 
         self.parser.add_argument(
-            "--discover-by-language",
+            "--language",
             action="store",
             dest="discover_language",
             help="Discover stations with state name",
@@ -107,7 +107,7 @@ class Parser:
         )
 
         self.parser.add_argument(
-            "--add-station",
+            "--add",
             "-A",
             action="store_true",
             default=False,
@@ -116,7 +116,7 @@ class Parser:
         )
 
         self.parser.add_argument(
-            "--add-to-favorite",
+            "--favorite",
             "-F",
             action="store",
             dest="add_to_favorite",
@@ -124,8 +124,7 @@ class Parser:
         )
 
         self.parser.add_argument(
-            "--show-favorite-list",
-            "-W",
+            "--list",
             action="store_true",
             dest="show_favorite_list",
             default=False,
