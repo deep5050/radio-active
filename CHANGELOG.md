@@ -1,10 +1,11 @@
 ## 2.7.0
 
 1. Recording support added 🎉 . save recording as mp3 or wav 🎶 `--record`
-2. Play a staion from favorite list or stream an url directly without any user selection menu. Useful when running from other scripts. `--play`
-3. Runtime command feature added. Perform actions on demand ⚡
-4. Cacching mechanism added for fewer API calls. Fatser radio playbacks!
-5. Code refatored. Easier for contributors to implement new featues.
+2. Play a station from your favorite list or stream a URL directly without any user selection menu. Useful when running from other scripts. `--play`
+3. Play the last played station directly. `--last`
+4. Runtime command feature added. Perform actions on demand ⚡
+5. A caching mechanism was added for fewer API calls. Faster radio playbacks!
+6. Code refactored. It is easier for contributors to implement new features.
 
 ## 2.6.0
 
