@@ -72,7 +72,7 @@ def handle_record(
     tmp_filename = f"{record_file}.{record_file_format}"
     outfile_path = os.path.join(record_file_path, tmp_filename)
 
-    log.info(f"Recording will be saved as: {outfile_path}")
+    log.info(f"Recording will be saved as: \n{outfile_path}")
 
     record_audio_from_url(target_url, outfile_path)
 
@@ -361,3 +361,8 @@ def handle_direct_play(alias, station_name_or_url=""):
         else:
             log.debug("Direct play: {}".format(respone))
             return respone["name"], respone["uuid_or_url"]
+
+
+def handle_play_last_station(last_station):
+    station_obj = last_station.get_info()
+    return station_obj["name"], station_obj["uuid_or_url"]

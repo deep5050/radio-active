@@ -22,6 +22,7 @@ from radioactive.utilities import (
     handle_favorite_table,
     handle_listen_keypress,
     handle_log_level,
+    handle_play_last_station,
     handle_record,
     handle_save_last_station,
     handle_search_stations,
@@ -47,6 +48,8 @@ def main():
     show_help_table = args.help
     search_station_name = args.search_station_name
     direct_play = args.direct_play
+    play_last_station = args.play_last_station
+
     search_station_uuid = args.search_station_uuid
 
     discover_country_code = args.discover_country_code
@@ -125,6 +128,7 @@ def main():
         search_station_name is None
         and search_station_uuid is None
         and direct_play is None
+        and not play_last_station
     ):
         curr_station_name, target_url = handle_station_selection_menu(
             handler, last_station, alias
@@ -156,6 +160,8 @@ def main():
     if direct_play is not None:
         curr_station_name, target_url = handle_direct_play(alias, direct_play)
 
+    if play_last_station:
+        curr_station_name, target_url = handle_play_last_station(last_station)
     # ---------------------- player ------------------------ #
     # check target URL for the last time
     if target_url.strip() == "":

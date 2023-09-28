@@ -44,6 +44,15 @@ class Parser:
             dest="direct_play",
             help="Specify a station from fav list or direct url",
         )
+
+        self.parser.add_argument(
+            "--last",
+            action="store_true",
+            default=False,
+            dest="play_last_station",
+            help="Play last played station.",
+        )
+
         self.parser.add_argument(
             "--uuid",
             "-U",

@@ -23,6 +23,11 @@ def show_help():
         "",
     )
     table.add_row(
+        "--last",
+        "Play last played station",
+        "False",
+    )
+    table.add_row(
         "--uuid , -U",
         "A station UUID to play it directly",
         "",
