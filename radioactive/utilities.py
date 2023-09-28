@@ -319,10 +319,13 @@ def handle_user_choice_from_search_result(handler, response):
         # single station found
         log.debug("Exactly one result found")
 
-        user_input = input("Want to play this station: y/n: ")
+        user_input = input("Want to play this station? Y/N: ")
         if user_input == ("y" or "Y"):
             log.debug("Playing UUID from single response")
-        return handle_station_uuid_play(handler, response[0]["stationuuid"])
+            return handle_station_uuid_play(handler, response[0]["stationuuid"])
+        else:
+            log.debug("Quiting")
+            sys.exit(0)
     else:
         # multiple station
         log.debug("Asking for user input")
