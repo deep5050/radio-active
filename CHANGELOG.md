@@ -1,6 +1,17 @@
+## 2.7.0
+
+1. Recording support added 🎉 . save recording as mp3 or wav 🎶 `--record`
+2. Play a station from your favorite list or stream a URL directly without any user selection menu. Useful when running from other scripts. `--play`
+3. Play the last played station directly. `--last`
+4. Runtime command feature added. Perform actions on demand ⚡
+5. A caching mechanism was added for fewer API calls. Faster radio playbacks!
+6. Code refactored. It is easier for contributors to implement new features.
+7. BREAKING CHANGES: `--station` -> `--search`, `--discover-by-country` -> `--country`, `--discover-by-tag` -> `--tag`, `--discover-by-state` -> `--state`, `--discover-by-language` -> `--lamguage`, `--add-station` -> `--add`, `--add-to-favorite` -> `--favorite`, `--show-favorite-list` -> `--list`
+
+
 ## 2.6.0
 
-1. Detect errors while trying to play a dead station or encountering other connection errors. 
+1. Detect errors while trying to play a dead station or encountering other connection errors.
 2. Playing a station will increase the click (vote) counter for that station on the server.
 3. Fixed bugs that occurred when there was a blank entry in the favorite station file.
 4. Fixed bugs that caused empty last stations.
@@ -44,7 +55,7 @@ Fixed setup-related issues (development purpose)
 
 ## 2.3.0
 
-1. Discover stations by country 
+1. Discover stations by country
 2. Discover stations by state
 3. Discover stations by genre/tags
 4. Discover stations by language

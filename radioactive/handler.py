@@ -2,15 +2,24 @@
     This handler solely depends on pyradios module to communicate with our remote API
 """
 
+import datetime
 import json
 import sys
 
+import requests_cache
 from pyradios import RadioBrowser
 from rich.console import Console
 from rich.table import Table
 from zenlog import log
 
 console = Console()
+
+
+def trim_string(text, max_length=40):
+    if len(text) > max_length:
+        return text[:max_length] + "..."
+    else:
+        return text
 
 
 class Handler:
@@ -25,7 +34,11 @@ class Handler:
 
         # When RadioBrowser can not be initiated properly due to no internet (probably)
         try:
-            self.API = RadioBrowser()
+            expire_after = datetime.timedelta(days=3)
+            session = requests_cache.CachedSession(
+                cache_name="cache", backend="sqlite", expire_after=expire_after
+            )
+            self.API = RadioBrowser(session=session)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.critical("Something is wrong with your internet connection")
@@ -37,28 +50,31 @@ class Handler:
         # when no response from the API
         if not self.response:
             log.error("No stations found by the name")
-            sys.exit(0)  # considering it as not an error
+            return []
+        # TODO: remove sys exit
+        # sys.exit(0)  # considering it as not an error
 
         # when multiple results found
         if len(self.response) > 1:
             table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("ID", justify="center")
             table.add_column("Station", justify="left")
-            table.add_column("UUID", justify="center")
+            # table.add_column("UUID", justify="center")
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
 
-            log.warn(
-                "{} stations found by the name, select one and run with UUID instead".format(
-                    len(self.response)
-                )
-            )
+            log.warn("showing {} stations with the name!".format(len(self.response)))
 
-            for station in self.response:
+            for i in range(0, len(self.response)):
+                station = self.response[i]
                 table.add_row(
-                    station["name"],
-                    station["stationuuid"],
+                    str(i + 1),
+                    trim_string(station["name"], max_length=50),
+                    # station["stationuuid"],
                     station["countrycode"],
-                    station["tags"],
+                    trim_string(
+                        station["tags"]
+                    ),  # trimming tags to make the table shortrer
                 )
 
             console.print(table)
@@ -66,8 +82,9 @@ class Handler:
                 "If the table does not fit into your screen, \
                 \ntry to maximize the window , decrease the font by a bit and retry"
             )
-
-            sys.exit(1)
+            return self.response
+            # TODO: remove sys exit
+            # sys.exit(0)
 
         # when exactly one response found
         if len(self.response) == 1:
@@ -76,16 +93,17 @@ class Handler:
             self.target_station = self.response[0]
             # register a valid click to increase its popularity
             self.API.click_counter(self.target_station["stationuuid"])
-            # return name
-            return self.response[0]["name"].strip()
+
+            return self.response
+            # return self.response[0]["name"].strip()
 
     # ---------------------------- NAME -------------------------------- #
-    def play_by_station_name(self, _name=None):
+    def search_by_station_name(self, _name=None, limit=100):
         """search and play a station by its name"""
         # TODO: handle exact error
         try:
-            self.response = self.API.search(name=_name, name_exact=False)
-            self.station_validator()
+            self.response = self.API.search(name=_name, name_exact=False, limit=limit)
+            return self.station_validator()
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -104,9 +122,9 @@ class Handler:
             sys.exit(1)
 
     # ----------------------- ------- COUNTRY -------------------------#
-    def discover_by_country(self, _country_code, _limit):
+    def discover_by_country(self, country_code, limit):
         try:
-            discover_result = self.API.search(countrycode=_country_code, limit=_limit)
+            discover_result = self.API.search(countrycode=country_code, limit=limit)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -116,18 +134,18 @@ class Handler:
             log.info("Result for country: {}".format(discover_result[0]["country"]))
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Station", justify="left")
-            table.add_column("UUID", justify="center")
+            # table.add_column("UUID", justify="center")
             table.add_column("State", justify="center")
             table.add_column("Tags", justify="center")
             table.add_column("Language", justify="center")
 
             for res in discover_result:
                 table.add_row(
-                    res["name"],
-                    res["stationuuid"],
+                    trim_string(res["name"], max_length=30),
+                    # res["stationuuid"],
                     res["state"],
-                    res["tags"],
-                    res["language"],
+                    trim_string(res["tags"], max_length=20),
+                    trim_string(res["language"], max_length=20),
                 )
             console.print(table)
             log.info(
@@ -142,29 +160,28 @@ class Handler:
 
     # ------------------- by state ---------------------
 
-    def discover_by_state(self, _state, _limit):
+    def discover_by_state(self, state, limit):
         try:
-            discover_result = self.API.search(state=_state, limit=_limit)
+            discover_result = self.API.search(state=state, limit=limit)
         except Exception:
-            # print(e)
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
         if len(discover_result) > 1:
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Station", justify="left")
-            table.add_column("UUID", justify="center")
+            # table.add_column("UUID", justify="center")
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
             table.add_column("Language", justify="center")
 
             for res in discover_result:
                 table.add_row(
-                    res["name"],
-                    res["stationuuid"],
+                    trim_string(res["name"], max_length=30),
+                    # res["stationuuid"],
                     res["country"],
-                    res["tags"],
-                    res["language"],
+                    trim_string(res["tags"], max_length=20),
+                    trim_string(res["language"], max_length=20),
                 )
             console.print(table)
             log.info(
@@ -178,9 +195,9 @@ class Handler:
 
     # -----------------by language --------------------
 
-    def discover_by_language(self, _language, _limit):
+    def discover_by_language(self, language, limit):
         try:
-            discover_result = self.API.search(language=_language, limit=_limit)
+            discover_result = self.API.search(language=language, limit=limit)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -189,17 +206,20 @@ class Handler:
         if len(discover_result) > 1:
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Station", justify="left")
-            table.add_column("UUID", justify="center")
+            # table.add_column("UUID", justify="center")
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
 
             for res in discover_result:
                 table.add_row(
-                    res["name"], res["stationuuid"], res["country"], res["tags"]
+                    trim_string(res["name"], max_length=30),
+                    # res["stationuuid"],
+                    res["country"],
+                    trim_string(res["tags"], max_length=30),
                 )
             console.print(table)
             log.info(
-                "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
+                "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit and retry"
             )
 
             sys.exit(0)
@@ -207,11 +227,11 @@ class Handler:
             log.error("No stations found for the language, recheck it")
             sys.exit(1)
 
-    # -------------------- by tag ----------------------
+    # -------------------- by tag ---------------------- #
 
-    def discover_by_tag(self, _tag, _limit):
+    def discover_by_tag(self, tag, limit):
         try:
-            discover_result = self.API.search(tag=_tag, limit=_limit)
+            discover_result = self.API.search(tag=tag, limit=limit)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -226,7 +246,10 @@ class Handler:
 
             for res in discover_result:
                 table.add_row(
-                    res["name"], res["stationuuid"], res["country"], res["language"]
+                    trim_string(res["name"], max_length=30),
+                    res["stationuuid"],
+                    res["country"],
+                    res["language"],
                 )
             console.print(table)
             log.info(

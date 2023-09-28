@@ -41,6 +41,7 @@ class Alias:
         """searches for an entry in the fav list with the name
         the right side may contain both url or uuid , need to check properly
         """
+        log.debug("Alias search: {}".format(entry))
         if len(self.alias_map) > 0:
             log.debug("looking under alias file")
             for alias in self.alias_map:
