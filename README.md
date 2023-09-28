@@ -102,14 +102,14 @@ Run with `radioactive --search [STATION_NAME]` or as simply `radio -U [UUID] ` :
 | `--last`                      | Optional                            | Play last played station                       | False                   |
 | `--uuid`, `-U`                | Optional                            | ID of the station                              | None                    |
 | `--loglevel`                  | Optional                            | Log level of the program                       | Info                    |
-| `--add-station` , `-A`        | Optional                            | Add an entry to fav list                       | False                   |
-| `--show-favorite-list`, `-W`  | Optional                            | Show fav list                                  | False                   |
-| `--add-to-favorite`, `-F`     | Optional                            | Add current station to fav list                | False                   |
+| `--add` , `-A`        | Optional                            | Add an entry to fav list                       | False                   |
+| `--list`, `-W`  | Optional                            | Show fav list                                  | False                   |
+| `--favorite`, `-F`     | Optional                            | Add current station to fav list                | False                   |
 | `--flush`                     | Optional                            | Remove all the entries from fav list           | False                   |
-| `--discover-by-country`, `-D` | Optional                            | Discover stations by country code              | False                   |
-| `--discover-by-state`         | Optional                            | Discover stations by country state             | False                   |
-| `--discover-by-tag`           | Optional                            | Discover stations by tags/genre                | False                   |
-| `--discover-by-language`      | optional                            | Discover stations by                           | False                   |
+| `--country`, `-C` | Optional                            | Discover stations by country code              | False                   |
+| `--state`         | Optional                            | Discover stations by country state             | False                   |
+| `--tag`           | Optional                            | Discover stations by tags/genre                | False                   |
+| `--language`      | optional                            | Discover stations by                           | False                   |
 | `--limit`                     | Optional                            | Limit the # of results in the Discover table   | 100                     |
 | `--volume` , `-V`             | Optional                            | Change the volume passed into ffplay           | 80                      |
 | `--kill` , `-K`               | Optional                            | Kill background radios.                        | False                   |

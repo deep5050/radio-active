@@ -6,6 +6,8 @@
 4. Runtime command feature added. Perform actions on demand ⚡
 5. A caching mechanism was added for fewer API calls. Faster radio playbacks!
 6. Code refactored. It is easier for contributors to implement new features.
+7. BREAKING CHANGES: `--station` -> `--search`, `--discover-by-country` -> `--country`, `--discover-by-tag` -> `--tag`, `--discover-by-state` -> `--state`, `--discover-by-language` -> `--lamguage`, `--add-station` -> `--add`, `--add-to-favorite` -> `--favorite`, `--show-favorite-list` -> `--list`
+
 
 ## 2.6.0
 
