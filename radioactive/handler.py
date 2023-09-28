@@ -59,7 +59,7 @@ class Handler:
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("ID", justify="center")
             table.add_column("Station", justify="left")
-            table.add_column("UUID", justify="center")
+            # table.add_column("UUID", justify="center")
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
 
@@ -69,8 +69,8 @@ class Handler:
                 station = self.response[i]
                 table.add_row(
                     str(i + 1),
-                    trim_string(station["name"], max_length=30),
-                    station["stationuuid"],
+                    trim_string(station["name"], max_length=50),
+                    # station["stationuuid"],
                     station["countrycode"],
                     trim_string(
                         station["tags"]
@@ -134,7 +134,7 @@ class Handler:
             log.info("Result for country: {}".format(discover_result[0]["country"]))
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Station", justify="left")
-            table.add_column("UUID", justify="center")
+            # table.add_column("UUID", justify="center")
             table.add_column("State", justify="center")
             table.add_column("Tags", justify="center")
             table.add_column("Language", justify="center")
@@ -142,10 +142,10 @@ class Handler:
             for res in discover_result:
                 table.add_row(
                     trim_string(res["name"], max_length=30),
-                    res["stationuuid"],
+                    # res["stationuuid"],
                     res["state"],
-                    res["tags"],
-                    res["language"],
+                    trim_string(res["tags"], max_length=20),
+                    trim_string(res["language"], max_length=20),
                 )
             console.print(table)
             log.info(
@@ -170,7 +170,7 @@ class Handler:
         if len(discover_result) > 1:
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Station", justify="left")
-            table.add_column("UUID", justify="center")
+            # table.add_column("UUID", justify="center")
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
             table.add_column("Language", justify="center")
@@ -178,10 +178,10 @@ class Handler:
             for res in discover_result:
                 table.add_row(
                     trim_string(res["name"], max_length=30),
-                    res["stationuuid"],
+                    # res["stationuuid"],
                     res["country"],
-                    trim_string(res["tags"]),
-                    res["language"],
+                    trim_string(res["tags"], max_length=20),
+                    trim_string(res["language"], max_length=20),
                 )
             console.print(table)
             log.info(
@@ -206,16 +206,16 @@ class Handler:
         if len(discover_result) > 1:
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Station", justify="left")
-            table.add_column("UUID", justify="center")
+            # table.add_column("UUID", justify="center")
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
 
             for res in discover_result:
                 table.add_row(
                     trim_string(res["name"], max_length=30),
-                    res["stationuuid"],
+                    # res["stationuuid"],
                     res["country"],
-                    trim_string(res["tags"], max_length=40),
+                    trim_string(res["tags"], max_length=30),
                 )
             console.print(table)
             log.info(
