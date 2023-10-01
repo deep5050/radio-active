@@ -24,16 +24,24 @@ def handle_log_level(args):
     log_level = args.log_level
     if log_level in ["info", "error", "warning", "debug"]:
         log.level(log_level)
+        return args.log_level
     else:
         log.warning("Correct log levels are: error,warning,info(default),debug")
 
 
 def handle_record(
-    target_url, curr_station_name, record_file_path, record_file, record_file_format
+    target_url,
+    curr_station_name,
+    record_file_path,
+    record_file,
+    record_file_format,
+    loglevel,
 ):
     log.info("Press 'q' to stop recording")
 
+    # TODO: codec checking
     # check record path
+
     if record_file_path and not os.path.exists(record_file_path):
         log.debug("filepath: {}".format(record_file_path))
         os.makedirs(record_file_path, exist_ok=True)
@@ -55,13 +63,7 @@ def handle_record(
     formatted_date_time = now.strftime(f"%d-{month_name}-%Y@%I-%M-%S-{am_pm}")
     # formatted_date_time = now.strftime("%y-%m-%d-%H:%M:%S")
 
-    # check file format type. currently wav and mp3 supported
-    if record_file_format != ("mp3" and "wav"):
-        log.debug(
-            "Filetype: unknown type '{}'. falling back to mp3".format(
-                record_file_format
-            )
-        )
+    if not record_file_format.strip():
         record_file_format = "mp3"
 
     if not record_file:
@@ -74,7 +76,7 @@ def handle_record(
 
     log.info(f"Recording will be saved as: \n{outfile_path}")
 
-    record_audio_from_url(target_url, outfile_path)
+    record_audio_from_url(target_url, outfile_path, loglevel)
 
 
 def handle_welcome_screen():
@@ -248,6 +250,7 @@ def handle_listen_keypress(
     record_file_path,
     record_file,
     record_file_format,
+    loglevel,
 ):
     while True:
         user_input = input("Enter a command to perform an action: ")
@@ -258,6 +261,7 @@ def handle_listen_keypress(
                 record_file_path,
                 record_file,
                 record_file_format,
+                loglevel,
             )
         elif user_input == "rf" or user_input == "RF" or user_input == "recordfile":
             user_input = input("Enter output filename: ")
@@ -270,7 +274,12 @@ def handle_listen_keypress(
 
             if user_input.strip() != "":
                 handle_record(
-                    target_url, station_name, record_file_path, file_name, file_ext
+                    target_url,
+                    station_name,
+                    record_file_path,
+                    file_name,
+                    file_ext,
+                    loglevel,
                 )
 
         elif user_input == "f" or user_input == "F" or user_input == "fav":

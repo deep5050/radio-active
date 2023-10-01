@@ -1,9 +1,10 @@
+import re
 import subprocess
 
 from zenlog import log
 
 
-def record_audio_from_url(input_url, output_file):
+def record_audio_from_url(input_url, output_file, loglevel):
     try:
         # Construct the FFmpeg command
         ffmpeg_command = [
@@ -14,12 +15,17 @@ def record_audio_from_url(input_url, output_file):
             "copy",  # Codec (copy) audio
             "-vn",  # Disable video recording
             # "-n",  # no overwrite file, possible on foreground only
-            "-loglevel",
-            "error",  # stop showing build and metadata info
-            "-hide_banner",
             "-stats",  # show stats
             output_file,  # Output file path
         ]
+
+        if loglevel == "debug":
+            ffmpeg_command.append("-loglevel")
+            ffmpeg_command.append("info")
+        else:
+            ffmpeg_command.append("-loglevel"),
+            ffmpeg_command.append("error"),
+            ffmpeg_command.append("-hide_banner")
 
         # Run FFmpeg command on frouground to catch 'q' without
         # any complex thread for now

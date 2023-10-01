@@ -44,6 +44,13 @@ class Handler:
             log.critical("Something is wrong with your internet connection")
             sys.exit(1)
 
+    def get_country_code(self, name):
+        self.countries = self.API.countries()
+        for country in self.countries:
+            if country["name"].lower() == name.lower():
+                return country["iso_3166_1"]
+        return None
+
     def station_validator(self):
         """Validates a response from the API and takes appropriate decision"""
 
@@ -109,7 +116,7 @@ class Handler:
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
-    # ------------------------------- UUID ------------------------------ #
+    # ------------------------- UUID ------------------------ #
     def play_by_station_uuid(self, _uuid):
         """search and play station by its stationuuid"""
         # TODO: handle exact error
@@ -121,31 +128,56 @@ class Handler:
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
-    # ----------------------- ------- COUNTRY -------------------------#
-    def discover_by_country(self, country_code, limit):
-        try:
-            discover_result = self.API.search(countrycode=country_code, limit=limit)
-        except Exception as e:
-            log.debug("Error: {}".format(e))
-            log.error("Something went wrong. please try again.")
-            sys.exit(1)
+    # -------------------------- COUNTRY ----------------------#
+    def discover_by_country(self, country_code_or_name, limit):
+        # check if it is a code or name
+        if len(country_code_or_name.strip()) == 2:
+            # it's a code
+            log.debug("Country code {} provided".format(country_code_or_name))
+            try:
+                response = self.API.search(
+                    countrycode=country_code_or_name, limit=limit
+                )
+            except Exception as e:
+                log.debug("Error: {}".format(e))
+                log.error("Something went wrong. please try again.")
+                sys.exit(1)
+        else:
+            # it's name
+            log.debug("Country name {} provided".format(country_code_or_name))
+            code = self.get_country_code(country_code_or_name)
+            if code:
+                try:
+                    response = self.API.search(
+                        countrycode=code, limit=limit, country_exact=True
+                    )
+                except Exception as e:
+                    log.debug("Error: {}".format(e))
+                    log.error("Something went wrong. please try again.")
+                    sys.exit(1)
+            else:
+                log.error("Not a valid country name")
+                sys.exit(1)
 
-        if len(discover_result) > 1:
-            log.info("Result for country: {}".format(discover_result[0]["country"]))
+        if len(response) > 1:
+            log.info("Result for country: {}".format(response[0]["country"]))
             table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("ID", justify="center")
             table.add_column("Station", justify="left")
             # table.add_column("UUID", justify="center")
             table.add_column("State", justify="center")
             table.add_column("Tags", justify="center")
             table.add_column("Language", justify="center")
 
-            for res in discover_result:
+            for i in range(0, len(response)):
+                current_response = response[i]
                 table.add_row(
-                    trim_string(res["name"], max_length=30),
+                    str(i + 1),
+                    trim_string(current_response["name"], max_length=30),
                     # res["stationuuid"],
-                    res["state"],
-                    trim_string(res["tags"], max_length=20),
-                    trim_string(res["language"], max_length=20),
+                    current_response["state"],
+                    trim_string(current_response["tags"], max_length=20),
+                    trim_string(current_response["language"], max_length=20),
                 )
             console.print(table)
             log.info(
@@ -153,9 +185,9 @@ class Handler:
                     \ntry to maximize the window , decrease the font by a bit and retry"
             )
 
-            sys.exit(0)
+            return response
         else:
-            log.error("No stations found for the country code, recheck it")
+            log.error("No stations found for the country code/name, recheck it")
             sys.exit(1)
 
     # ------------------- by state ---------------------
@@ -169,17 +201,20 @@ class Handler:
 
         if len(discover_result) > 1:
             table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("ID", justify="center")
             table.add_column("Station", justify="left")
             # table.add_column("UUID", justify="center")
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
             table.add_column("Language", justify="center")
 
-            for res in discover_result:
+            for i in range(0, len(discover_result)):
+                res = discover_result[i]
                 table.add_row(
+                    str(i + 1),
                     trim_string(res["name"], max_length=30),
                     # res["stationuuid"],
-                    res["country"],
+                    trim_string(res["country"], max_length=20),
                     trim_string(res["tags"], max_length=20),
                     trim_string(res["language"], max_length=20),
                 )
@@ -188,7 +223,7 @@ class Handler:
                 "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
             )
 
-            sys.exit(0)
+            return discover_result
         else:
             log.error("No stations found for the state, recheck it")
             sys.exit(1)
@@ -205,16 +240,19 @@ class Handler:
 
         if len(discover_result) > 1:
             table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("ID", justify="center")
             table.add_column("Station", justify="left")
             # table.add_column("UUID", justify="center")
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
 
-            for res in discover_result:
+            for i in range(0, len(discover_result)):
+                res = discover_result[i]
                 table.add_row(
+                    str(i + 1),
                     trim_string(res["name"], max_length=30),
                     # res["stationuuid"],
-                    res["country"],
+                    trim_string(res["country"], max_length=20),
                     trim_string(res["tags"], max_length=30),
                 )
             console.print(table)
@@ -222,7 +260,7 @@ class Handler:
                 "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit and retry"
             )
 
-            sys.exit(0)
+            return discover_result
         else:
             log.error("No stations found for the language, recheck it")
             sys.exit(1)
@@ -239,25 +277,27 @@ class Handler:
 
         if len(discover_result) > 1:
             table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("ID", justify="center")
             table.add_column("Station", justify="left")
-            table.add_column("UUID", justify="center")
+            # table.add_column("UUID", justify="center")
             table.add_column("country", justify="center")
             table.add_column("Language", justify="center")
 
-            for res in discover_result:
+            for i in range(0, len(discover_result)):
+                res = discover_result[i]
                 table.add_row(
+                    str(i + 1),
                     trim_string(res["name"], max_length=30),
-                    res["stationuuid"],
-                    res["country"],
-                    res["language"],
+                    # res["stationuuid"],
+                    trim_string(res["country"], max_length=20),
+                    trim_string(res["language"], max_length=20),
                 )
             console.print(table)
             log.info(
                 "If the table does not fit into your screen, \
                 \ntry to maximize the window , decrease the font by a bit and retry"
             )
-
-            sys.exit(0)
+            return discover_result
         else:
             log.error("No stations found for the tag, recheck it")
             sys.exit(1)
