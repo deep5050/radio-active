@@ -75,7 +75,7 @@ I encourage you to install with pipx: `pipx install radio-active`
 
 ### Run
 
-Run with `radioactive --search [STATION_NAME]` or as simply `radio -U [UUID] ` :zap:
+Run with `radio --search [STATION_NAME]` or as simply `radio` :zap: to select from favorite menu.
 
 ### Tips
 
@@ -95,46 +95,52 @@ Run with `radioactive --search [STATION_NAME]` or as simply `radio -U [UUID] ` :
 ### Options
 
 
-| Argument                      | Note                                | Description                                    | Default                 |
-| ----------------------------- | ----------------------------------- | ---------------------------------------------- | ----------------------- |
-| `--search`, `-S`              | Required (Optional from second run) | Station name                                   | None                    |
-| `--play`, `-P`                | Optional                            | A station from fav list or url for direct play | None                    |
-| `--last`                      | Optional                            | Play last played station                       | False                   |
-| `--uuid`, `-U`                | Optional                            | ID of the station                              | None                    |
-| `--loglevel`                  | Optional                            | Log level of the program                       | Info                    |
-| `--add` , `-A`        | Optional                            | Add an entry to fav list                       | False                   |
-| `--list`, `-W`  | Optional                            | Show fav list                                  | False                   |
-| `--favorite`, `-F`     | Optional                            | Add current station to fav list                | False                   |
-| `--flush`                     | Optional                            | Remove all the entries from fav list           | False                   |
-| `--country`, `-C` | Optional                            | Discover stations by country code              | False                   |
-| `--state`         | Optional                            | Discover stations by country state             | False                   |
-| `--tag`           | Optional                            | Discover stations by tags/genre                | False                   |
-| `--language`      | optional                            | Discover stations by                           | False                   |
-| `--limit`                     | Optional                            | Limit the # of results in the Discover table   | 100                     |
-| `--volume` , `-V`             | Optional                            | Change the volume passed into ffplay           | 80                      |
-| `--kill` , `-K`               | Optional                            | Kill background radios.                        | False                   |
-| `--record` , `-R`             | Optional                            | Record a station and save to file              | False                   |
-| `--filename`, `-N`            | Optional                            | Filename to used to save the recorded audio    | None                    |
-| `--filepath`                  | Optional                            | Path to save the recordings                    | /User/Music/radioactive |
-| `--filetype`, `-T`            | Optional                            | Format of the recording (mp3/wav)              | mp3                     |
-|                               |                                     |                                                |                         |
+| Argument           | Note                                | Description                                    | Default       |
+| ------------------ | ----------------------------------- | ---------------------------------------------- | ------------- |
+| `--search`, `-S`   | Required (Optional from second run) | Station name                                   | None          |
+| `--play`, `-P`     | Optional                            | A station from fav list or url for direct play | None          |
+| `--last`           | Optional                            | Play last played station                       | False         |
+| `--uuid`, `-U`     | Optional                            | ID of the station                              | None          |
+| `--loglevel`       | Optional                            | Log level of the program                       | Info          |
+| `--add` , `-A`     | Optional                            | Add an entry to fav list                       | False         |
+| `--list`, `-W`     | Optional                            | Show fav list                                  | False         |
+| `--favorite`, `-F` | Optional                            | Add current station to fav list                | False         |
+| `--flush`          | Optional                            | Remove all the entries from fav list           | False         |
+| `--country`, `-C`  | Optional                            | Discover stations by country code              | False         |
+| `--state`          | Optional                            | Discover stations by country state             | False         |
+| `--tag`            | Optional                            | Discover stations by tags/genre                | False         |
+| `--language`       | optional                            | Discover stations by                           | False         |
+| `--limit`          | Optional                            | Limit the # of results in the Discover table   | 100           |
+| `--volume` , `-V`  | Optional                            | Change the volume passed into ffplay           | 80            |
+| `--kill` , `-K`    | Optional                            | Kill background radios.                        | False         |
+| `--record` , `-R`  | Optional                            | Record a station and save to file              | False         |
+| `--filename`, `-N` | Optional                            | Filename to used to save the recorded audio    | None          |
+| `--filepath`       | Optional                            | Path to save the recordings                    | <DEFAULT_DIR> |
+| `--filetype`, `-T` | Optional                            | Format of the recording (mp3/auto)             | mp3           |
+
 <hr>
 
 
-> `--search`, `-S` : Expects a station name to be played . Example: "pehla nasha" ,
-> pehla_nasha, bbc_radio
+
+> `--search`, `-S` : Search for a station on the internet.
 
 > `--play`, `-P`: You can pass an exact name from your favorite stations or alternatively pass any direct stream url. This would bypass any user slection menu (useful when running from another srcipt)
 
 > `--uuid`,`-U` : When station names are too long or confusing (or multiple
 > results for the same name) use the station's uuid to play . --uuid gets the
-> greater priority than `--search`. Example: 96444e20-0601-11e8-ae97-52543be04c81
+> greater priority than `--search`. Example: 96444e20-0601-11e8-ae97-52543be04c81. type `u` on runtime command to get the UUID of a station.
 
 > `--loglevel`, : Don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug`
 
 > `-F` : Add current station to your favorite list. Example: `-F my_fav_1`
 
 > `-A`: Add any stations to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream.
+
+> `--limit`: Specify how much search results should be diplayed.
+
+> `--filetype`: Specify the extension of the final recording file. default is `mp3`. you can provide `-T auto` to autodetect the codec and set file extension accrodingly (in original form).
+
+> DEFAULT_DIR: is `/home/user/Music/radioactive`
 
 ### Runtime Commands
 
@@ -143,15 +149,15 @@ Input a command during the radio playback to perform an action. Available comman
 ```
 Enter a command to perform an action: ?
 
-q/Q/x/quit: Quit radioactive
+q/Q/quit: Quit radioactive
 h/H/help/?: Show this help message
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
-rf/RF/recordfile: Speficy a filename for the recording
+rf/RF/recordfile: Speficy a filename for the recording.
 ```
 
 
-> **TIP**: when using `rf`: specify the format of the output using the name. for example: "new-show.mp3" or "new-show.wav"
+> **TIP**: when using `rf`: you can force the recording to be in mp3 format by adding an extension to the file name. Example "talk-show.mp3". If you dont specify any extension it should auto detect. Example "new_show"
 
 ### Changes
 
