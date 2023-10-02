@@ -66,7 +66,7 @@ def final_step(options, last_station, alias, handler):
             options["curr_station_name"],
             options["record_file_path"],
             options["record_file"],
-            "mp3",  # file format
+            options["record_file_format"],
             options["loglevel"],
         )
 
@@ -77,7 +77,7 @@ def final_step(options, last_station, alias, handler):
         station_url=options["target_url"],
         record_file_path=options["record_file_path"],
         record_file=options["record_file"],
-        record_file_format="mp3",
+        record_file_format=options["record_file_format"],
         loglevel=options["loglevel"],
     )
 

@@ -10,11 +10,12 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
+
 from zenlog import log
 
 from radioactive.last_station import Last_station
 from radioactive.player import kill_background_ffplays
-from radioactive.recorder import record_audio_from_url
+from radioactive.recorder import record_audio_from_url, record_audio_auto_codec
 
 RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
@@ -34,13 +35,30 @@ def handle_record(
     curr_station_name,
     record_file_path,
     record_file,
-    record_file_format,
+    record_file_format,  # auto/mp3
     loglevel,
 ):
     log.info("Press 'q' to stop recording")
+    force_mp3 = False
 
-    # TODO: codec checking
-    # check record path
+    if record_file_format != "mp3" and record_file_format != "auto":
+        record_file_format = "mp3"  # defult to mp3
+        log.debug("Error: wrong codec supplied!. falling back to mp3")
+        force_mp3 = True
+    elif record_file_format == "auto":
+        log.debug("Codec: fetching stream codec")
+        codec = record_audio_auto_codec(target_url)
+        if code is None:
+            record_file_format = "mp3"  # defult to mp3
+            force_mp3 = True
+            log.debug("Error: could not detect codec. falling back to mp3")
+        else:
+            record_file_format = codec
+            log.debug("Codec: found {}".format(codec))
+    elif record_file_format == "mp3":
+        # always save to mp3 to eliminate any runtime issues
+        # it is better to leave it on libmp3lame
+        force_mp3 = True
 
     if record_file_path and not os.path.exists(record_file_path):
         log.debug("filepath: {}".format(record_file_path))
@@ -76,7 +94,7 @@ def handle_record(
 
     log.info(f"Recording will be saved as: \n{outfile_path}")
 
-    record_audio_from_url(target_url, outfile_path, loglevel)
+    record_audio_from_url(target_url, outfile_path, force_mp3, loglevel)
 
 
 def handle_welcome_screen():
@@ -116,7 +134,7 @@ def handle_favorite_table(alias):
     log.info("Your favorite station list is below")
     table = Table(show_header=True, header_style="bold magenta")
     table.add_column("Station", justify="left")
-    table.add_column("URL / UUID", justify="center")
+    table.add_column("URL / UUID", justify="left")
     if len(alias.alias_map) > 0:
         for entry in alias.alias_map:
             table.add_row(entry["name"], entry["uuid_or_url"])
@@ -252,6 +270,7 @@ def handle_listen_keypress(
     record_file_format,
     loglevel,
 ):
+    log.info("Press '?' to see available commands\n")
     while True:
         user_input = input("Enter a command to perform an action: ")
         if user_input == "r" or user_input == "R" or user_input == "record":
@@ -264,13 +283,24 @@ def handle_listen_keypress(
                 loglevel,
             )
         elif user_input == "rf" or user_input == "RF" or user_input == "recordfile":
+            # if no filename is provided try to auto detect
+            # else if ".mp3" is provided, use libmp3lame to force write to mp3
+
             user_input = input("Enter output filename: ")
             # try to get extension from filename
             try:
                 file_name, file_ext = user_input.split(".")
+                if file_ext == "mp3":
+                    log.debug("codec: force mp3")
+                    # overwrite otoginal codec with "mp3"
+                    record_file_format = "mp3"
+                else:
+                    log.warning("You can only specify mp3 as file extension.\n")
+                    log.warning(
+                        "Do not provide any extension to autodetect the codec.\n"
+                    )
             except:
                 file_name = user_input
-                file_ext = ""  # set default
 
             if user_input.strip() != "":
                 handle_record(
@@ -278,19 +308,14 @@ def handle_listen_keypress(
                     station_name,
                     record_file_path,
                     file_name,
-                    file_ext,
+                    record_file_format,
                     loglevel,
                 )
 
         elif user_input == "f" or user_input == "F" or user_input == "fav":
             handle_add_to_favorite(alias, station_name, station_url)
 
-        elif (
-            user_input == "q"
-            or user_input == "Q"
-            or user_input == "x"
-            or user_input == "quit"
-        ):
+        elif user_input == "q" or user_input == "Q" or user_input == "quit":
             kill_background_ffplays()
             sys.exit(0)
         elif user_input == "w" or user_input == "W" or user_input == "list":
@@ -303,13 +328,12 @@ def handle_listen_keypress(
             or user_input == "?"
             or user_input == "help"
         ):
-            print()
-            print("q/Q/x/quit: Quit radioactive")
-            print("h/H/help/?: Show this help message")
-            print("r/R/record: Record a station")
-            print("f/F/fav: Add station to favorite list")
-            print("rf/RF/recordfile: Speficy a filename for the recording")
-            print()
+            log.info("h/help/?: Show this help message")
+            log.info("q/quit: Quit radioactive")
+            log.info("r/record: Record a station")
+            log.info("f/fav: Add station to favorite list")
+            log.info("rf/recordfile: Specify a filename for the recording")
+            # TODO: u for uuid, link for url, p for setting path
 
 
 def handle_current_play_panel(curr_station_name=""):
