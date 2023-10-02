@@ -65,6 +65,7 @@ class Player:
             self.exe_path,
             "-volume",
             f"{self.volume}",
+            "-vn",  # no video playback
             self.url,
         ]
 
