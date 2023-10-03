@@ -35,12 +35,12 @@
 - [x] Selection menu for favorite stations
 - [x] Supports user-added stations :wrench:
 - [x] Looks minimal and user-friendly
-- [x] Runs on Raspberry-Pi
+- [x] Runs on Raspberry Pi
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
 - [x] Record audio from live radio on demand :zap:
-- [ ] I'm feeling lucky ! Play Random stations
+- [ ] I'm feeling lucky! Play Random stations
 
 
 > See my progress [here](https://github.com/deep5050/radio-active/projects/1)
@@ -55,18 +55,18 @@ Just run: `pip3 install --upgrade radio-active`
 It needs [FFmpeg](https://ffmpeg.org/download.html) to be installed on your
 system in order to play the audio
 
-on Ubuntu based system >= 20.04 Run
+on Ubuntu-based system >= 20.04 Run
 
 ```
 sudo apt update
 sudo apt install ffmpeg
 ```
 
-For other systems including windows see the above link
+For other systems including Windows see the above link
 
 #### Installing FFmpeg
 
-FFmpeg is required for this program to work correctly. Install FFmpeg by following these steps :-
+FFmpeg is required for this program to work correctly. Install FFmpeg by following these steps:-
 
 - On Linux - <https://www.tecmint.com/install-ffmpeg-in-linux/>
 - On Windows - <https://www.wikihow.com/Install-FFmpeg-on-Windows>
@@ -74,12 +74,12 @@ FFmpeg is required for this program to work correctly. Install FFmpeg by followi
 
 ### Run
 
-Search a station with `radio --search [STATION_NAME]` or as simply `radio` :zap: to select from favorite menu.
+Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to select from the favorite menu.
 
 ### Tips
 
 1. Use a modern terminal emulator, otherwise the UI might break! (gets too ugly sometimes)
-2. On Windows, instead of default Command Prompt, use the new Windows Terminal or web-based emulators like hyper,Cmdr,Terminus etc. for better UI
+2. On Windows, instead of the default Command Prompt, use the new Windows Terminal or web-based emulators like Hyper, Cmdr, Terminus, etc. for better UI
 3. Let the app run for at least 5 seconds (not a serious issue though, for better performance)
 
 
@@ -121,23 +121,23 @@ Search a station with `radio --search [STATION_NAME]` or as simply `radio` :zap:
 
 
 
-> `--search`, `-S` : Search for a station on the internet.
+> `--search`, `-S`: Search for a station online.
 
-> `--play`, `-P`: You can pass an exact name from your favorite stations or alternatively pass any direct stream url. This would bypass any user slection menu (useful when running from another srcipt)
+> `--play`, `-P`: You can pass an exact name from your favorite stations or alternatively pass any direct stream URL. This would bypass any user selection menu (useful when running from another script)
 
-> `--uuid`,`-U` : When station names are too long or confusing (or multiple
-> results for the same name) use the station's uuid to play . --uuid gets the
-> greater priority than `--search`. Example: 96444e20-0601-11e8-ae97-52543be04c81. type `u` on runtime command to get the UUID of a station.
+> `--uuid`,`-U`: When station names are too long or confusing (or multiple
+> results for the same name) use the station's uuid to play. --uuid gets the
+> greater priority than `--search`. Example: 96444e20-0601-11e8-ae97-52543be04c81. type `u` on the runtime command to get the UUID of a station.
 
-> `--loglevel`, : Don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug`
+> `--loglevel`,: Don't need to specify unless you are developing it. `info`, `warning`, `error`, `debug`
 
-> `-F` : Add current station to your favorite list. Example: `-F my_fav_1`
+> `-F`: Add the current station to your favorite list. Example: `-F my_fav_1`
 
 > `-A`: Add any stations to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream.
 
-> `--limit`: Specify how much search results should be diplayed.
+> `--limit`: Specify how many search results should be displayed.
 
-> `--filetype`: Specify the extension of the final recording file. default is `mp3`. you can provide `-T auto` to autodetect the codec and set file extension accrodingly (in original form).
+> `--filetype`: Specify the extension of the final recording file. default is `mp3`. you can provide `-T auto` to autodetect the codec and set file extension accordingly (in original form).
 
 > DEFAULT_DIR: is `/home/user/Music/radioactive`
 
@@ -152,17 +152,17 @@ q/Q/quit: Quit radioactive
 h/H/help/?: Show this help message
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
-rf/RF/recordfile: Speficy a filename for the recording.
+rf/RF/recordfile: Specify a filename for the recording.
 ```
 
 
 ### Bonus Tips
 
-1. when using `rf`: you can force the recording to be in mp3 format by adding an extension to the file name. Example "talk-show.mp3". If you dont specify any extension it should auto detect. Example "new_show"
+1. when using `rf`: you can force the recording to be in mp3 format by adding an extension to the file name. Example "talk-show.mp3". If you don't specify any extension it should auto-detect. Example "new_show"
 
-2. You don't have to pass the exact option name, a portion of will also work. for example `--sea` for `--search`, `--coun` for `--country`, `--lim` for `--limit`
+2. You don't have to pass the exact option name, a portion of it will also work. for example `--sea` for `--search`, `--coun` for `--country`, `--lim` for `--limit`
 
-3. It's better to leave the `--filetype` as mp3 when you need to record something quickly. The autocodec takes a few miliseconds extra to determine the codec.
+3. It's better to leave the `--filetype` as mp3 when you need to record something quickly. The autocodec takes a few milliseconds extra to determine the codec.
 
 ### Changes
 
