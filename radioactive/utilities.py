@@ -48,7 +48,7 @@ def handle_record(
     elif record_file_format == "auto":
         log.debug("Codec: fetching stream codec")
         codec = record_audio_auto_codec(target_url)
-        if code is None:
+        if codec is None:
             record_file_format = "mp3"  # defult to mp3
             force_mp3 = True
             log.debug("Error: could not detect codec. falling back to mp3")
