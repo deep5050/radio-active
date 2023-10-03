@@ -42,14 +42,14 @@ def handle_record(
     force_mp3 = False
 
     if record_file_format != "mp3" and record_file_format != "auto":
-        record_file_format = "mp3"  # defult to mp3
+        record_file_format = "mp3"  # default to mp3
         log.debug("Error: wrong codec supplied!. falling back to mp3")
         force_mp3 = True
     elif record_file_format == "auto":
         log.debug("Codec: fetching stream codec")
         codec = record_audio_auto_codec(target_url)
         if codec is None:
-            record_file_format = "mp3"  # defult to mp3
+            record_file_format = "mp3"  # default to mp3
             force_mp3 = True
             log.debug("Error: could not detect codec. falling back to mp3")
         else:
@@ -71,6 +71,7 @@ def handle_record(
             os.makedirs(record_file_path, exist_ok=True)
         except Exception as e:
             log.debug("{}".format(e))
+            log.error("Could not make default directory")
             sys.exit(1)
 
     now = datetime.datetime.now()
@@ -78,8 +79,8 @@ def handle_record(
     # Format AM/PM as 'AM' or 'PM'
     am_pm = now.strftime("%p")
 
+    # format is : day-monthname-year@hour-minute-second-(AM/PM)
     formatted_date_time = now.strftime(f"%d-{month_name}-%Y@%I-%M-%S-{am_pm}")
-    # formatted_date_time = now.strftime("%y-%m-%d-%H:%M:%S")
 
     if not record_file_format.strip():
         record_file_format = "mp3"
@@ -180,7 +181,7 @@ def handle_station_uuid_play(handler, station_uuid):
         station_url = handler.target_station["url"]
     except Exception as e:
         log.debug("{}".format(e))
-        log.error("Somethig went wrong")
+        log.error("Something went wrong")
         sys.exit(1)
 
     return station_name, station_url
@@ -190,7 +191,6 @@ def handle_search_stations(handler, station_name, limit):
     log.debug("Searching API for: {}".format(station_name))
 
     return handler.search_by_station_name(station_name, limit)
-    # TODO: ask user to play using a # number of the result
 
 
 def handle_station_selection_menu(handler, last_station, alias):
@@ -292,7 +292,7 @@ def handle_listen_keypress(
                 file_name, file_ext = user_input.split(".")
                 if file_ext == "mp3":
                     log.debug("codec: force mp3")
-                    # overwrite otoginal codec with "mp3"
+                    # overwrite original codec with "mp3"
                     record_file_format = "mp3"
                 else:
                     log.warning("You can only specify mp3 as file extension.\n")
@@ -357,7 +357,7 @@ def handle_user_choice_from_search_result(handler, response):
             log.debug("Playing UUID from single response")
             return handle_station_uuid_play(handler, response[0]["stationuuid"])
         else:
-            log.debug("Quiting")
+            log.debug("Quitting")
             sys.exit(0)
     else:
         # multiple station
@@ -390,13 +390,13 @@ def handle_direct_play(alias, station_name_or_url=""):
         # station name from fav list
         # search for the station in fav list and return name and url
 
-        respone = alias.search(station_name_or_url)
-        if not respone:
+        response = alias.search(station_name_or_url)
+        if not response:
             log.error("No station found on your favorite list with the name")
             sys.exit(1)
         else:
-            log.debug("Direct play: {}".format(respone))
-            return respone["name"], respone["uuid_or_url"]
+            log.debug("Direct play: {}".format(response))
+            return response["name"], response["uuid_or_url"]
 
 
 def handle_play_last_station(last_station):

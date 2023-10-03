@@ -1,4 +1,3 @@
-import re
 import subprocess
 
 from zenlog import log
@@ -50,21 +49,20 @@ def record_audio_from_url(input_url, output_file, force_mp3, loglevel):
             log.debug("Record: force libmp3lame")
         else:
             # file will be saved as as provided. this is more error prone
-            # file extension must match the actual stream coedec
+            # file extension must match the actual stream codec
             ffmpeg_command.append("copy")
 
+        ffmpeg_command.append("-loglevel")
         if loglevel == "debug":
-            ffmpeg_command.append("-loglevel")
             ffmpeg_command.append("info")
         else:
-            ffmpeg_command.append("-loglevel"),
             ffmpeg_command.append("error"),
             ffmpeg_command.append("-hide_banner")
 
         # output file
         ffmpeg_command.append(output_file)
 
-        # Run FFmpeg command on frouground to catch 'q' without
+        # Run FFmpeg command on foreground to catch 'q' without
         # any complex thread for now
         subprocess.run(ffmpeg_command, check=True)
 

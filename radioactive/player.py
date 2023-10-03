@@ -101,6 +101,7 @@ class Player:
         while self.is_running:
             stderr_result = self.process.stderr.readline()
             if stderr_result:
+                print()  # pass a blank line to command for better log messages
                 log.error("Could not connect to the station")
                 try:
                     # try to show the debug info

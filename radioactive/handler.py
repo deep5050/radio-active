@@ -58,8 +58,6 @@ class Handler:
         if not self.response:
             log.error("No stations found by the name")
             return []
-        # TODO: remove sys exit
-        # sys.exit(0)  # considering it as not an error
 
         # when multiple results found
         if len(self.response) > 1:
@@ -81,7 +79,7 @@ class Handler:
                     station["countrycode"],
                     trim_string(
                         station["tags"]
-                    ),  # trimming tags to make the table shortrer
+                    ),  # trimming tags to make the table shorter
                 )
 
             console.print(table)
@@ -90,8 +88,6 @@ class Handler:
                 \ntry to maximize the window , decrease the font by a bit and retry"
             )
             return self.response
-            # TODO: remove sys exit
-            # sys.exit(0)
 
         # when exactly one response found
         if len(self.response) == 1:
@@ -107,7 +103,6 @@ class Handler:
     # ---------------------------- NAME -------------------------------- #
     def search_by_station_name(self, _name=None, limit=100):
         """search and play a station by its name"""
-        # TODO: handle exact error
         try:
             self.response = self.API.search(name=_name, name_exact=False, limit=limit)
             return self.station_validator()
@@ -119,7 +114,6 @@ class Handler:
     # ------------------------- UUID ------------------------ #
     def play_by_station_uuid(self, _uuid):
         """search and play station by its stationuuid"""
-        # TODO: handle exact error
         try:
             self.response = self.API.station_by_uuid(_uuid)
             return self.station_validator()  # should return a station name also
