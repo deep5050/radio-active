@@ -1,8 +1,9 @@
 <div align=center>
 <p align=center><img src=https://user-images.githubusercontent.com/27947066/267328833-3e81a98e-2acb-4291-89cb-f3f9bed6c299.png width=250px></p>
-<h1 align=center> RADIO-ACTIVE </h1>
+<h1 align=center> RADIOACTIVE </h1>
+<p> SEARCH - PLAY - RECORD - REPEAT </p>
 
-<p align=center> Play any radios around the globe right from your terminal </p>
+<p align=center> Play and record any radio stations around the globe right from your terminal </p>
 
 <a href="https://www.producthunt.com/posts/radio-active?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-radio-active" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=305380&theme=dark" alt="radio-active - Play more than 30K radio stations from your terminal | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
@@ -44,6 +45,10 @@
 
 > See my progress [here](https://github.com/deep5050/radio-active/projects/1)
 
+### Install
+
+Just run: `pip3 install --upgrade radio-active`
+
 
 ### External Dependency
 
@@ -67,15 +72,9 @@ FFmpeg is required for this program to work correctly. Install FFmpeg by followi
 - On Windows - <https://www.wikihow.com/Install-FFmpeg-on-Windows>
 
 
-### Install
-
-Just run: `pip3 install --upgrade radio-active`
-
-I encourage you to install with pipx: `pipx install radio-active`
-
 ### Run
 
-Run with `radio --search [STATION_NAME]` or as simply `radio` :zap: to select from favorite menu.
+Search a station with `radio --search [STATION_NAME]` or as simply `radio` :zap: to select from favorite menu.
 
 ### Tips
 
@@ -86,9 +85,9 @@ Run with `radio --search [STATION_NAME]` or as simply `radio` :zap: to select fr
 
 ### Demo
 
-<a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src=https://user-images.githubusercontent.com/27947066/267328820-f7264e02-edc1-46f3-9548-5dfb50a6627d.jpg /> </a>
-<hr>
-<a align=center href="https://asciinema.org/a/412285" target="_blank"><img src="https://asciinema.org/a/412285.svg" /></a>
+<!-- <a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src=https://user-images.githubusercontent.com/27947066/267328820-f7264e02-edc1-46f3-9548-5dfb50a6627d.jpg /> </a>
+<hr> -->
+<a align=center href="https://asciinema.org/a/611668" target="_blank"><img src="https://asciinema.org/a/611668.svg" /></a>
 
 
 
@@ -157,7 +156,13 @@ rf/RF/recordfile: Speficy a filename for the recording.
 ```
 
 
-> **TIP**: when using `rf`: you can force the recording to be in mp3 format by adding an extension to the file name. Example "talk-show.mp3". If you dont specify any extension it should auto detect. Example "new_show"
+### Bonus Tips
+
+1. when using `rf`: you can force the recording to be in mp3 format by adding an extension to the file name. Example "talk-show.mp3". If you dont specify any extension it should auto detect. Example "new_show"
+
+2. You don't have to pass the exact option name, a portion of will also work. for example `--sea` for `--search`, `--coun` for `--country`, `--lim` for `--limit`
+
+3. It's better to leave the `--filetype` as mp3 when you need to record something quickly. The autocodec takes a few miliseconds extra to determine the codec.
 
 ### Changes
 
