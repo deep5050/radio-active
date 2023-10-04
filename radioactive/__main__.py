@@ -13,24 +13,18 @@ from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player, kill_background_ffplays
-from radioactive.utilities import (
-    handle_add_station,
-    handle_add_to_favorite,
-    handle_current_play_panel,
-    handle_direct_play,
-    handle_favorite_table,
-    handle_listen_keypress,
-    handle_log_level,
-    handle_play_last_station,
-    handle_record,
-    handle_save_last_station,
-    handle_search_stations,
-    handle_station_selection_menu,
-    handle_station_uuid_play,
-    handle_update_screen,
-    handle_user_choice_from_search_result,
-    handle_welcome_screen,
-)
+from radioactive.utilities import (handle_add_station, handle_add_to_favorite,
+                                   handle_current_play_panel,
+                                   handle_direct_play, handle_favorite_table,
+                                   handle_listen_keypress, handle_log_level,
+                                   handle_play_last_station, handle_record,
+                                   handle_save_last_station,
+                                   handle_search_stations,
+                                   handle_station_selection_menu,
+                                   handle_station_uuid_play,
+                                   handle_update_screen,
+                                   handle_user_choice_from_search_result,
+                                   handle_welcome_screen)
 
 # globally needed as signal handler needs it
 # to terminate main() properly

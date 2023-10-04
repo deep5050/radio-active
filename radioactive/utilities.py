@@ -10,12 +10,11 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
-
 from zenlog import log
 
 from radioactive.last_station import Last_station
 from radioactive.player import kill_background_ffplays
-from radioactive.recorder import record_audio_from_url, record_audio_auto_codec
+from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
 
 RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
