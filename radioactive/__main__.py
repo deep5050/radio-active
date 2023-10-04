@@ -4,7 +4,6 @@ import signal
 import sys
 from time import sleep
 
-from rich.console import Console
 from zenlog import log
 
 from radioactive.alias import Alias
@@ -14,28 +13,67 @@ from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player, kill_background_ffplays
-from radioactive.utilities import (
-    handle_add_station,
-    handle_add_to_favorite,
-    handle_current_play_panel,
-    handle_direct_play,
-    handle_favorite_table,
-    handle_listen_keypress,
-    handle_log_level,
-    handle_play_last_station,
-    handle_record,
-    handle_save_last_station,
-    handle_search_stations,
-    handle_station_selection_menu,
-    handle_station_uuid_play,
-    handle_update_screen,
-    handle_user_choice_from_search_result,
-    handle_welcome_screen,
-)
+from radioactive.utilities import (handle_add_station, handle_add_to_favorite,
+                                   handle_current_play_panel,
+                                   handle_direct_play, handle_favorite_table,
+                                   handle_listen_keypress, handle_log_level,
+                                   handle_play_last_station, handle_record,
+                                   handle_save_last_station,
+                                   handle_search_stations,
+                                   handle_station_selection_menu,
+                                   handle_station_uuid_play,
+                                   handle_update_screen,
+                                   handle_user_choice_from_search_result,
+                                   handle_welcome_screen)
 
 # globally needed as signal handler needs it
 # to terminate main() properly
 player = None
+
+
+def final_step(options, last_station, alias, handler):
+    global player
+    # check target URL for the last time
+    if options["target_url"].strip() == "":
+        log.error("something is wrong with the url")
+        sys.exit(1)
+
+    if options["curr_station_name"].strip() == "":
+        options["curr_station_name"] = "N/A"
+
+    player = Player(options["target_url"], options["volume"], options["loglevel"])
+
+    handle_save_last_station(
+        last_station, options["curr_station_name"], options["target_url"]
+    )
+
+    if options["add_to_favorite"]:
+        handle_add_to_favorite(
+            alias, options["curr_station_name"], options["target_url"]
+        )
+
+    handle_current_play_panel(options["curr_station_name"])
+
+    if options["record_stream"]:
+        handle_record(
+            options["target_url"],
+            options["curr_station_name"],
+            options["record_file_path"],
+            options["record_file"],
+            options["record_file_format"],
+            options["loglevel"],
+        )
+
+    handle_listen_keypress(
+        alias,
+        target_url=options["target_url"],
+        station_name=options["curr_station_name"],
+        station_url=options["target_url"],
+        record_file_path=options["record_file_path"],
+        record_file=options["record_file"],
+        record_file_format=options["record_file_format"],
+        loglevel=options["loglevel"],
+    )
 
 
 def main():
@@ -44,36 +82,38 @@ def main():
     app = App()
     args = parser.parse()
 
+    options = {}
     # ----------------- all the args ------------- #
-    show_help_table = args.help
-    search_station_name = args.search_station_name
-    direct_play = args.direct_play
-    play_last_station = args.play_last_station
+    options["show_help_table"] = args.help
+    options["search_station_name"] = args.search_station_name
+    options["direct_play"] = args.direct_play
+    options["play_last_station"] = args.play_last_station
 
-    search_station_uuid = args.search_station_uuid
+    options["search_station_uuid"] = args.search_station_uuid
 
-    discover_country_code = args.discover_country_code
-    discover_state = args.discover_state
-    discover_language = args.discover_language
-    discover_tag = args.discover_tag
+    options["discover_country_code"] = args.discover_country_code
+    options["discover_state"] = args.discover_state
+    options["discover_language"] = args.discover_language
+    options["discover_tag"] = args.discover_tag
 
     limit = args.limit
-    limit = int(limit) if limit else 100
+    options["limit"] = int(limit) if limit else 100
     log.debug("limit is set to: {}".format(limit))
 
-    add_station = args.new_station
-    add_to_favorite = args.add_to_favorite
-    show_favorite_list = args.show_favorite_list
+    options["add_station"] = args.new_station
+    options["add_to_favorite"] = args.add_to_favorite
+    options["show_favorite_list"] = args.show_favorite_list
 
-    flush_fav_list = args.flush
-    kill_ffplays = args.kill_ffplays
+    options["flush_fav_list"] = args.flush
+    options["kill_ffplays"] = args.kill_ffplays
 
-    record_stream = args.record_stream
-    record_file = args.record_file
-    record_file_format = args.record_file_format
-    record_file_path = args.record_file_path
+    options["record_stream"] = args.record_stream
+    options["record_file"] = args.record_file
+    options["record_file_format"] = args.record_file_format
+    options["record_file_path"] = args.record_file_path
 
-    target_url = ""
+    options["target_url"] = ""
+    options["volume"] = args.volume
 
     VERSION = app.get_version()
 
@@ -89,116 +129,138 @@ def main():
         log.info("RADIO-ACTIVE : version {}".format(VERSION))
         sys.exit(0)
 
-    if show_help_table:
+    if options["show_help_table"]:
         show_help()
         sys.exit(0)
-    handle_log_level(args)
 
-    if flush_fav_list:
+    options["loglevel"] = handle_log_level(args)
+
+    if options["flush_fav_list"]:
         sys.exit(alias.flush())
 
-    if kill_ffplays:
+    if options["kill_ffplays"]:
         kill_background_ffplays()
         sys.exit(0)
 
-    if show_favorite_list:
+    if options["show_favorite_list"]:
         handle_favorite_table(alias)
         sys.exit(0)
 
-    if add_station:
+    if options["add_station"]:
         handle_add_station(alias)
 
     handle_update_screen(app)
 
-    if discover_country_code:
-        handler.discover_by_country(discover_country_code, limit)
+    # ----------- country ----------- #
+    if options["discover_country_code"]:
+        response = handler.discover_by_country(
+            options["discover_country_code"], options["limit"]
+        )
+        if response is not None:
+            (
+                options["curr_station_name"],
+                options["target_url"],
+            ) = handle_user_choice_from_search_result(handler, response)
+            final_step(options, last_station, alias, handler)
+        else:
+            sys.exit(0)
 
-    if discover_state:
-        handler.discover_by_state(discover_state, limit)
+    # -------------- state ------------- #
+    if options["discover_state"]:
+        response = handler.discover_by_state(
+            options["discover_state"], options["limit"]
+        )
+        if response is not None:
+            (
+                options["curr_station_name"],
+                options["target_url"],
+            ) = handle_user_choice_from_search_result(handler, response)
+            final_step(options, last_station, alias, handler)
+        else:
+            sys.exit(0)
 
-    if discover_language:
-        handler.discover_by_language(discover_language, limit)
+    # ----------- language ------------ #
+    if options["discover_language"]:
+        response = handler.discover_by_language(
+            options["discover_language"], options["limit"]
+        )
+        if response is not None:
+            (
+                options["curr_station_name"],
+                options["target_url"],
+            ) = handle_user_choice_from_search_result(handler, response)
+            final_step(options, last_station, alias, handler)
+        else:
+            sys.exit(0)
 
-    if discover_tag:
-        handler.discover_by_tag(discover_tag, limit)
+    # -------------- tag ------------- #
+    if options["discover_tag"]:
+        response = handler.discover_by_tag(options["discover_tag"], options["limit"])
+        if response is not None:
+            (
+                options["curr_station_name"],
+                options["target_url"],
+            ) = handle_user_choice_from_search_result(handler, response)
+            final_step(options, last_station, alias, handler)
+        else:
+            sys.exit(0)
 
     # -------------------- NOTHING PROVIDED --------------------- #
-    # if neither of --search and --uuid provided
     if (
-        search_station_name is None
-        and search_station_uuid is None
-        and direct_play is None
-        and not play_last_station
+        options["search_station_name"] is None
+        and options["search_station_uuid"] is None
+        and options["direct_play"] is None
+        and not options["play_last_station"]
     ):
-        curr_station_name, target_url = handle_station_selection_menu(
-            handler, last_station, alias
-        )
+        (
+            options["curr_station_name"],
+            options["target_url"],
+        ) = handle_station_selection_menu(handler, last_station, alias)
+        final_step(options, last_station, alias, handler)
 
     # --------------------ONLY UUID PROVIDED --------------------- #
 
-    if search_station_uuid is not None:
-        curr_station_name, target_url = handle_station_uuid_play(
-            handler, search_station_uuid
+    if options["search_station_uuid"] is not None:
+        options["curr_station_name"], options["target_url"] = handle_station_uuid_play(
+            handler, options["search_station_uuid"]
         )
+        final_step(options, last_station, alias, handler)
 
     # ------------------- ONLY STATION PROVIDED ------------------ #
 
     elif (
-        search_station_name is not None
-        and search_station_uuid is None
-        and direct_play is None
+        options["search_station_name"] is not None
+        and options["search_station_uuid"] is None
+        and options["direct_play"] is None
     ):
         response = [{}]
-        response = handle_search_stations(handler, search_station_name, limit)
+        response = handle_search_stations(
+            handler, options["search_station_name"], options["limit"]
+        )
         if response is not None:
-            curr_station_name, target_url = handle_user_choice_from_search_result(
-                handler, response
-            )
+            (
+                options["curr_station_name"],
+                options["target_url"],
+            ) = handle_user_choice_from_search_result(handler, response)
+            # options["codec"] = response["codec"]
+            # print(response)
+            final_step(options, last_station, alias, handler)
         else:
             sys.exit(0)
     # ------------------------- direct play ------------------------#
-    if direct_play is not None:
-        curr_station_name, target_url = handle_direct_play(alias, direct_play)
-
-    if play_last_station:
-        curr_station_name, target_url = handle_play_last_station(last_station)
-    # ---------------------- player ------------------------ #
-    # check target URL for the last time
-    if target_url.strip() == "":
-        log.error("something is wrong with the url")
-        sys.exit(1)
-
-    if curr_station_name.strip() == "":
-        curr_station_name = "N/A"
-
-    global player
-    player = Player(target_url, args.volume)
-
-    handle_save_last_station(last_station, curr_station_name, target_url)
-
-    if add_to_favorite:
-        handle_add_to_favorite(alias, curr_station_name, target_url)
-
-    handle_current_play_panel(curr_station_name)
-
-    if record_stream:
-        handle_record(
-            target_url,
-            curr_station_name,
-            record_file_path,
-            record_file,
-            record_file_format,
+    if options["direct_play"] is not None:
+        options["curr_station_name"], options["target_url"] = handle_direct_play(
+            alias, options["direct_play"]
         )
+        final_step(options, last_station, alias, handler)
 
-    handle_listen_keypress(
-        alias=alias,
-        target_url=target_url,
-        station_name=curr_station_name,
-        station_url=target_url,
-        record_file_path=record_file_path,
-        record_file=record_file,
-        record_file_format=record_file_format,
-    )
+    if options["play_last_station"]:
+        options["curr_station_name"], options["target_url"] = handle_play_last_station(
+            last_station
+        )
+        final_step(options, last_station, alias, handler)
+
+    # final_step()
 
     if os.name == "nt":
         while True:

@@ -40,13 +40,14 @@ class Player:
     FFmepg required to be installed separately
     """
 
-    def __init__(self, URL, volume):
+    def __init__(self, URL, volume, loglevel):
         self.url = URL
         self.volume = volume
         self.is_playing = False
         self.process = None
         self.exe_path = None
         self.program_name = "ffplay"  # constant value
+        self.loglevel = loglevel
 
         log.debug("player: url => {}".format(self.url))
         # check if FFplay is installed
@@ -60,18 +61,26 @@ class Player:
         self.start_process()
 
     def start_process(self):
+        ffplay_commands = [
+            self.exe_path,
+            "-volume",
+            f"{self.volume}",
+            "-vn",  # no video playback
+            self.url,
+        ]
+
+        if self.loglevel == "debug":
+            # don't add no disp and
+            ffplay_commands.append("-loglevel")
+            ffplay_commands.append("error")
+
+        else:
+            ffplay_commands.append("-loglevel")
+            ffplay_commands.append("error")
+            ffplay_commands.append("-nodisp")
         try:
             self.process = subprocess.Popen(
-                [
-                    self.exe_path,
-                    "-nodisp",
-                    "-nostats",
-                    "-loglevel",
-                    "error",
-                    "-volume",
-                    f"{self.volume}",
-                    self.url,
-                ],
+                ffplay_commands,
                 shell=False,
                 stdout=subprocess.PIPE,  # Capture standard output
                 stderr=subprocess.PIPE,  # Capture standard error
@@ -92,6 +101,7 @@ class Player:
         while self.is_running:
             stderr_result = self.process.stderr.readline()
             if stderr_result:
+                print()  # pass a blank line to command for better log messages
                 log.error("Could not connect to the station")
                 try:
                     # try to show the debug info

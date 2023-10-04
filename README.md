@@ -1,8 +1,9 @@
 <div align=center>
 <p align=center><img src=https://user-images.githubusercontent.com/27947066/267328833-3e81a98e-2acb-4291-89cb-f3f9bed6c299.png width=250px></p>
-<h1 align=center> RADIO-ACTIVE </h1>
+<h1 align=center> RADIOACTIVE </h1>
+<p> SEARCH - PLAY - RECORD - REPEAT </p>
 
-<p align=center> Play any radios around the globe right from your terminal </p>
+<p align=center> Play and record any radio stations around the globe right from your terminal </p>
 
 <a href="https://www.producthunt.com/posts/radio-active?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-radio-active" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=305380&theme=dark" alt="radio-active - Play more than 30K radio stations from your terminal | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
@@ -34,15 +35,19 @@
 - [x] Selection menu for favorite stations
 - [x] Supports user-added stations :wrench:
 - [x] Looks minimal and user-friendly
-- [x] Runs on Raspberry-Pi
+- [x] Runs on Raspberry Pi
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
 - [x] Record audio from live radio on demand :zap:
-- [ ] I'm feeling lucky ! Play Random stations
+- [ ] I'm feeling lucky! Play Random stations
 
 
 > See my progress [here](https://github.com/deep5050/radio-active/projects/1)
+
+### Install
+
+Just run: `pip3 install --upgrade radio-active`
 
 
 ### External Dependency
@@ -50,91 +55,91 @@
 It needs [FFmpeg](https://ffmpeg.org/download.html) to be installed on your
 system in order to play the audio
 
-on Ubuntu based system >= 20.04 Run
+on Ubuntu-based system >= 20.04 Run
 
 ```
 sudo apt update
 sudo apt install ffmpeg
 ```
 
-For other systems including windows see the above link
+For other systems including Windows see the above link
 
 #### Installing FFmpeg
 
-FFmpeg is required for this program to work correctly. Install FFmpeg by following these steps :-
+FFmpeg is required for this program to work correctly. Install FFmpeg by following these steps:-
 
 - On Linux - <https://www.tecmint.com/install-ffmpeg-in-linux/>
 - On Windows - <https://www.wikihow.com/Install-FFmpeg-on-Windows>
 
 
-### Install
-
-Just run: `pip3 install --upgrade radio-active`
-
-I encourage you to install with pipx: `pipx install radio-active`
-
 ### Run
 
-Run with `radioactive --search [STATION_NAME]` or as simply `radio -U [UUID] ` :zap:
+Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to select from the favorite menu.
 
 ### Tips
 
 1. Use a modern terminal emulator, otherwise the UI might break! (gets too ugly sometimes)
-2. On Windows, instead of default Command Prompt, use the new Windows Terminal or web-based emulators like hyper,Cmdr,Terminus etc. for better UI
+2. On Windows, instead of the default Command Prompt, use the new Windows Terminal or web-based emulators like Hyper, Cmdr, Terminus, etc. for better UI
 3. Let the app run for at least 5 seconds (not a serious issue though, for better performance)
 
 
 ### Demo
 
-<a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src=https://user-images.githubusercontent.com/27947066/267328820-f7264e02-edc1-46f3-9548-5dfb50a6627d.jpg /> </a>
-<hr>
-<a align=center href="https://asciinema.org/a/412285" target="_blank"><img src="https://asciinema.org/a/412285.svg" /></a>
+<!-- <a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src=https://user-images.githubusercontent.com/27947066/267328820-f7264e02-edc1-46f3-9548-5dfb50a6627d.jpg /> </a>
+<hr> -->
+<a align=center href="https://asciinema.org/a/611668" target="_blank"><img src="https://asciinema.org/a/611668.svg" /></a>
 
 
 
 ### Options
 
 
-| Argument                      | Note                                | Description                                    | Default                 |
-| ----------------------------- | ----------------------------------- | ---------------------------------------------- | ----------------------- |
-| `--search`, `-S`              | Required (Optional from second run) | Station name                                   | None                    |
-| `--play`, `-P`                | Optional                            | A station from fav list or url for direct play | None                    |
-| `--last`                      | Optional                            | Play last played station                       | False                   |
-| `--uuid`, `-U`                | Optional                            | ID of the station                              | None                    |
-| `--loglevel`                  | Optional                            | Log level of the program                       | Info                    |
-| `--add` , `-A`        | Optional                            | Add an entry to fav list                       | False                   |
-| `--list`, `-W`  | Optional                            | Show fav list                                  | False                   |
-| `--favorite`, `-F`     | Optional                            | Add current station to fav list                | False                   |
-| `--flush`                     | Optional                            | Remove all the entries from fav list           | False                   |
-| `--country`, `-C` | Optional                            | Discover stations by country code              | False                   |
-| `--state`         | Optional                            | Discover stations by country state             | False                   |
-| `--tag`           | Optional                            | Discover stations by tags/genre                | False                   |
-| `--language`      | optional                            | Discover stations by                           | False                   |
-| `--limit`                     | Optional                            | Limit the # of results in the Discover table   | 100                     |
-| `--volume` , `-V`             | Optional                            | Change the volume passed into ffplay           | 80                      |
-| `--kill` , `-K`               | Optional                            | Kill background radios.                        | False                   |
-| `--record` , `-R`             | Optional                            | Record a station and save to file              | False                   |
-| `--filename`, `-N`            | Optional                            | Filename to used to save the recorded audio    | None                    |
-| `--filepath`                  | Optional                            | Path to save the recordings                    | /User/Music/radioactive |
-| `--filetype`, `-T`            | Optional                            | Format of the recording (mp3/wav)              | mp3                     |
-|                               |                                     |                                                |                         |
+| Argument           | Note                                | Description                                    | Default       |
+| ------------------ | ----------------------------------- | ---------------------------------------------- | ------------- |
+| `--search`, `-S`   | Required (Optional from second run) | Station name                                   | None          |
+| `--play`, `-P`     | Optional                            | A station from fav list or url for direct play | None          |
+| `--last`           | Optional                            | Play last played station                       | False         |
+| `--uuid`, `-U`     | Optional                            | ID of the station                              | None          |
+| `--loglevel`       | Optional                            | Log level of the program                       | Info          |
+| `--add` , `-A`     | Optional                            | Add an entry to fav list                       | False         |
+| `--list`, `-W`     | Optional                            | Show fav list                                  | False         |
+| `--favorite`, `-F` | Optional                            | Add current station to fav list                | False         |
+| `--flush`          | Optional                            | Remove all the entries from fav list           | False         |
+| `--country`, `-C`  | Optional                            | Discover stations by country code              | False         |
+| `--state`          | Optional                            | Discover stations by country state             | False         |
+| `--tag`            | Optional                            | Discover stations by tags/genre                | False         |
+| `--language`       | optional                            | Discover stations by                           | False         |
+| `--limit`          | Optional                            | Limit the # of results in the Discover table   | 100           |
+| `--volume` , `-V`  | Optional                            | Change the volume passed into ffplay           | 80            |
+| `--kill` , `-K`    | Optional                            | Kill background radios.                        | False         |
+| `--record` , `-R`  | Optional                            | Record a station and save to file              | False         |
+| `--filename`, `-N` | Optional                            | Filename to used to save the recorded audio    | None          |
+| `--filepath`       | Optional                            | Path to save the recordings                    | <DEFAULT_DIR> |
+| `--filetype`, `-T` | Optional                            | Format of the recording (mp3/auto)             | mp3           |
+
 <hr>
 
 
-> `--search`, `-S` : Expects a station name to be played . Example: "pehla nasha" ,
-> pehla_nasha, bbc_radio
 
-> `--play`, `-P`: You can pass an exact name from your favorite stations or alternatively pass any direct stream url. This would bypass any user slection menu (useful when running from another srcipt)
+> `--search`, `-S`: Search for a station online.
 
-> `--uuid`,`-U` : When station names are too long or confusing (or multiple
-> results for the same name) use the station's uuid to play . --uuid gets the
-> greater priority than `--search`. Example: 96444e20-0601-11e8-ae97-52543be04c81
+> `--play`, `-P`: You can pass an exact name from your favorite stations or alternatively pass any direct stream URL. This would bypass any user selection menu (useful when running from another script)
 
-> `--loglevel`, : Don't need to specify unless you are developing it. `info` , `warning` , `error` , `debug`
+> `--uuid`,`-U`: When station names are too long or confusing (or multiple
+> results for the same name) use the station's uuid to play. --uuid gets the
+> greater priority than `--search`. Example: 96444e20-0601-11e8-ae97-52543be04c81. type `u` on the runtime command to get the UUID of a station.
 
-> `-F` : Add current station to your favorite list. Example: `-F my_fav_1`
+> `--loglevel`,: Don't need to specify unless you are developing it. `info`, `warning`, `error`, `debug`
+
+> `-F`: Add the current station to your favorite list. Example: `-F my_fav_1`
 
 > `-A`: Add any stations to your list. You can add stations that are not currently available on our API. When adding a new station enter a name and direct URL to the audio stream.
+
+> `--limit`: Specify how many search results should be displayed.
+
+> `--filetype`: Specify the extension of the final recording file. default is `mp3`. you can provide `-T auto` to autodetect the codec and set file extension accordingly (in original form).
+
+> DEFAULT_DIR: is `/home/user/Music/radioactive`
 
 ### Runtime Commands
 
@@ -143,15 +148,21 @@ Input a command during the radio playback to perform an action. Available comman
 ```
 Enter a command to perform an action: ?
 
-q/Q/x/quit: Quit radioactive
+q/Q/quit: Quit radioactive
 h/H/help/?: Show this help message
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
-rf/RF/recordfile: Speficy a filename for the recording
+rf/RF/recordfile: Specify a filename for the recording.
 ```
 
 
-> **TIP**: when using `rf`: specify the format of the output using the name. for example: "new-show.mp3" or "new-show.wav"
+### Bonus Tips
+
+1. when using `rf`: you can force the recording to be in mp3 format by adding an extension to the file name. Example "talk-show.mp3". If you don't specify any extension it should auto-detect. Example "new_show"
+
+2. You don't have to pass the exact option name, a portion of it will also work. for example `--sea` for `--search`, `--coun` for `--country`, `--lim` for `--limit`
+
+3. It's better to leave the `--filetype` as mp3 when you need to record something quickly. The autocodec takes a few milliseconds extra to determine the codec.
 
 ### Changes
 

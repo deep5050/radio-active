@@ -6,7 +6,9 @@ import io
 
 app = App()
 
-DESCRIPTION = "Play any radio around the globe right from the terminal"
+DESCRIPTION = (
+    "Play and record any radio stations around the globe right from the terminal"
+)
 VERSION = app.get_version()
 
 

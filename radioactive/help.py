@@ -1,6 +1,9 @@
+from os import path
+
 from rich.console import Console
-from rich.panel import Panel
 from rich.table import Table
+
+user = path.expanduser("~")
 
 
 def show_help():
@@ -104,7 +107,7 @@ def show_help():
     table.add_row(
         "--filepath",
         "Path to save the recorded audio",
-        "/User/Music/radioactive",
+        f"{user}/Music/radioactive",
     )
 
     table.add_row(
@@ -114,7 +117,7 @@ def show_help():
     )
     table.add_row(
         "--filetype, -T",
-        "Type / format of target recording",
+        "Type/codec of target recording. (mp3/auto)",
         "mp3",
     )
 
@@ -125,3 +128,6 @@ def show_help():
     )
 
     console.print(table)
+    print(
+        "For more details : https://github.com/deep5050/radio-active/blob/main/README.md"
+    )

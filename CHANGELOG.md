@@ -1,3 +1,12 @@
+## 2.8.0
+
+1. Selection menu added for `--country` and `--tag` results. Play directly from result page.
+2. `ffplay` and `ffmpeg` will show debug info while started with `--loglevel debug`
+3. Autodetect the codec information and set the file extension of the recorded file.
+4. Force a recording to be in mp3 format only.
+5. Simpler command help message
+
+
 ## 2.7.0
 
 1. Recording support added 🎉 . save recording as mp3 or wav 🎶 `--record`

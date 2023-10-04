@@ -190,8 +190,8 @@ class Parser:
             "-T",
             action="store",
             dest="record_file_format",
-            default="",
-            help="specify the audio format for recording",
+            default="mp3",
+            help="specify the audio format for recording. auto/mp3",
         )
 
     def parse(self):
