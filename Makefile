@@ -6,7 +6,7 @@ SRC_DIR = "radioactive"
 TEST_DIR = "test"
 
 .PHONY: all clean isort check dist deploy test-deploy help build install install-dev test
-all: clean format check build install
+all: clean isort format check build install
 
 check:
 	@echo "Chceking linting errors......."
