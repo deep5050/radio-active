@@ -203,7 +203,7 @@ def handle_station_selection_menu(handler, last_station, alias):
         # no last station??
         pass
 
-    log.info("You can search for a station on internet using the --search option")
+    # log.info("You can search for a station on internet using the --search option")
     title = "Please select a station from your favorite list:"
     station_selection_names = []
     station_selection_urls = []
@@ -368,6 +368,7 @@ def handle_user_choice_from_search_result(handler, response):
             if user_input in range(0, len(response)):
                 target_response = response[user_input]
                 log.debug("Selected: {}".format(target_response))
+                log.info("UUID: {}".format(target_response["stationuuid"]))
                 return handle_station_uuid_play(handler, target_response["stationuuid"])
             else:
                 log.error("Please enter an ID within the range")

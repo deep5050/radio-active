@@ -83,15 +83,15 @@ class Handler:
                 )
 
             console.print(table)
-            log.info(
-                "If the table does not fit into your screen, \
-                \ntry to maximize the window , decrease the font by a bit and retry"
-            )
+            # log.info(
+            #     "If the table does not fit into your screen, \
+            #     \ntry to maximize the window , decrease the font by a bit and retry"
+            # )
             return self.response
 
         # when exactly one response found
         if len(self.response) == 1:
-            log.info("Station found: {}".format(self.response[0]["name"].strip()))
+            # log.info("Station found: {}".format(self.response[0]["name"].strip()))
             log.debug(json.dumps(self.response[0], indent=3))
             self.target_station = self.response[0]
             # register a valid click to increase its popularity
@@ -174,10 +174,10 @@ class Handler:
                     trim_string(current_response["language"], max_length=20),
                 )
             console.print(table)
-            log.info(
-                "If the table does not fit into your screen,\
-                    \ntry to maximize the window , decrease the font by a bit and retry"
-            )
+            # log.info(
+            #     "If the table does not fit into your screen,\
+            #         \ntry to maximize the window , decrease the font by a bit and retry"
+            # )
 
             return response
         else:
@@ -213,9 +213,9 @@ class Handler:
                     trim_string(res["language"], max_length=20),
                 )
             console.print(table)
-            log.info(
-                "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
-            )
+            # log.info(
+            #     "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
+            # )
 
             return discover_result
         else:
@@ -250,9 +250,9 @@ class Handler:
                     trim_string(res["tags"], max_length=30),
                 )
             console.print(table)
-            log.info(
-                "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit and retry"
-            )
+            # log.info(
+            #     "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit and retry"
+            # )
 
             return discover_result
         else:
@@ -287,10 +287,10 @@ class Handler:
                     trim_string(res["language"], max_length=20),
                 )
             console.print(table)
-            log.info(
-                "If the table does not fit into your screen, \
-                \ntry to maximize the window , decrease the font by a bit and retry"
-            )
+            # log.info(
+            #     "If the table does not fit into your screen, \
+            #     \ntry to maximize the window , decrease the font by a bit and retry"
+            # )
             return discover_result
         else:
             log.error("No stations found for the tag, recheck it")
