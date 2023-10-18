@@ -1,4 +1,5 @@
 """ FFplay process handler """
+from __future__ import annotations
 
 import os
 import signal
@@ -7,6 +8,7 @@ import sys
 import threading
 from shutil import which
 from time import sleep
+from typing import Callable, List
 
 import psutil
 from zenlog import log
@@ -39,8 +41,14 @@ class Player:
     FFmepg required to be installed separately
     """
 
-    def __init__(self, URL, volume, loglevel):
-        self.url = URL
+    def __init__(
+        self,
+        url: str,  # TODO pass the station in the future
+        volume: int,  # [0..100] everything else is interpreted as 100 by ffplay
+        loglevel: str,
+        state_changed: List[Callable[[Player], None]] = None
+    ):
+        self.url = url
         self.volume = volume
         self.process = None
         self.exe_path = None
@@ -49,6 +57,7 @@ class Player:
         self._metadata_program = "ffprobe"  # constant value
         self._exe_metadata_path = None
         self.loglevel = loglevel
+        self._state_changed = state_changed
 
         log.debug(f"player: url => {self.url}")
         # check if FFplay is installed
@@ -121,7 +130,8 @@ class Player:
                 stderr=subprocess.PIPE,  # Capture standard error
                 text=True,  # Use text mode to capture strings
             )
-            log.debug(f"player: {self.program_name} => PID {self.process.pid} initiated")
+            log.debug(
+                f"player: {self.program_name} => PID {self.process.pid} initiated")
             # Create a thread to continuously capture and check error output
             error_thread = threading.Thread(target=self.check_error_output)
             error_thread.daemon = True
@@ -137,7 +147,10 @@ class Player:
 
     def update_title(self):
         while self.is_playing:
-            self._stream_title = self.read_title()
+            new_title = self.read_title()
+            if self._stream_title != new_title:
+                self._stream_title = new_title
+                self._informAboutChange()
             sleep(1)
         self._stream_title = ""
 
@@ -210,6 +223,8 @@ class Player:
         if self.is_playing:
             ffplay_proc = self.process
             self.process = None
+            self._stream_title = ""
+            self._informAboutChange()
             try:
                 ffplay_proc.terminate()  # Terminate the process gracefully
                 ffplay_proc.wait(timeout=5)  # Wait for process to finish
@@ -225,6 +240,11 @@ class Player:
             current_pid = os.getpid()
             os.kill(current_pid, signal.SIGINT)
 
+    def _informAboutChange(self):
+        for changed in self._state_changed:
+            changed(self)
+
+    # TODO pass the station in the future
     def switch_url(self, url: str):
         self.stop()
         self.url = url

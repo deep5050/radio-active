@@ -42,7 +42,12 @@ def final_step(options, last_station, alias, handler):
     if options["curr_station_name"].strip() == "":
         options["curr_station_name"] = "N/A"
 
-    player = Player(options["target_url"], options["volume"], options["loglevel"])
+    def curry_current_station_name_state_changed(callback_player: Optional[Player]):
+        # TODO clean this up, as soon as there's a type for stations,
+        # which holds at least the station and url
+        handle_current_play_panel(callback_player, options["curr_station_name"])
+
+    player = Player(options["target_url"], options["volume"], options["loglevel"],[curry_current_station_name_state_changed])
 
     handle_save_last_station(
         last_station, options["curr_station_name"], options["target_url"]
@@ -52,8 +57,6 @@ def final_step(options, last_station, alias, handler):
         handle_add_to_favorite(
             alias, options["curr_station_name"], options["target_url"]
         )
-
-    handle_current_play_panel(player, options["curr_station_name"])
 
     if options["record_stream"]:
         handle_record(

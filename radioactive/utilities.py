@@ -339,6 +339,7 @@ def handle_listen_keypress(
 
 
 def handle_current_play_panel(player: Optional[Player], curr_station_name=""):
+    print()
     now_playing = curr_station_name
     if player:
         now_playing += f"\n{player.read_title()}"
