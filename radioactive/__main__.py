@@ -3,6 +3,7 @@ import os
 import signal
 import sys
 from time import sleep
+from typing import Optional
 
 from zenlog import log
 
@@ -28,7 +29,7 @@ from radioactive.utilities import (handle_add_station, handle_add_to_favorite,
 
 # globally needed as signal handler needs it
 # to terminate main() properly
-player = None
+player: Optional[Player] = None
 
 
 def final_step(options, last_station, alias, handler):
