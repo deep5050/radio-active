@@ -44,6 +44,7 @@ class Player:
         self.volume = volume
         self.process = None
         self.exe_path = None
+        self._stream_title: str = ""
         self.program_name = "ffplay"  # constant value
         self._metadata_program = "ffprobe"  # constant value
         self._exe_metadata_path = None
@@ -65,6 +66,33 @@ class Player:
         else:
             log.debug(f"{self.program_name}: {self._exe_metadata_path}")
         self._start_process()
+
+    def read_title(self):
+        ffprobe_command = [
+            self._exe_metadata_path,
+            "-v", "error",
+            "-select_streams", "a:0",
+            # TODO maybe this tag is different on different stations
+            "-show_entries", "format_tags=StreamTitle",
+            "-of", "default=noprint_wrappers=1:nokey=1",
+            self.url
+        ]
+        try:
+            ffprobe_proc = subprocess.Popen(
+                ffprobe_command,
+                shell=False,
+                stdout=subprocess.PIPE,  # Capture standard output
+                stderr=subprocess.PIPE,  # Capture standard error
+                text=True,  # Use text mode to capture strings
+            )
+            title = ""
+            for line in ffprobe_proc.stdout:
+                title += line
+            return title
+        except Exception as e:
+            # Handle exceptions that might occur during process setup
+            log.error(f"Error while reading current track: {e}")
+            return f"Error while reading current track: {e}"
 
     def _start_process(self):
         ffplay_commands = [
@@ -97,10 +125,20 @@ class Player:
             error_thread = threading.Thread(target=self.check_error_output)
             error_thread.daemon = True
             error_thread.start()
+            # Create a thread to update the stream title information
+            title_update_thread = threading.Thread(target=self.update_title)
+            title_update_thread.daemon = True
+            title_update_thread.start()
 
         except Exception as e:
             # Handle exceptions that might occur during process setup
             log.error(f"Error while starting radio: {e}")
+
+    def update_title(self):
+        while self.is_playing:
+            self._stream_title = self.read_title()
+            sleep(1)
+        self._stream_title = ""
 
     def check_error_output(self):
         while self.is_playing:
