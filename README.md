@@ -153,6 +153,7 @@ h/H/help/?: Show this help message
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
 rf/RF/recordfile: Specify a filename for the recording.
+s: Start/stop playing the station
 ```
 
 
