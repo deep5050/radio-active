@@ -66,6 +66,7 @@ def final_step(options, last_station, alias, handler):
         )
 
     handle_listen_keypress(
+        player,
         alias,
         target_url=options["target_url"],
         station_name=options["curr_station_name"],
