@@ -288,4 +288,8 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    finally:
+        if player:
+            player.stop()
