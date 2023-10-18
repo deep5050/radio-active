@@ -45,6 +45,8 @@ class Player:
         self.process = None
         self.exe_path = None
         self.program_name = "ffplay"  # constant value
+        self._metadata_program = "ffprobe"  # constant value
+        self._exe_metadata_path = None
         self.loglevel = loglevel
 
         log.debug(f"player: url => {self.url}")
@@ -56,7 +58,12 @@ class Player:
         else:
             log.debug(f"{self.program_name}: {self.exe_path}")
 
-
+        self._exe_metadata_path = which(self._metadata_program)
+        if self._exe_metadata_path is None:
+            log.critical(f"{self._metadata_program} not found, install it first please")
+            sys.exit(1)
+        else:
+            log.debug(f"{self.program_name}: {self._exe_metadata_path}")
         self._start_process()
 
     def _start_process(self):
