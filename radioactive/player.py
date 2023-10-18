@@ -219,3 +219,8 @@ class Player:
             log.debug("Radio is not currently playing")
             current_pid = os.getpid()
             os.kill(current_pid, signal.SIGINT)
+
+    def switch_url(self, url: str):
+        self.stop()
+        self.url = url
+        self.play()
