@@ -320,7 +320,6 @@ def handle_listen_keypress(
         elif user_input == "w" or user_input == "W" or user_input == "list":
             alias.generate_map()
             handle_favorite_table(alias)
-
         elif (
             user_input == "h"
             or user_input == "H"

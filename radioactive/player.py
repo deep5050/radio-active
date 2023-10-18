@@ -42,7 +42,6 @@ class Player:
     def __init__(self, URL, volume, loglevel):
         self.url = URL
         self.volume = volume
-        self.is_playing = False
         self.process = None
         self.exe_path = None
         self.program_name = "ffplay"  # constant value
@@ -86,7 +85,6 @@ class Player:
                 stderr=subprocess.PIPE,  # Capture standard error
                 text=True,  # Use text mode to capture strings
             )
-            self.is_running = True
             log.debug(f"player: {self.program_name} => PID {self.process.pid} initiated")
             # Create a thread to continuously capture and check error output
             error_thread = threading.Thread(target=self.check_error_output)
@@ -98,7 +96,7 @@ class Player:
             log.error(f"Error while starting radio: {e}")
 
     def check_error_output(self):
-        while self.is_running:
+        while self.is_playing():
             stderr_result = self.process.stderr.readline()
             if stderr_result:
                 print()  # pass a blank line to command for better log messages
@@ -111,8 +109,6 @@ class Player:
                 except Exception as e:
                     log.debug(f"Error: {e}")
                     pass
-
-                self.is_running = False
                 self.stop()
             sleep(2)
 
@@ -152,26 +148,27 @@ class Player:
 
     def play(self):
         """Play a station"""
-        if not self.is_playing:
-            pass  # call the init function again ?
+        if not self.is_playing():
+            self._start_process()
+
+    def is_playing(self):
+        return self.process
 
     def stop(self):
         """stop the ffplayer"""
-
-        if self.is_playing:
+        if self.is_playing():
+            ffplay_proc = self.process
+            self.process = None
             try:
-                self.process.terminate()  # Terminate the process gracefully
-                self.process.wait(timeout=5)  # Wait for process to finish
+                ffplay_proc.terminate()  # Terminate the process gracefully
+                ffplay_proc.wait(timeout=5)  # Wait for process to finish
                 log.info("Radio playback stopped successfully")
             except subprocess.TimeoutExpired:
                 log.warning("Radio process did not terminate, killing...")
-                self.process.kill()  # Kill the process forcefully
+                ffplay_proc.kill()  # Kill the process forcefully
             except Exception as e:
                 log.error(f"Error while stopping radio: {e}")
                 raise
-            finally:
-                self.is_playing = False
-                self.process = None
         else:
             log.debug("Radio is not currently playing")
             current_pid = os.getpid()

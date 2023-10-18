@@ -278,7 +278,7 @@ def signal_handler(sig, frame):
     global player
     log.debug("You pressed Ctrl+C!")
     log.debug("Stopping the radio")
-    if player and player.is_playing:
+    if player and player.is_playing():
         player.stop()
     log.info("Exiting now")
     sys.exit(0)
