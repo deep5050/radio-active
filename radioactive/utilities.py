@@ -338,8 +338,11 @@ def handle_listen_keypress(
             # TODO: u for uuid, link for url, p for setting path
 
 
-def handle_current_play_panel(curr_station_name=""):
-    panel_station_name = Text(curr_station_name, justify="center")
+def handle_current_play_panel(player: Optional[Player], curr_station_name=""):
+    now_playing = curr_station_name
+    if player:
+        now_playing += f"\n{player.read_title()}"
+    panel_station_name = Text(now_playing, justify="center")
 
     station_panel = Panel(panel_station_name, title="[blink]:radio:[/blink]", width=85)
     console = Console()

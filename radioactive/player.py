@@ -88,7 +88,8 @@ class Player:
             title = ""
             for line in ffprobe_proc.stdout:
                 title += line
-            return title
+            # truncate trailing \n
+            return title[:-1] if title[-1] == "\n" else title
         except Exception as e:
             # Handle exceptions that might occur during process setup
             log.error(f"Error while reading current track: {e}")
@@ -199,6 +200,10 @@ class Player:
     @property
     def is_playing(self):
         return self.process
+
+    @property
+    def stream_title(self):
+        return self._stream_title
 
     def stop(self):
         """stop the ffplayer"""

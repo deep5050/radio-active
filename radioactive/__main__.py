@@ -53,7 +53,7 @@ def final_step(options, last_station, alias, handler):
             alias, options["curr_station_name"], options["target_url"]
         )
 
-    handle_current_play_panel(options["curr_station_name"])
+    handle_current_play_panel(player, options["curr_station_name"])
 
     if options["record_stream"]:
         handle_record(
