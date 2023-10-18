@@ -96,7 +96,7 @@ class Player:
             log.error(f"Error while starting radio: {e}")
 
     def check_error_output(self):
-        while self.is_playing():
+        while self.is_playing:
             stderr_result = self.process.stderr.readline()
             if stderr_result:
                 print()  # pass a blank line to command for better log messages
@@ -148,15 +148,16 @@ class Player:
 
     def play(self):
         """Play a station"""
-        if not self.is_playing():
+        if not self.is_playing:
             self._start_process()
 
+    @property
     def is_playing(self):
         return self.process
 
     def stop(self):
         """stop the ffplayer"""
-        if self.is_playing():
+        if self.is_playing:
             ffplay_proc = self.process
             self.process = None
             try:
