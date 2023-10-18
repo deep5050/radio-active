@@ -35,7 +35,6 @@ def kill_background_ffplays():
 
 
 class Player:
-
     """FFPlayer handler, it holds all the attributes to properly execute ffplay
     FFmepg required to be installed separately
     """
@@ -49,14 +48,15 @@ class Player:
         self.program_name = "ffplay"  # constant value
         self.loglevel = loglevel
 
-        log.debug("player: url => {}".format(self.url))
+        log.debug(f"player: url => {self.url}")
         # check if FFplay is installed
         self.exe_path = which(self.program_name)
-        log.debug("FFplay: {}".format(self.exe_path))
-
         if self.exe_path is None:
-            log.critical("FFplay not found, install it first please")
+            log.critical(f"{self.program_name} not found, install it first please")
             sys.exit(1)
+        else:
+            log.debug(f"{self.program_name}: {self.exe_path}")
+
 
         self._start_process()
 
@@ -87,7 +87,7 @@ class Player:
                 text=True,  # Use text mode to capture strings
             )
             self.is_running = True
-            log.debug("player: ffplay => PID {} initiated".format(self.process.pid))
+            log.debug(f"player: {self.program_name} => PID {self.process.pid} initiated")
             # Create a thread to continuously capture and check error output
             error_thread = threading.Thread(target=self.check_error_output)
             error_thread.daemon = True
@@ -95,7 +95,7 @@ class Player:
 
         except Exception as e:
             # Handle exceptions that might occur during process setup
-            log.error("Error while starting radio: {}".format(e))
+            log.error(f"Error while starting radio: {e}")
 
     def check_error_output(self):
         while self.is_running:
@@ -109,7 +109,7 @@ class Player:
                     # only showing the server response
                     log.error(stderr_result.split(": ")[1])
                 except Exception as e:
-                    log.debug("Error: {}".format(e))
+                    log.debug(f"Error: {e}")
                     pass
 
                 self.is_running = False
@@ -147,7 +147,7 @@ class Player:
             log.debug("Process not found")
             return False
         except Exception as e:
-            log.error("Error while checking process status: {}".format(e))
+            log.error(f"Error while checking process status: {e}")
             return False
 
     def play(self):
@@ -167,7 +167,7 @@ class Player:
                 log.warning("Radio process did not terminate, killing...")
                 self.process.kill()  # Kill the process forcefully
             except Exception as e:
-                log.error("Error while stopping radio: {}".format(e))
+                log.error(f"Error while stopping radio: {e}")
                 raise
             finally:
                 self.is_playing = False
