@@ -58,9 +58,9 @@ class Player:
             log.critical("FFplay not found, install it first please")
             sys.exit(1)
 
-        self.start_process()
+        self._start_process()
 
-    def start_process(self):
+    def _start_process(self):
         ffplay_commands = [
             self.exe_path,
             "-volume",
