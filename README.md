@@ -47,7 +47,7 @@
 
 ### Install
 
-Just run: `pip3 install --upgrade radio-active`
+Just run: `pipx install  radio-active`
 
 
 ### External Dependency
