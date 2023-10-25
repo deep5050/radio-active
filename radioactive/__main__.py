@@ -14,6 +14,7 @@ from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.player import Player, kill_background_ffplays
 from radioactive.utilities import (
+    check_sort_by_parameter,
     handle_add_station,
     handle_add_to_favorite,
     handle_current_play_panel,
@@ -96,7 +97,7 @@ def main():
     options["play_last_station"] = args.play_last_station
 
     options["search_station_uuid"] = args.search_station_uuid
-
+    options["sort_by"] = args.stations_sort_by
     options["discover_country_code"] = args.discover_country_code
     options["discover_state"] = args.discover_state
     options["discover_language"] = args.discover_language
@@ -155,12 +156,14 @@ def main():
     if options["add_station"]:
         handle_add_station(alias)
 
+    check_sort_by_parameter(options["sort_by"])
+
     handle_update_screen(app)
 
     # ----------- country ----------- #
     if options["discover_country_code"]:
         response = handler.discover_by_country(
-            options["discover_country_code"], options["limit"]
+            options["discover_country_code"], options["limit"], options["sort_by"]
         )
         if response is not None:
             (
@@ -174,7 +177,7 @@ def main():
     # -------------- state ------------- #
     if options["discover_state"]:
         response = handler.discover_by_state(
-            options["discover_state"], options["limit"]
+            options["discover_state"], options["limit"], options["sort_by"]
         )
         if response is not None:
             (
@@ -188,7 +191,7 @@ def main():
     # ----------- language ------------ #
     if options["discover_language"]:
         response = handler.discover_by_language(
-            options["discover_language"], options["limit"]
+            options["discover_language"], options["limit"], options["sort_by"]
         )
         if response is not None:
             (
@@ -201,7 +204,9 @@ def main():
 
     # -------------- tag ------------- #
     if options["discover_tag"]:
-        response = handler.discover_by_tag(options["discover_tag"], options["limit"])
+        response = handler.discover_by_tag(
+            options["discover_tag"], options["limit"], options["sort_by"]
+        )
         if response is not None:
             (
                 options["curr_station_name"],
@@ -241,7 +246,10 @@ def main():
     ):
         response = [{}]
         response = handle_search_stations(
-            handler, options["search_station_name"], options["limit"]
+            handler,
+            options["search_station_name"],
+            options["limit"],
+            options["sort_by"],
         )
         if response is not None:
             (

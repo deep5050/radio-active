@@ -186,10 +186,31 @@ def handle_station_uuid_play(handler, station_uuid):
     return station_name, station_url
 
 
-def handle_search_stations(handler, station_name, limit):
+def check_sort_by_parameter(sort_by):
+    accepted_parameters = [
+        "name",
+        "votes",
+        "codec",
+        "bitrate",
+        "lastcheckok",
+        "lastchecktime",
+        "clickcount",
+        "clicktrend",
+        "random",
+    ]
+
+    if sort_by not in accepted_parameters:
+        log.warning("Sort parameter is unknown. Falling back to 'clickcount'")
+
+        log.warning(
+            "choose from: name,votes,codec,bitrate,lastcheckok,lastchecktime,clickcount,clicktrend,random"
+        )
+
+
+def handle_search_stations(handler, station_name, limit, sort_by):
     log.debug("Searching API for: {}".format(station_name))
 
-    return handler.search_by_station_name(station_name, limit)
+    return handler.search_by_station_name(station_name, limit, sort_by)
 
 
 def handle_station_selection_menu(handler, last_station, alias):

@@ -27,6 +27,7 @@
 
 </div>
 
+
 ### Features
 
 - [x] Supports more than 40K stations !! :radio:
@@ -41,6 +42,8 @@
 - [x] Discovers stations by language
 - [x] Record audio from live radio on demand :zap:
 - [ ] I'm feeling lucky! Play Random stations
+- [ ] VLC media player support
+- [ ] MPV player support
 
 
 > See my progress [here](https://github.com/deep5050/radio-active/projects/1)
@@ -111,6 +114,7 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 | `--language`       | optional                            | Discover stations by                           | False         |
 | `--limit`          | Optional                            | Limit the # of results in the Discover table   | 100           |
 | `--volume` , `-V`  | Optional                            | Change the volume passed into ffplay           | 80            |
+| `--sort`           | Optional                            | Sort the result page                           | clickcount    |
 | `--kill` , `-K`    | Optional                            | Kill background radios.                        | False         |
 | `--record` , `-R`  | Optional                            | Record a station and save to file              | False         |
 | `--filename`, `-N` | Optional                            | Filename to used to save the recorded audio    | None          |
@@ -155,6 +159,18 @@ f/F/fav: Add station to favorite list
 rf/RF/recordfile: Specify a filename for the recording.
 ```
 
+### sort parameters
+
+you can sort the result page with these parameters:
+- name
+- votes
+- codec
+- bitrate
+- lastcheckok
+- lastchecktime
+- clickcount
+- clicktrend
+- random
 
 ### Bonus Tips
 
@@ -173,6 +189,17 @@ see [CHANGELOG](./CHANGELOG.md)
 Share you favorite list with our community 🌐 ➡️ [Here](https://github.com/deep5050/radio-active/discussions/10)
 
 > Your favorite list `.radio-active-alias` is under your home directory as a hidden file :)
+
+### Featured on
+
+- [distroTube](https://www.youtube.com/watch?v=H7sf1RDFXpU&pp=ygUYcmFkaW9hY3RpdmUgcGxheWVyIHJhZGlv)
+![H7sf1RDFXpU-SD](https://github.com/deep5050/random-shits-happen-here/assets/27947066/cb3aec4e-a2a5-41ca-a6f0-f17553e3676e)
+
+- [LinuxLinks](https://www.linuxlinks.com/radio-active-listen-radio-terminal/3/)
+
+- [Ubunlog](https://ubunlog.com/en/radio-activate-an-application-to-listen-to-the-radio-from-the-terminal/)
+
+- [RadioBrowser](https://www.radio-browser.info/users)
 
 
 ### Support

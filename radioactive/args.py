@@ -37,6 +37,7 @@ class Parser:
             dest="search_station_name",
             help="Specify a station name",
         )
+
         self.parser.add_argument(
             "--play",
             "-P",
@@ -104,6 +105,14 @@ class Parser:
             dest="limit",
             default=100,
             help="Limit of entries in discover table",
+        )
+
+        self.parser.add_argument(
+            "--sort",
+            action="store",
+            dest="stations_sort_by",
+            default="clickcount",
+            help="Sort stations",
         )
 
         self.parser.add_argument(

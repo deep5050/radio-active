@@ -1,3 +1,7 @@
+## 2.8.1
+
+1. Sort results with several parameters like: click-count, popularity, bitrate, random etc.
+
 ## 2.8.0
 
 1. Selection menu added for `--country` and `--tag` results. Play directly from result page.

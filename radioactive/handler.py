@@ -68,7 +68,7 @@ class Handler:
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
 
-            log.warn("showing {} stations with the name!".format(len(self.response)))
+            log.info("showing {} stations with the name!".format(len(self.response)))
 
             for i in range(0, len(self.response)):
                 station = self.response[i]
@@ -101,10 +101,12 @@ class Handler:
             # return self.response[0]["name"].strip()
 
     # ---------------------------- NAME -------------------------------- #
-    def search_by_station_name(self, _name=None, limit=100):
+    def search_by_station_name(self, _name=None, limit=100, sort_by="clickcount"):
         """search and play a station by its name"""
         try:
-            self.response = self.API.search(name=_name, name_exact=False, limit=limit)
+            self.response = self.API.search(
+                name=_name, name_exact=False, limit=limit, order=sort_by
+            )
             return self.station_validator()
         except Exception as e:
             log.debug("Error: {}".format(e))
@@ -123,14 +125,14 @@ class Handler:
             sys.exit(1)
 
     # -------------------------- COUNTRY ----------------------#
-    def discover_by_country(self, country_code_or_name, limit):
+    def discover_by_country(self, country_code_or_name, limit, sort_by):
         # check if it is a code or name
         if len(country_code_or_name.strip()) == 2:
             # it's a code
             log.debug("Country code {} provided".format(country_code_or_name))
             try:
                 response = self.API.search(
-                    countrycode=country_code_or_name, limit=limit
+                    countrycode=country_code_or_name, limit=limit, order=sort_by
                 )
             except Exception as e:
                 log.debug("Error: {}".format(e))
@@ -186,9 +188,9 @@ class Handler:
 
     # ------------------- by state ---------------------
 
-    def discover_by_state(self, state, limit):
+    def discover_by_state(self, state, limit, sort_by):
         try:
-            discover_result = self.API.search(state=state, limit=limit)
+            discover_result = self.API.search(state=state, limit=limit, order=sort_by)
         except Exception:
             log.error("Something went wrong. please try again.")
             sys.exit(1)
@@ -224,9 +226,11 @@ class Handler:
 
     # -----------------by language --------------------
 
-    def discover_by_language(self, language, limit):
+    def discover_by_language(self, language, limit, sort_by):
         try:
-            discover_result = self.API.search(language=language, limit=limit)
+            discover_result = self.API.search(
+                language=language, limit=limit, order=sort_by
+            )
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -261,9 +265,9 @@ class Handler:
 
     # -------------------- by tag ---------------------- #
 
-    def discover_by_tag(self, tag, limit):
+    def discover_by_tag(self, tag, limit, sort_by):
         try:
-            discover_result = self.API.search(tag=tag, limit=limit)
+            discover_result = self.API.search(tag=tag, limit=limit, order=sort_by)
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")

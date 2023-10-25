@@ -86,6 +86,11 @@ def show_help():
         "Limit the number of station results",
         "100",
     )
+    table.add_row(
+        "--sort",
+        "Sort the results page, see documentation",
+        "clickcount",
+    )
 
     table.add_row(
         "--volume, -V",
