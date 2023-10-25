@@ -156,7 +156,7 @@ def main():
     if options["add_station"]:
         handle_add_station(alias)
 
-    check_sort_by_parameter(options["sort_by"])
+    options["sort_by"] = check_sort_by_parameter(options["sort_by"])
 
     handle_update_screen(app)
 

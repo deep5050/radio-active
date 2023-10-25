@@ -51,9 +51,8 @@ class Handler:
                 return country["iso_3166_1"]
         return None
 
-    def station_validator(self):
+    def station_validator(self, sort_by: str = "name"):
         """Validates a response from the API and takes appropriate decision"""
-
         # when no response from the API
         if not self.response:
             log.error("No stations found by the name")
@@ -67,20 +66,36 @@ class Handler:
             # table.add_column("UUID", justify="center")
             table.add_column("Country", justify="center")
             table.add_column("Tags", justify="center")
+            if sort_by != "name":
+                table.add_column(sort_by, justify="left")
 
             log.info("showing {} stations with the name!".format(len(self.response)))
 
             for i in range(0, len(self.response)):
                 station = self.response[i]
-                table.add_row(
-                    str(i + 1),
-                    trim_string(station["name"], max_length=50),
-                    # station["stationuuid"],
-                    station["countrycode"],
-                    trim_string(
-                        station["tags"]
-                    ),  # trimming tags to make the table shorter
-                )
+                if sort_by != "name":
+                    # TODO: find a better way of doing this,
+                    # if name is the parameter for sort don't add extra column
+                    table.add_row(
+                        str(i + 1),
+                        trim_string(station["name"], max_length=50),
+                        # station["stationuuid"],
+                        station["countrycode"],
+                        trim_string(
+                            station["tags"]
+                        ),  # trimming tags to make the table shorter
+                        str(station[sort_by]),
+                    )
+                else:
+                    table.add_row(
+                        str(i + 1),
+                        trim_string(station["name"], max_length=50),
+                        # station["stationuuid"],
+                        station["countrycode"],
+                        trim_string(
+                            station["tags"]
+                        ),  # trimming tags to make the table shorter
+                    )
 
             console.print(table)
             # log.info(
@@ -101,38 +116,46 @@ class Handler:
             # return self.response[0]["name"].strip()
 
     # ---------------------------- NAME -------------------------------- #
-    def search_by_station_name(self, _name=None, limit=100, sort_by="clickcount"):
+    def search_by_station_name(self, _name=None, limit=100, sort_by: str = "name"):
         """search and play a station by its name"""
-        try:
-            self.response = self.API.search(
-                name=_name, name_exact=False, limit=limit, order=sort_by
-            )
-            return self.station_validator()
-        except Exception as e:
-            log.debug("Error: {}".format(e))
-            log.error("Something went wrong. please try again.")
-            sys.exit(1)
+        if sort_by == "name":
+            reversed = False
+        else:
+            reversed = True
+        # try:
+        self.response = self.API.search(
+            name=_name,
+            name_exact=False,
+            limit=limit,
+            order=str(sort_by),
+            reverse=reversed,
+        )
+        return self.station_validator(sort_by)
+        # except Exception as e:
+        #     log.debug("Error: {}".format(e))
+        #     log.error("Something went wrong. please try again.")
+        #     sys.exit(1)
 
     # ------------------------- UUID ------------------------ #
     def play_by_station_uuid(self, _uuid):
         """search and play station by its stationuuid"""
         try:
             self.response = self.API.station_by_uuid(_uuid)
-            return self.station_validator()  # should return a station name also
+            return self.station_validator("name")  # should return a station name also
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
     # -------------------------- COUNTRY ----------------------#
-    def discover_by_country(self, country_code_or_name, limit, sort_by):
+    def discover_by_country(self, country_code_or_name, limit, sort_by: str = "name"):
         # check if it is a code or name
         if len(country_code_or_name.strip()) == 2:
             # it's a code
-            log.debug("Country code {} provided".format(country_code_or_name))
+            log.debug("Country code '{}' provided".format(country_code_or_name))
             try:
                 response = self.API.search(
-                    countrycode=country_code_or_name, limit=limit, order=sort_by
+                    countrycode=country_code_or_name, limit=limit, order=str(sort_by)
                 )
             except Exception as e:
                 log.debug("Error: {}".format(e))
@@ -140,12 +163,15 @@ class Handler:
                 sys.exit(1)
         else:
             # it's name
-            log.debug("Country name {} provided".format(country_code_or_name))
+            log.debug("Country name '{}' provided".format(country_code_or_name))
             code = self.get_country_code(country_code_or_name)
             if code:
                 try:
                     response = self.API.search(
-                        countrycode=code, limit=limit, country_exact=True
+                        countrycode=code,
+                        limit=limit,
+                        country_exact=True,
+                        order=str(sort_by),
                     )
                 except Exception as e:
                     log.debug("Error: {}".format(e))
@@ -188,9 +214,11 @@ class Handler:
 
     # ------------------- by state ---------------------
 
-    def discover_by_state(self, state, limit, sort_by):
+    def discover_by_state(self, state, limit, sort_by: str = "name"):
         try:
-            discover_result = self.API.search(state=state, limit=limit, order=sort_by)
+            discover_result = self.API.search(
+                state=state, limit=limit, order=str(sort_by)
+            )
         except Exception:
             log.error("Something went wrong. please try again.")
             sys.exit(1)
@@ -226,10 +254,10 @@ class Handler:
 
     # -----------------by language --------------------
 
-    def discover_by_language(self, language, limit, sort_by):
+    def discover_by_language(self, language, limit, sort_by: str = "name"):
         try:
             discover_result = self.API.search(
-                language=language, limit=limit, order=sort_by
+                language=language, limit=limit, order=str(sort_by)
             )
         except Exception as e:
             log.debug("Error: {}".format(e))
@@ -265,9 +293,9 @@ class Handler:
 
     # -------------------- by tag ---------------------- #
 
-    def discover_by_tag(self, tag, limit, sort_by):
+    def discover_by_tag(self, tag, limit, sort_by: str = "name"):
         try:
-            discover_result = self.API.search(tag=tag, limit=limit, order=sort_by)
+            discover_result = self.API.search(tag=tag, limit=limit, order=str(sort_by))
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")

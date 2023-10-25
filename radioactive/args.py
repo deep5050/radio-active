@@ -111,7 +111,7 @@ class Parser:
             "--sort",
             action="store",
             dest="stations_sort_by",
-            default="clickcount",
+            default="name",
             help="Sort stations",
         )
 

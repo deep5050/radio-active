@@ -200,11 +200,13 @@ def check_sort_by_parameter(sort_by):
     ]
 
     if sort_by not in accepted_parameters:
-        log.warning("Sort parameter is unknown. Falling back to 'clickcount'")
+        log.warning("Sort parameter is unknown. Falling back to 'name'")
 
         log.warning(
             "choose from: name,votes,codec,bitrate,lastcheckok,lastchecktime,clickcount,clicktrend,random"
         )
+        return "name"
+    return sort_by
 
 
 def handle_search_stations(handler, station_name, limit, sort_by):
@@ -293,7 +295,7 @@ def handle_listen_keypress(
     log.info("Press '?' to see available commands\n")
     while True:
         user_input = input("Enter a command to perform an action: ")
-        if user_input == "r" or user_input == "R" or user_input == "record":
+        if user_input in ["r", "R", "record"]:
             handle_record(
                 target_url,
                 station_name,
@@ -302,7 +304,7 @@ def handle_listen_keypress(
                 record_file_format,
                 loglevel,
             )
-        elif user_input == "rf" or user_input == "RF" or user_input == "recordfile":
+        elif user_input in ["rf", "RF", "recordfile"]:
             # if no filename is provided try to auto detect
             # else if ".mp3" is provided, use libmp3lame to force write to mp3
 
@@ -332,22 +334,17 @@ def handle_listen_keypress(
                     loglevel,
                 )
 
-        elif user_input == "f" or user_input == "F" or user_input == "fav":
+        elif user_input in ["f", "F", "fav"]:
             handle_add_to_favorite(alias, station_name, station_url)
 
-        elif user_input == "q" or user_input == "Q" or user_input == "quit":
+        elif user_input in ["q", "Q", "quit"]:
             kill_background_ffplays()
             sys.exit(0)
-        elif user_input == "w" or user_input == "W" or user_input == "list":
+        elif user_input in ["w", "W", "list"]:
             alias.generate_map()
             handle_favorite_table(alias)
 
-        elif (
-            user_input == "h"
-            or user_input == "H"
-            or user_input == "?"
-            or user_input == "help"
-        ):
+        elif user_input in ["h", "H", "?", "help"]:
             log.info("h/help/?: Show this help message")
             log.info("q/quit: Quit radioactive")
             log.info("r/record: Record a station")
