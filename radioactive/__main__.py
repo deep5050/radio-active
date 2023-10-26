@@ -21,7 +21,6 @@ from radioactive.utilities import (
     handle_direct_play,
     handle_favorite_table,
     handle_listen_keypress,
-    handle_log_level,
     handle_play_last_station,
     handle_record,
     handle_save_last_station,
@@ -108,8 +107,6 @@ def main():
         show_help()
         sys.exit(0)
 
-    handle_log_level(options["loglevel"])
-
     if options["flush_fav_list"]:
         sys.exit(alias.flush())
 
@@ -123,6 +120,11 @@ def main():
 
     if options["add_station"]:
         handle_add_station(alias)
+
+    if options["remove_fav_stations"]:
+        # handle_remove_stations(alias)
+        alias.remove_entries()
+        sys.exit(0)
 
     options["sort_by"] = check_sort_by_parameter(options["sort_by"])
 

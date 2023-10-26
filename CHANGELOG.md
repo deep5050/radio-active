@@ -1,6 +1,7 @@
 ## 2.8.1
 
 1. Sort results with several parameters like: click-count, popularity, bitrate, random etc.
+2. Select stations from favorite menu to remove them
 
 ## 2.8.0
 
@@ -19,7 +20,7 @@
 4. Runtime command feature added. Perform actions on demand ⚡
 5. A caching mechanism was added for fewer API calls. Faster radio playbacks!
 6. Code refactored. It is easier for contributors to implement new features.
-7. BREAKING CHANGES: `--station` -> `--search`, `--discover-by-country` -> `--country`, `--discover-by-tag` -> `--tag`, `--discover-by-state` -> `--state`, `--discover-by-language` -> `--lamguage`, `--add-station` -> `--add`, `--add-to-favorite` -> `--favorite`, `--show-favorite-list` -> `--list`
+7. BREAKING CHANGES: `--station` -> `--search`, `--discover-by-country` -> `--country`, `--discover-by-tag` -> `--tag`, `--discover-by-state` -> `--state`, `--discover-by-language` -> `--language`, `--add-station` -> `--add`, `--add-to-favorite` -> `--favorite`, `--show-favorite-list` -> `--list`
 
 
 ## 2.6.0
@@ -64,7 +65,7 @@
 ## 2.4.0
 
 1. Crashes on Windows fixed
-Fixed setup-related issues (development purpose)
+2. Fixed setup-related issues (development purpose)
 
 ## 2.3.0
 

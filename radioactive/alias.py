@@ -1,6 +1,7 @@
 import os.path
 
 from zenlog import log
+from pick import pick
 
 
 class Alias:
@@ -10,9 +11,23 @@ class Alias:
 
         self.alias_path = os.path.join(os.path.expanduser("~"), ".radio-active-alias")
 
+    def write_stations(self, station_map):
+        """Write stations file from generated map"""
+        with open(self.alias_path, "w") as f:
+            f.flush()
+            for entry in station_map:
+                f.write(
+                    "{}=={}\n".format(
+                        entry["name"].strip(), entry["uuid_or_url"].strip()
+                    )
+                )
+        return True
+
     def generate_map(self):
         """parses the fav list file and generates a list"""
         # create alias map
+        self.alias_map = []
+
         if os.path.exists(self.alias_path):
             log.debug(f"Alias file at: {self.alias_path}")
             try:
@@ -81,3 +96,35 @@ class Alias:
             log.debug("Error: {}".format(e))
             log.error("could not delete your favorite list. something went wrong")
             return 1
+
+    def remove_entries(self):
+        # select entries from fav menu and remove them
+        self.generate_map()
+
+        if not self.alias_map:
+            log.error("No stations to be removed!")
+            return
+
+        title = "Select stations to be removed. Hit 'SPACE' to select "
+        options = [entry["name"] for entry in self.alias_map]
+        selected = pick(
+            options, title, indicator="->", multiselect=True, min_selection_count=1
+        )
+
+        # Extract integer numbers and create a new list
+        indices_to_remove = [item[1] for item in selected if isinstance(item[1], int)]
+
+        # remove selected entries from the map, and regenerate
+        filtered_list = [
+            self.alias_map[i]
+            for i in range(len(self.alias_map))
+            if i not in indices_to_remove
+        ]
+
+        log.debug(
+            f"Current # of entries reduced to : {len(filtered_list)} from {len(self.alias_map)}"
+        )
+
+        self.write_stations(filtered_list)
+        self.alias_map = filtered_list
+        log.info("Stations removed successfully!")

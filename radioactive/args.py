@@ -141,6 +141,14 @@ class Parser:
         )
 
         self.parser.add_argument(
+            "--remove",
+            action="store_true",
+            default=False,
+            dest="remove_fav_stations",
+            help="Remove stations from favorite list",
+        )
+
+        self.parser.add_argument(
             "--flush",
             action="store_true",
             dest="flush",
