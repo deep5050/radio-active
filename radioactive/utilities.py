@@ -3,6 +3,7 @@
 import datetime
 import os
 import sys
+import requests
 
 from pick import pick
 from rich import print
@@ -383,7 +384,9 @@ def handle_direct_play(alias, station_name_or_url=""):
         log.debug("Direct play: URL provided")
         # stream URL
         # call using URL with no station name N/A
-        return "N/A", station_name_or_url
+        # let's attempt to get station name from url headers
+        station_name = handle_station_name_from_headers(station_name_or_url)
+        return station_name, station_name_or_url
     else:
         log.debug("Direct play: station name provided")
         # station name from fav list
@@ -401,3 +404,20 @@ def handle_direct_play(alias, station_name_or_url=""):
 def handle_play_last_station(last_station):
     station_obj = last_station.get_info()
     return station_obj["name"], station_obj["uuid_or_url"]
+
+def handle_station_name_from_headers(url):
+    # Get headers from URL so that we can get radio station
+    log.debug('Attempting to retrieve station name from: {}'.format(url))
+    station_name = 'Custom Station'
+    try:
+        response = requests.get(url,stream=True)
+        if response.status_code == requests.codes.ok:
+            if response.headers.get('Icy-Name'):
+                station_name = response.headers.get('Icy-Name')
+        else:
+            log.debug('Response code received is: {}'.format(
+                response.get_code()))
+    except requests.HTTPError as e:
+        log.debug('''An error occurred: {}
+    The response code was {}'''.format(e, e.errno))
+    return station_name
