@@ -20,14 +20,6 @@ RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
 
 
-def handle_log_level(log_level):
-    if log_level in ["info", "error", "warning", "debug"]:
-        log.level(log_level)
-    else:
-        log.level("info")
-        log.warning("Correct log levels are: error,warning,info(default),debug")
-
-
 def handle_record(
     target_url,
     curr_station_name,
@@ -130,7 +122,7 @@ def handle_update_screen(app):
 
 
 def handle_favorite_table(alias):
-    log.info("Your favorite station list is below")
+    # log.info("Your favorite station list is below")
     table = Table(show_header=True, header_style="bold magenta")
     table.add_column("Station", justify="left")
     table.add_column("URL / UUID", justify="left")
