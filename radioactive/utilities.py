@@ -145,8 +145,14 @@ def handle_favorite_table(alias):
 
 
 def handle_add_station(alias):
-    left = input("Enter station name:")
-    right = input("Enter station stream-url or radio-browser uuid:")
+    try:
+        left = input("Enter station name:")
+        right = input("Enter station stream-url or radio-browser uuid:")
+    except EOFError:
+        print()
+        log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+        sys.exit(0)
+
     if left.strip() == "" or right.strip() == "":
         log.error("Empty inputs not allowed")
         sys.exit(1)
@@ -159,7 +165,13 @@ def handle_add_to_favorite(alias, station_name, station_uuid_url):
     try:
         response = alias.add_entry(station_name, station_uuid_url)
         if not response:
-            user_input = input("Enter a different name: ")
+            try:
+                user_input = input("Enter a different name: ")
+            except EOFError:
+                print()
+                log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+                sys.exit(0)
+
             if user_input.strip() != "":
                 response = alias.add_entry(user_input.strip(), station_uuid_url)
     except Exception as e:
@@ -294,7 +306,14 @@ def handle_listen_keypress(
 ):
     log.info("Press '?' to see available commands\n")
     while True:
-        user_input = input("Enter a command to perform an action: ")
+        try:
+            user_input = input("Enter a command to perform an action: ")
+        except EOFError:
+            print()
+            log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+            kill_background_ffplays()
+            sys.exit(0)
+
         if user_input in ["r", "R", "record"]:
             handle_record(
                 target_url,
@@ -307,8 +326,14 @@ def handle_listen_keypress(
         elif user_input in ["rf", "RF", "recordfile"]:
             # if no filename is provided try to auto detect
             # else if ".mp3" is provided, use libmp3lame to force write to mp3
+            try:
+                user_input = input("Enter output filename: ")
+            except EOFError:
+                print()
+                log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+                kill_background_ffplays()
+                sys.exit(0)
 
-            user_input = input("Enter output filename: ")
             # try to get extension from filename
             try:
                 file_name, file_ext = user_input.split(".")
@@ -369,7 +394,12 @@ def handle_user_choice_from_search_result(handler, response):
         # single station found
         log.debug("Exactly one result found")
 
-        user_input = input("Want to play this station? Y/N: ")
+        try:
+            user_input = input("Want to play this station? Y/N: ")
+        except EOFError:
+            print()
+            sys.exit(0)
+
         if user_input == ("y" or "Y"):
             log.debug("Playing UUID from single response")
             return handle_station_uuid_play(handler, response[0]["stationuuid"])
