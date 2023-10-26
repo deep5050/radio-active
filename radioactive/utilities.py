@@ -20,12 +20,11 @@ RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
 
 
-def handle_log_level(args):
-    log_level = args.log_level
+def handle_log_level(log_level):
     if log_level in ["info", "error", "warning", "debug"]:
         log.level(log_level)
-        return args.log_level
     else:
+        log.level("info")
         log.warning("Correct log levels are: error,warning,info(default),debug")
 
 

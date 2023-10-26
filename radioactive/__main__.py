@@ -8,10 +8,10 @@ from zenlog import log
 
 from radioactive.alias import Alias
 from radioactive.app import App
-from radioactive.args import Parser
 from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
+from radioactive.parser import parse_options
 from radioactive.player import Player, kill_background_ffplays
 from radioactive.utilities import (
     check_sort_by_parameter,
@@ -85,42 +85,10 @@ def final_step(options, last_station, alias, handler):
 
 def main():
     log.level("info")
-    parser = Parser()
+
     app = App()
-    args = parser.parse()
 
-    options = {}
-    # ----------------- all the args ------------- #
-    options["show_help_table"] = args.help
-    options["search_station_name"] = args.search_station_name
-    options["direct_play"] = args.direct_play
-    options["play_last_station"] = args.play_last_station
-
-    options["search_station_uuid"] = args.search_station_uuid
-    options["sort_by"] = args.stations_sort_by
-    options["discover_country_code"] = args.discover_country_code
-    options["discover_state"] = args.discover_state
-    options["discover_language"] = args.discover_language
-    options["discover_tag"] = args.discover_tag
-
-    limit = args.limit
-    options["limit"] = int(limit) if limit else 100
-    log.debug("limit is set to: {}".format(limit))
-
-    options["add_station"] = args.new_station
-    options["add_to_favorite"] = args.add_to_favorite
-    options["show_favorite_list"] = args.show_favorite_list
-
-    options["flush_fav_list"] = args.flush
-    options["kill_ffplays"] = args.kill_ffplays
-
-    options["record_stream"] = args.record_stream
-    options["record_file"] = args.record_file
-    options["record_file_format"] = args.record_file_format
-    options["record_file_path"] = args.record_file_path
-
-    options["target_url"] = ""
-    options["volume"] = args.volume
+    options = parse_options()
 
     VERSION = app.get_version()
 
@@ -132,7 +100,7 @@ def main():
     # --------------- app logic starts here ------------------- #
     handle_welcome_screen()
 
-    if args.version:
+    if options["version"]:
         log.info("RADIO-ACTIVE : version {}".format(VERSION))
         sys.exit(0)
 
@@ -140,7 +108,7 @@ def main():
         show_help()
         sys.exit(0)
 
-    options["loglevel"] = handle_log_level(args)
+    handle_log_level(options["loglevel"])
 
     if options["flush_fav_list"]:
         sys.exit(alias.flush())
