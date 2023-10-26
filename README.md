@@ -255,6 +255,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://www.bjoli.com"><img src="https://avatars.githubusercontent.com/u/48383?v=4?s=100" width="100px;" alt="Joe Smith"/><br /><sub><b>Joe Smith</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=Yasumoto" title="Tests">⚠️</a> <a href="https://github.com/deep5050/radio-active/commits?author=Yasumoto" title="Code">💻</a> <a href="#ideas-Yasumoto" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/salehjafarli"><img src="https://avatars.githubusercontent.com/u/81613563?v=4?s=100" width="100px;" alt="salehjafarli"/><br /><sub><b>salehjafarli</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=salehjafarli" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/marvoh"><img src="https://avatars.githubusercontent.com/u/5451142?v=4?s=100" width="100px;" alt="marvoh"/><br /><sub><b>marvoh</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=marvoh" title="Code">💻</a> <a href="https://github.com/deep5050/radio-active/issues?q=author%3Amarvoh" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
