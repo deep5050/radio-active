@@ -45,7 +45,7 @@
 - [ ] VLC, MPV player support
 
 
-> See my progress ➡️ [here]([https://github.com/deep5050/radio-active/projects/1](https://github.com/users/deep5050/projects/5))
+> See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)
 
 ### Why radioactive?
 
@@ -134,6 +134,7 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 | `--loglevel`       | Optional                            | Log level of the program                       | Info          |
 | `--add` , `-A`     | Optional                            | Add an entry to fav list                       | False         |
 | `--list`, `-W`     | Optional                            | Show fav list                                  | False         |
+| `--remove`         | Optional                            | Remove entries from favorite list              | False         |
 | `--favorite`, `-F` | Optional                            | Add current station to fav list                | False         |
 | `--flush`          | Optional                            | Remove all the entries from fav list           | False         |
 | `--country`, `-C`  | Optional                            | Discover stations by country code              | False         |
@@ -142,7 +143,7 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 | `--language`       | optional                            | Discover stations by                           | False         |
 | `--limit`          | Optional                            | Limit the # of results in the Discover table   | 100           |
 | `--volume` , `-V`  | Optional                            | Change the volume passed into ffplay           | 80            |
-| `--sort`           | Optional                            | Sort the result page                           | clickcount    |
+| `--sort`           | Optional                            | Sort the result page                           | name    |
 | `--kill` , `-K`    | Optional                            | Kill background radios.                        | False         |
 | `--record` , `-R`  | Optional                            | Record a station and save to file              | False         |
 | `--filename`, `-N` | Optional                            | Filename to used to save the recorded audio    | None          |
@@ -190,7 +191,7 @@ rf/RF/recordfile: Specify a filename for the recording.
 ### sort parameters
 
 you can sort the result page with these parameters:
-- name
+- name (default)
 - votes
 - codec
 - bitrate

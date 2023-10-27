@@ -20,41 +20,11 @@ def show_help():
         "A station name to search on the internet",
         "",
     )
-    table.add_row(
-        "--play , -P",
-        "A station name from fav list or a stream url",
-        "",
-    )
-    table.add_row(
-        "--last",
-        "Play last played station",
-        "False",
-    )
+
     table.add_row(
         "--uuid , -U",
         "A station UUID to play it directly",
         "",
-    )
-    table.add_row(
-        "--loglevel",
-        "Log level of the program: info,warning,error,debug",
-        "info",
-    )
-    table.add_row(
-        "--add , -A",
-        "Add a station to your favorite list",
-        "False",
-    )
-    table.add_row(
-        "--favorite, -F ",
-        "Add current station to favorite list",
-        "False",
-    )
-
-    table.add_row(
-        "--list",
-        "Show your favorite list",
-        "False",
     )
 
     table.add_row(
@@ -62,7 +32,6 @@ def show_help():
         "Discover stations by country code",
         "",
     )
-
     table.add_row(
         "--state",
         "Discover stations by country state",
@@ -82,10 +51,53 @@ def show_help():
     )
 
     table.add_row(
+        "--play , -P",
+        "A station name from fav list or a stream url",
+        "",
+    )
+
+    table.add_row(
+        "--last",
+        "Play last played station",
+        "False",
+    )
+
+    table.add_row(
+        "--add , -A",
+        "Add a station to your favorite list",
+        "False",
+    )
+
+    table.add_row(
+        "--favorite, -F ",
+        "Add current station to favorite list",
+        "False",
+    )
+
+    table.add_row(
+        "--list",
+        "Show your favorite list",
+        "False",
+    )
+
+    table.add_row(
+        "--remove",
+        "Remove stations from favorite list",
+        "False",
+    )
+
+    table.add_row(
+        "--flush",
+        "Clear your favorite list",
+        "False",
+    )
+
+    table.add_row(
         "--limit, -L",
         "Limit the number of station results",
         "100",
     )
+
     table.add_row(
         "--sort",
         "Sort the results page, see documentation",
@@ -98,11 +110,6 @@ def show_help():
         "80",
     )
 
-    table.add_row(
-        "--flush",
-        "Clear your favorite list",
-        "False",
-    )
     table.add_row(
         "--record, -R",
         "Record current stations audio",
@@ -130,6 +137,12 @@ def show_help():
         "--kill, -K",
         "Stop background radios",
         "False",
+    )
+
+    table.add_row(
+        "--loglevel",
+        "Log level of the program: info,warning,error,debug",
+        "info",
     )
 
     console.print(table)
