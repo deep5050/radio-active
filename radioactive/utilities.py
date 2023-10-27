@@ -3,8 +3,8 @@
 import datetime
 import os
 import sys
-import requests
 
+import requests
 from pick import pick
 from rich import print
 from rich.console import Console
@@ -402,7 +402,14 @@ def handle_user_choice_from_search_result(handler, response):
         # multiple station
         log.debug("Asking for user input")
 
-        user_input = input("Type the result ID to play: ")
+        try:
+            user_input = input("Type the result ID to play: ")
+        except EOFError:
+            print()
+            log.info("Exiting")
+            log.debug("EOF reached, quitting")
+            sys.exit(0)
+
         try:
             user_input = int(user_input) - 1  # because ID starts from 1
             if user_input in range(0, len(response)):
@@ -445,19 +452,26 @@ def handle_play_last_station(last_station):
     station_obj = last_station.get_info()
     return station_obj["name"], station_obj["uuid_or_url"]
 
+
 def handle_station_name_from_headers(url):
     # Get headers from URL so that we can get radio station
-    log.debug('Attempting to retrieve station name from: {}'.format(url))
-    station_name = 'Custom Station'
+    log.info("Fetching the station name")
+    log.debug("Attempting to retrieve station name from: {}".format(url))
+    station_name = "Custom Station"
     try:
-        response = requests.get(url,stream=True)
+        # sync call
+        response = requests.get(url)
         if response.status_code == requests.codes.ok:
-            if response.headers.get('Icy-Name'):
-                station_name = response.headers.get('Icy-Name')
+            if response.headers.get("Icy-Name"):
+                station_name = response.headers.get("Icy-Name")
         else:
-            log.debug('Response code received is: {}'.format(
-                response.get_code()))
+            log.debug("Response code received is: {}".format(response.status_code()))
     except requests.HTTPError as e:
-        log.debug('''An error occurred: {}
-    The response code was {}'''.format(e, e.errno))
+        log.error("Could not fetch the station name")
+        log.debug(
+            """An error occurred: {}
+    The response code was {}""".format(
+                e, e.errno
+            )
+        )
     return station_name

@@ -2,6 +2,8 @@
 
 1. Sort results with several parameters like: click-count, popularity, bitrate, random etc.
 2. Select stations from favorite menu to remove them
+3. Squashed CTRL+D unhandled bugs
+4. Detect station name while playing with direct url
 
 ## 2.8.0
 
