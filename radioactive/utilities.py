@@ -1,7 +1,9 @@
 """Handler functions for __main__.py"""
 
 import datetime
+import json
 import os
+import subprocess
 import sys
 
 import requests
@@ -427,12 +429,13 @@ def handle_user_choice_from_search_result(handler, response):
 
 def handle_direct_play(alias, station_name_or_url=""):
     """Play a station directly with UUID or direct stream URL"""
-    if "http" in station_name_or_url.strip():
+    if "://" in station_name_or_url.strip():
         log.debug("Direct play: URL provided")
         # stream URL
         # call using URL with no station name N/A
         # let's attempt to get station name from url headers
-        station_name = handle_station_name_from_headers(station_name_or_url)
+        # station_name = handle_station_name_from_headers(station_name_or_url)
+        station_name = handle_get_station_name_from_metadata(station_name_or_url)
         return station_name, station_name_or_url
     else:
         log.debug("Direct play: station name provided")
@@ -453,6 +456,41 @@ def handle_play_last_station(last_station):
     return station_obj["name"], station_obj["uuid_or_url"]
 
 
+# uses ffprobe to fetch station name
+def handle_get_station_name_from_metadata(url):
+    """Get ICY metadata from ffprobe"""
+    log.info("Fetching the station name")
+    log.debug("Attempting to retrieve station name from: {}".format(url))
+    # Run ffprobe command and capture the metadata
+    cmd = [
+        "ffprobe",
+        "-v",
+        "quiet",
+        "-print_format",
+        "json",
+        "-show_format",
+        "-show_entries",
+        "format=icy",
+        url,
+    ]
+    station_name = "Unknown Station"
+
+    try:
+        output = subprocess.check_output(cmd).decode("utf-8")
+        data = json.loads(output)
+        log.debug(f"station info: {data}")
+
+        # Extract the station name (icy-name) if available
+        station_name = (
+            data.get("format", {}).get("tags", {}).get("icy-name", "Unknown Station")
+        )
+    except:
+        log.error("Could not fetch the station name")
+
+    return station_name
+
+
+# uses requests module to fetch station name [deprecated]
 def handle_station_name_from_headers(url):
     # Get headers from URL so that we can get radio station
     log.info("Fetching the station name")
