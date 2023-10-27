@@ -51,16 +51,22 @@
 
 While there are various CLI-based radio players like [PyRadio](https://github.com/coderholic/pyradio) and [TERA](https://github.com/shinokada/tera), Radioactive stands out for its simplicity. It's designed to work seamlessly right from the start. You don't need to be a hardcore Linux or Vim expert to enjoy radio stations with Radioactive. The goal of Radioactive is to offer a straightforward user interface that's easy to grasp and comes preconfigured, without unnecessary complexities.
 
-### Showcase
+### In the Spotlight
 
 The praise from YouTube channels and blogs underscores Radioactive's emergence as a top choice for radio enthusiasts. Its simple yet powerful features, make it a must-try application for radio lovers of all expertise levels. Discover the world of radio with ease – experience Radioactive today.
 
 1. See DistroTube YouTube channel talks about my app: https://www.youtube.com/watch?v=H7sf1RDFXpU&pp=ygUYcmFkaW9hY3RpdmUgcGxheWVyIHJhZGlv
+
 2. Ubunlog: https://ubunlog.com/en/radio-activate-an-application-to-listen-to-the-radio-from-the-terminal/
+
 3. LinuxLinks: https://www.linuxlinks.com/radio-active-listen-radio-terminal/3/
+
 4. Official entry in the RadioBrowser API: [https://www.radio-browser.info/users](https://www.radio-browser.info/users#:~:text=Sources-,radio%2Dactive,-Sources)
+
 5. ThingsAndStuff: https://wiki.thingsandstuff.org/Streaming#:~:text=com/billniakas/bash_radio_gr-,radio%2Dactive,-https%3A//github.com
+
 6. Awesome-stars: https://arbal.github.io/awesome-stars/#:~:text=deep5050/radio%2Dactive%20%2D%20Play%20any%20radios%20around%20the%20globe%20right%20from%20the%20terminal%20%3Azap%3A
+
 7. OpenSourceAgenda: https://www.opensourceagenda.com/projects/my-awesome-stars#:~:text=deep5050/radio%2Dactive%20%2D%20Play%20any%20radios%20around%20the%20globe%20right%20from%20the%20terminal%20%3Azap%3A
 
 ### Install
@@ -211,17 +217,6 @@ see [CHANGELOG](./CHANGELOG.md)
 Share you favorite list with our community 🌐 ➡️ [Here](https://github.com/deep5050/radio-active/discussions/10)
 
 > Your favorite list `.radio-active-alias` is under your home directory as a hidden file :)
-
-### Featured on
-
-- [distroTube](https://www.youtube.com/watch?v=H7sf1RDFXpU&pp=ygUYcmFkaW9hY3RpdmUgcGxheWVyIHJhZGlv)
-![H7sf1RDFXpU-SD](https://github.com/deep5050/random-shits-happen-here/assets/27947066/cb3aec4e-a2a5-41ca-a6f0-f17553e3676e)
-
-- [LinuxLinks](https://www.linuxlinks.com/radio-active-listen-radio-terminal/3/)
-
-- [Ubunlog](https://ubunlog.com/en/radio-activate-an-application-to-listen-to-the-radio-from-the-terminal/)
-
-- [RadioBrowser](https://www.radio-browser.info/users)
 
 
 ### Support
