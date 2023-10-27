@@ -457,16 +457,19 @@ def handle_station_name_from_headers(url):
     # Get headers from URL so that we can get radio station
     log.info("Fetching the station name")
     log.debug("Attempting to retrieve station name from: {}".format(url))
-    station_name = "Custom Station"
+    station_name = "Unknown Station"
     try:
-        # sync call
-        response = requests.get(url)
+        # sync call, with timeout
+        response = requests.get(url, timeout=5)
         if response.status_code == requests.codes.ok:
             if response.headers.get("Icy-Name"):
                 station_name = response.headers.get("Icy-Name")
+            else:
+                log.error("Station name not found")
         else:
             log.debug("Response code received is: {}".format(response.status_code()))
-    except requests.HTTPError as e:
+    except Exception as e:
+        # except requests.HTTPError and requests.exceptions.ReadTimeout as e:
         log.error("Could not fetch the station name")
         log.debug(
             """An error occurred: {}
