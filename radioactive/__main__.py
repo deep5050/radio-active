@@ -89,6 +89,8 @@ def main():
 
     options = parse_options()
 
+    handle_welcome_screen()
+
     VERSION = app.get_version()
 
     handler = Handler()
@@ -97,7 +99,6 @@ def main():
     last_station = Last_station()
 
     # --------------- app logic starts here ------------------- #
-    handle_welcome_screen()
 
     if options["version"]:
         log.info("RADIO-ACTIVE : version {}".format(VERSION))

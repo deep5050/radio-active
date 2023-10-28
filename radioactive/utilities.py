@@ -26,6 +26,40 @@ END_COLOR = "\033[0m"
 global_current_station_info = {}
 
 
+def handle_fetch_song_title(url):
+    """Fetch currently playing track information"""
+    log.info("Fetching the current track info")
+    log.debug("Attempting to retrieve track info from: {}".format(url))
+    # Run ffprobe command and capture the metadata
+    cmd = [
+        "ffprobe",
+        "-v",
+        "quiet",
+        "-print_format",
+        "json",
+        "-show_format",
+        "-show_entries",
+        "format=icy",
+        url,
+    ]
+    track_name = ""
+
+    try:
+        output = subprocess.check_output(cmd).decode("utf-8")
+        data = json.loads(output)
+        log.debug(f"station info: {data}")
+
+        # Extract the station name (icy-name) if available
+        track_name = data.get("format", {}).get("tags", {}).get("StreamTitle", "")
+    except:
+        log.error("Error while fetching the track name")
+
+    if track_name != "":
+        log.info(f"🎶: {track_name}")
+    else:
+        log.error("No track information available")
+
+
 def handle_record(
     target_url,
     curr_station_name,
@@ -394,13 +428,16 @@ def handle_listen_keypress(
         elif user_input in ["w", "W", "list"]:
             alias.generate_map()
             handle_favorite_table(alias)
+        elif user_input in ["t", "T", "track"]:
+            handle_fetch_song_title(target_url)
 
         elif user_input in ["h", "H", "?", "help"]:
-            log.info("h/help/?: Show this help message")
+            log.info("t/track: Current track info")
             log.info("i/info: Station information")
             log.info("r/record: Record a station")
             log.info("rf/recordfile: Specify a filename for the recording")
             log.info("f/fav: Add station to favorite list")
+            log.info("h/help/?: Show this help message")
             log.info("q/quit: Quit radioactive")
 
 
