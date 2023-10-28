@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import sys
+from random import randint
 
 import requests
 from pick import pick
@@ -407,6 +408,7 @@ def handle_user_choice_from_search_result(handler, response):
         log.debug("Asking for user input")
 
         try:
+            log.info("Type 'r' to play a random station")
             user_input = input("Type the result ID to play: ")
         except EOFError:
             print()
@@ -415,6 +417,11 @@ def handle_user_choice_from_search_result(handler, response):
             sys.exit(0)
 
         try:
+            if user_input in ["r", "R", "random"]:
+                # pick a random integer withing range
+                user_input = randint(1, len(response) - 1)
+                log.debug(f"Radom station id: {user_input}")
+
             user_input = int(user_input) - 1  # because ID starts from 1
             if user_input in range(0, len(response)):
                 target_response = response[user_input]
