@@ -6,6 +6,7 @@
 4. Squashed CTRL+D unhandled bugs
 5. Detect station name while playing with direct url
 6. Play a random station from result page
+7. See station information from runtime command
 
 ## 2.8.0
 

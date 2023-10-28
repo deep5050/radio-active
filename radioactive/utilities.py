@@ -23,6 +23,8 @@ from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
 RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
 
+global_current_station_info = {}
+
 
 def handle_record(
     target_url,
@@ -129,7 +131,13 @@ def handle_update_screen(app):
 
 def handle_favorite_table(alias):
     # log.info("Your favorite station list is below")
-    table = Table(show_header=True, header_style="bold magenta")
+    table = Table(
+        show_header=True,
+        header_style="bold magenta",
+        min_width=85,
+        safe_box=False,
+        expand=True,
+    )
     table.add_column("Station", justify="left")
     table.add_column("URL / UUID", justify="left")
     if len(alias.alias_map) > 0:
@@ -139,6 +147,25 @@ def handle_favorite_table(alias):
         log.info(f"Your favorite stations are saved in {alias.alias_path}")
     else:
         log.info("You have no favorite station list")
+
+
+def handle_show_station_info():
+    """Show important information regarding the current station"""
+    global global_current_station_info
+    custom_info = {}
+    try:
+        custom_info["name"] = global_current_station_info["name"]
+        custom_info["uuid"] = global_current_station_info["stationuuid"]
+        custom_info["url"] = global_current_station_info["url"]
+        custom_info["website"] = global_current_station_info["homepage"]
+        custom_info["country"] = global_current_station_info["country"]
+        custom_info["language"] = global_current_station_info["language"]
+        custom_info["tags"] = global_current_station_info["tags"]
+        custom_info["codec"] = global_current_station_info["codec"]
+        custom_info["bitrate"] = global_current_station_info["bitrate"]
+        print(custom_info)
+    except:
+        log.error("No station information available")
 
 
 def handle_add_station(alias):
@@ -355,6 +382,8 @@ def handle_listen_keypress(
                     record_file_format,
                     loglevel,
                 )
+        elif user_input in ["i", "I", "info"]:
+            handle_show_station_info()
 
         elif user_input in ["f", "F", "fav"]:
             handle_add_to_favorite(alias, station_name, station_url)
@@ -368,11 +397,11 @@ def handle_listen_keypress(
 
         elif user_input in ["h", "H", "?", "help"]:
             log.info("h/help/?: Show this help message")
-            log.info("q/quit: Quit radioactive")
+            log.info("i/info: Station information")
             log.info("r/record: Record a station")
-            log.info("f/fav: Add station to favorite list")
             log.info("rf/recordfile: Specify a filename for the recording")
-            # TODO: u for uuid, link for url, p for setting path
+            log.info("f/fav: Add station to favorite list")
+            log.info("q/quit: Quit radioactive")
 
 
 def handle_current_play_panel(curr_station_name=""):
@@ -384,6 +413,8 @@ def handle_current_play_panel(curr_station_name=""):
 
 
 def handle_user_choice_from_search_result(handler, response):
+    global global_current_station_info
+
     if not response:
         log.debug("No result found!")
         sys.exit(0)
@@ -399,6 +430,8 @@ def handle_user_choice_from_search_result(handler, response):
 
         if user_input == ("y" or "Y"):
             log.debug("Playing UUID from single response")
+            global_current_station_info = response[0]
+
             return handle_station_uuid_play(handler, response[0]["stationuuid"])
         else:
             log.debug("Quitting")
@@ -427,6 +460,10 @@ def handle_user_choice_from_search_result(handler, response):
                 target_response = response[user_input]
                 log.debug("Selected: {}".format(target_response))
                 # log.info("UUID: {}".format(target_response["stationuuid"]))
+
+                # saving global info
+                global_current_station_info = target_response
+
                 return handle_station_uuid_play(handler, target_response["stationuuid"])
             else:
                 log.error("Please enter an ID within the range")
