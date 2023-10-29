@@ -1,12 +1,13 @@
 ## 2.8.1
 
-1. Sort results with several parameters like: click-count, popularity, bitrate, random etc. `--sort`
-2. Select stations from favorite menu to remove them `--remove`
-3. Result page will adjust width according to the actual terminal window size
-4. Squashed CTRL+D unhandled bugs
-5. Detect station name while playing with direct url
-6. Play a random station from result page
-7. See station information from runtime command
+1. Fetch current playing track info from runtime commands 🎶 ⚡
+2. Sort results with several parameters like: click-count, popularity, bitrate, random etc. `--sort`
+3. Select stations from favorite menu to remove them `--remove`
+4. Result page will adjust width according to the actual terminal window size
+5. Squashed CTRL+D unhandled bugs
+6. Detect station name while playing with direct url
+7. Play a random station from result page
+8. See station information from runtime command
 
 ## 2.8.0
 

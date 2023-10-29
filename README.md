@@ -41,6 +41,7 @@
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
 - [x] Record audio from live radio on demand :zap:
+- [x] Get song information on run-time 🎶
 - [ ] I'm feeling lucky! Play Random stations
 - [ ] VLC, MPV player support
 
@@ -177,6 +178,7 @@ Enter a command to perform an action: ?
 
 q/Q/quit: Quit radioactive
 h/H/help/?: Show this help message
+t/T/track: Current song name (track info)
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
 rf/RF/recordfile: Specify a filename for the recording.
