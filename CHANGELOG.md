@@ -1,4 +1,4 @@
-## 2.8.1
+## 2.9.0
 
 1. Fetch current playing track info from runtime commands 🎶 ⚡
 2. Sort results with several parameters like: click-count, popularity, bitrate, random etc. `--sort`
