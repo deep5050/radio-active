@@ -31,8 +31,10 @@
 ### Features
 
 - [x] Supports more than 40K stations !! :radio:
+- [x] Record audio from live radio on demand :zap:
+- [x] Get song information on run-time 🎶
 - [x] Saves last station information
-- [x] Favorite stations (Aliasing) :heart:
+- [x] Favorite stations :heart:
 - [x] Selection menu for favorite stations
 - [x] Supports user-added stations :wrench:
 - [x] Looks minimal and user-friendly
@@ -40,8 +42,6 @@
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
-- [x] Record audio from live radio on demand :zap:
-- [x] Get song information on run-time 🎶
 - [ ] I'm feeling lucky! Play Random stations
 - [ ] VLC, MPV player support
 
@@ -120,34 +120,35 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 ### Options
 
 
-| Argument           | Note                                | Description                                    | Default       |
-| ------------------ | ----------------------------------- | ---------------------------------------------- | ------------- |
-| `--search`, `-S`   | Required (Optional from second run) | Station name                                   | None          |
-| `--play`, `-P`     | Optional                            | A station from fav list or url for direct play | None          |
-| `--last`           | Optional                            | Play last played station                       | False         |
-| `--uuid`, `-U`     | Optional                            | ID of the station                              | None          |
-| `--loglevel`       | Optional                            | Log level of the program                       | Info          |
-| `--add` , `-A`     | Optional                            | Add an entry to fav list                       | False         |
-| `--list`, `-W`     | Optional                            | Show fav list                                  | False         |
-| `--remove`         | Optional                            | Remove entries from favorite list              | False         |
-| `--favorite`, `-F` | Optional                            | Add current station to fav list                | False         |
-| `--flush`          | Optional                            | Remove all the entries from fav list           | False         |
-| `--country`, `-C`  | Optional                            | Discover stations by country code              | False         |
-| `--state`          | Optional                            | Discover stations by country state             | False         |
-| `--tag`            | Optional                            | Discover stations by tags/genre                | False         |
-| `--language`       | optional                            | Discover stations by                           | False         |
-| `--limit`          | Optional                            | Limit the # of results in the Discover table   | 100           |
-| `--volume` , `-V`  | Optional                            | Change the volume passed into ffplay           | 80            |
-| `--sort`           | Optional                            | Sort the result page                           | name    |
-| `--kill` , `-K`    | Optional                            | Kill background radios.                        | False         |
-| `--record` , `-R`  | Optional                            | Record a station and save to file              | False         |
-| `--filename`, `-N` | Optional                            | Filename to used to save the recorded audio    | None          |
-| `--filepath`       | Optional                            | Path to save the recordings                    | <DEFAULT_DIR> |
-| `--filetype`, `-T` | Optional                            | Format of the recording (mp3/auto)             | mp3           |
+| Argument           | Note     | Description                                    | Default       |
+| ------------------ | -------- | ---------------------------------------------- | ------------- |
+| `--search`, `-S`   | Optional | Station name                                   | None          |
+| `--play`, `-P`     | Optional | A station from fav list or url for direct play | None          |
+| `--country`, `-C`  | Optional | Discover stations by country code              | False         |
+| `--state`          | Optional | Discover stations by country state             | False         |
+| `--language`       | optional | Discover stations by                           | False         |
+| `--tag`            | Optional | Discover stations by tags/genre                | False         |
+| `--uuid`, `-U`     | Optional | ID of the station                              | None          |
+| `--record` , `-R`  | Optional | Record a station and save to file              | False         |
+| `--filename`, `-N` | Optional | Filename to used to save the recorded audio    | None          |
+| `--filepath`       | Optional | Path to save the recordings                    | <DEFAULT_DIR> |
+| `--filetype`, `-T` | Optional | Format of the recording (mp3/auto)             | mp3           |
+| `--last`           | Optional | Play last played station                       | False         |
+| `--sort`           | Optional | Sort the result page                           | name          |
+| `--limit`          | Optional | Limit the # of results in the Discover table   | 100           |
+| `--volume` , `-V`  | Optional | Change the volume passed into ffplay           | 80            |
+| `--favorite`, `-F` | Optional | Add current station to fav list                | False         |
+| `--add` , `-A`     | Optional | Add an entry to fav list                       | False         |
+| `--list`, `-W`     | Optional | Show fav list                                  | False         |
+| `--remove`         | Optional | Remove entries from favorite list              | False         |
+| `--flush`          | Optional | Remove all the entries from fav list           | False         |
+| `--kill` , `-K`    | Optional | Kill background radios.                        | False         |
+| `--loglevel`       | Optional | Log level of the program                       | Info          |
 
 <hr>
 
 
+> **NOTE:** Once you save/play at least one station, invoking `radio` without any options will show a selection menu
 
 > `--search`, `-S`: Search for a station online.
 
@@ -176,26 +177,26 @@ Input a command during the radio playback to perform an action. Available comman
 ```
 Enter a command to perform an action: ?
 
-q/Q/quit: Quit radioactive
-h/H/help/?: Show this help message
 t/T/track: Current song name (track info)
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
 rf/RF/recordfile: Specify a filename for the recording.
+h/H/help/?: Show this help message
+q/Q/quit: Quit radioactive
 ```
 
 ### sort parameters
 
 you can sort the result page with these parameters:
-- name (default)
-- votes
-- codec
-- bitrate
-- lastcheckok
-- lastchecktime
-- clickcount
-- clicktrend
-- random
+- `name` (default)
+- `votes` (based on user votes)
+- `codec`
+- `bitrate`
+- `lastcheckok` (active stations)
+- `lastchecktime` (recent active)
+- `clickcount` (total play count)
+- `clicktrend` (currently trending stations)
+- `random`
 
 ### Bonus Tips
 
