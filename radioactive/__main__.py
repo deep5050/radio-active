@@ -8,23 +8,29 @@ from zenlog import log
 
 from radioactive.alias import Alias
 from radioactive.app import App
-from radioactive.args import Parser
 from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
+from radioactive.parser import parse_options
 from radioactive.player import Player, kill_background_ffplays
-from radioactive.utilities import (handle_add_station, handle_add_to_favorite,
-                                   handle_current_play_panel,
-                                   handle_direct_play, handle_favorite_table,
-                                   handle_listen_keypress, handle_log_level,
-                                   handle_play_last_station, handle_record,
-                                   handle_save_last_station,
-                                   handle_search_stations,
-                                   handle_station_selection_menu,
-                                   handle_station_uuid_play,
-                                   handle_update_screen,
-                                   handle_user_choice_from_search_result,
-                                   handle_welcome_screen)
+from radioactive.utilities import (
+    check_sort_by_parameter,
+    handle_add_station,
+    handle_add_to_favorite,
+    handle_current_play_panel,
+    handle_direct_play,
+    handle_favorite_table,
+    handle_listen_keypress,
+    handle_play_last_station,
+    handle_record,
+    handle_save_last_station,
+    handle_search_stations,
+    handle_station_selection_menu,
+    handle_station_uuid_play,
+    handle_update_screen,
+    handle_user_choice_from_search_result,
+    handle_welcome_screen,
+)
 
 # globally needed as signal handler needs it
 # to terminate main() properly
@@ -78,42 +84,12 @@ def final_step(options, last_station, alias, handler):
 
 def main():
     log.level("info")
-    parser = Parser()
+
     app = App()
-    args = parser.parse()
 
-    options = {}
-    # ----------------- all the args ------------- #
-    options["show_help_table"] = args.help
-    options["search_station_name"] = args.search_station_name
-    options["direct_play"] = args.direct_play
-    options["play_last_station"] = args.play_last_station
+    options = parse_options()
 
-    options["search_station_uuid"] = args.search_station_uuid
-
-    options["discover_country_code"] = args.discover_country_code
-    options["discover_state"] = args.discover_state
-    options["discover_language"] = args.discover_language
-    options["discover_tag"] = args.discover_tag
-
-    limit = args.limit
-    options["limit"] = int(limit) if limit else 100
-    log.debug("limit is set to: {}".format(limit))
-
-    options["add_station"] = args.new_station
-    options["add_to_favorite"] = args.add_to_favorite
-    options["show_favorite_list"] = args.show_favorite_list
-
-    options["flush_fav_list"] = args.flush
-    options["kill_ffplays"] = args.kill_ffplays
-
-    options["record_stream"] = args.record_stream
-    options["record_file"] = args.record_file
-    options["record_file_format"] = args.record_file_format
-    options["record_file_path"] = args.record_file_path
-
-    options["target_url"] = ""
-    options["volume"] = args.volume
+    handle_welcome_screen()
 
     VERSION = app.get_version()
 
@@ -123,17 +99,14 @@ def main():
     last_station = Last_station()
 
     # --------------- app logic starts here ------------------- #
-    handle_welcome_screen()
 
-    if args.version:
+    if options["version"]:
         log.info("RADIO-ACTIVE : version {}".format(VERSION))
         sys.exit(0)
 
     if options["show_help_table"]:
         show_help()
         sys.exit(0)
-
-    options["loglevel"] = handle_log_level(args)
 
     if options["flush_fav_list"]:
         sys.exit(alias.flush())
@@ -149,12 +122,19 @@ def main():
     if options["add_station"]:
         handle_add_station(alias)
 
+    if options["remove_fav_stations"]:
+        # handle_remove_stations(alias)
+        alias.remove_entries()
+        sys.exit(0)
+
+    options["sort_by"] = check_sort_by_parameter(options["sort_by"])
+
     handle_update_screen(app)
 
     # ----------- country ----------- #
     if options["discover_country_code"]:
         response = handler.discover_by_country(
-            options["discover_country_code"], options["limit"]
+            options["discover_country_code"], options["limit"], options["sort_by"]
         )
         if response is not None:
             (
@@ -168,7 +148,7 @@ def main():
     # -------------- state ------------- #
     if options["discover_state"]:
         response = handler.discover_by_state(
-            options["discover_state"], options["limit"]
+            options["discover_state"], options["limit"], options["sort_by"]
         )
         if response is not None:
             (
@@ -182,7 +162,7 @@ def main():
     # ----------- language ------------ #
     if options["discover_language"]:
         response = handler.discover_by_language(
-            options["discover_language"], options["limit"]
+            options["discover_language"], options["limit"], options["sort_by"]
         )
         if response is not None:
             (
@@ -195,7 +175,9 @@ def main():
 
     # -------------- tag ------------- #
     if options["discover_tag"]:
-        response = handler.discover_by_tag(options["discover_tag"], options["limit"])
+        response = handler.discover_by_tag(
+            options["discover_tag"], options["limit"], options["sort_by"]
+        )
         if response is not None:
             (
                 options["curr_station_name"],
@@ -235,7 +217,10 @@ def main():
     ):
         response = [{}]
         response = handle_search_stations(
-            handler, options["search_station_name"], options["limit"]
+            handler,
+            options["search_station_name"],
+            options["limit"],
+            options["sort_by"],
         )
         if response is not None:
             (

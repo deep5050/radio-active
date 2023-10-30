@@ -1,9 +1,13 @@
 """Handler functions for __main__.py"""
 
 import datetime
+import json
 import os
+import subprocess
 import sys
+from random import randint
 
+import requests
 from pick import pick
 from rich import print
 from rich.console import Console
@@ -19,14 +23,41 @@ from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
 RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
 
+global_current_station_info = {}
 
-def handle_log_level(args):
-    log_level = args.log_level
-    if log_level in ["info", "error", "warning", "debug"]:
-        log.level(log_level)
-        return args.log_level
+
+def handle_fetch_song_title(url):
+    """Fetch currently playing track information"""
+    log.info("Fetching the current track info")
+    log.debug("Attempting to retrieve track info from: {}".format(url))
+    # Run ffprobe command and capture the metadata
+    cmd = [
+        "ffprobe",
+        "-v",
+        "quiet",
+        "-print_format",
+        "json",
+        "-show_format",
+        "-show_entries",
+        "format=icy",
+        url,
+    ]
+    track_name = ""
+
+    try:
+        output = subprocess.check_output(cmd).decode("utf-8")
+        data = json.loads(output)
+        log.debug(f"station info: {data}")
+
+        # Extract the station name (icy-name) if available
+        track_name = data.get("format", {}).get("tags", {}).get("StreamTitle", "")
+    except:
+        log.error("Error while fetching the track name")
+
+    if track_name != "":
+        log.info(f"🎶: {track_name}")
     else:
-        log.warning("Correct log levels are: error,warning,info(default),debug")
+        log.error("No track information available")
 
 
 def handle_record(
@@ -110,6 +141,8 @@ def handle_welcome_screen():
         """,
         title="[b]RADIOACTIVE[/b]",
         width=85,
+        expand=True,
+        safe_box=True,
     )
     print(welcome)
 
@@ -131,8 +164,14 @@ def handle_update_screen(app):
 
 
 def handle_favorite_table(alias):
-    log.info("Your favorite station list is below")
-    table = Table(show_header=True, header_style="bold magenta")
+    # log.info("Your favorite station list is below")
+    table = Table(
+        show_header=True,
+        header_style="bold magenta",
+        min_width=85,
+        safe_box=False,
+        expand=True,
+    )
     table.add_column("Station", justify="left")
     table.add_column("URL / UUID", justify="left")
     if len(alias.alias_map) > 0:
@@ -144,9 +183,34 @@ def handle_favorite_table(alias):
         log.info("You have no favorite station list")
 
 
+def handle_show_station_info():
+    """Show important information regarding the current station"""
+    global global_current_station_info
+    custom_info = {}
+    try:
+        custom_info["name"] = global_current_station_info["name"]
+        custom_info["uuid"] = global_current_station_info["stationuuid"]
+        custom_info["url"] = global_current_station_info["url"]
+        custom_info["website"] = global_current_station_info["homepage"]
+        custom_info["country"] = global_current_station_info["country"]
+        custom_info["language"] = global_current_station_info["language"]
+        custom_info["tags"] = global_current_station_info["tags"]
+        custom_info["codec"] = global_current_station_info["codec"]
+        custom_info["bitrate"] = global_current_station_info["bitrate"]
+        print(custom_info)
+    except:
+        log.error("No station information available")
+
+
 def handle_add_station(alias):
-    left = input("Enter station name:")
-    right = input("Enter station stream-url or radio-browser uuid:")
+    try:
+        left = input("Enter station name:")
+        right = input("Enter station stream-url or radio-browser uuid:")
+    except EOFError:
+        print()
+        log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+        sys.exit(0)
+
     if left.strip() == "" or right.strip() == "":
         log.error("Empty inputs not allowed")
         sys.exit(1)
@@ -159,7 +223,13 @@ def handle_add_to_favorite(alias, station_name, station_uuid_url):
     try:
         response = alias.add_entry(station_name, station_uuid_url)
         if not response:
-            user_input = input("Enter a different name: ")
+            try:
+                user_input = input("Enter a different name: ")
+            except EOFError:
+                print()
+                log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+                sys.exit(0)
+
             if user_input.strip() != "":
                 response = alias.add_entry(user_input.strip(), station_uuid_url)
     except Exception as e:
@@ -186,10 +256,33 @@ def handle_station_uuid_play(handler, station_uuid):
     return station_name, station_url
 
 
-def handle_search_stations(handler, station_name, limit):
+def check_sort_by_parameter(sort_by):
+    accepted_parameters = [
+        "name",
+        "votes",
+        "codec",
+        "bitrate",
+        "lastcheckok",
+        "lastchecktime",
+        "clickcount",
+        "clicktrend",
+        "random",
+    ]
+
+    if sort_by not in accepted_parameters:
+        log.warning("Sort parameter is unknown. Falling back to 'name'")
+
+        log.warning(
+            "choose from: name,votes,codec,bitrate,lastcheckok,lastchecktime,clickcount,clicktrend,random"
+        )
+        return "name"
+    return sort_by
+
+
+def handle_search_stations(handler, station_name, limit, sort_by):
     log.debug("Searching API for: {}".format(station_name))
 
-    return handler.search_by_station_name(station_name, limit)
+    return handler.search_by_station_name(station_name, limit, sort_by)
 
 
 def handle_station_selection_menu(handler, last_station, alias):
@@ -203,7 +296,7 @@ def handle_station_selection_menu(handler, last_station, alias):
         # no last station??
         pass
 
-    log.info("You can search for a station on internet using the --search option")
+    # log.info("You can search for a station on internet using the --search option")
     title = "Please select a station from your favorite list:"
     station_selection_names = []
     station_selection_urls = []
@@ -271,8 +364,15 @@ def handle_listen_keypress(
 ):
     log.info("Press '?' to see available commands\n")
     while True:
-        user_input = input("Enter a command to perform an action: ")
-        if user_input == "r" or user_input == "R" or user_input == "record":
+        try:
+            user_input = input("Enter a command to perform an action: ")
+        except EOFError:
+            print()
+            log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+            kill_background_ffplays()
+            sys.exit(0)
+
+        if user_input in ["r", "R", "record"]:
             handle_record(
                 target_url,
                 station_name,
@@ -281,11 +381,17 @@ def handle_listen_keypress(
                 record_file_format,
                 loglevel,
             )
-        elif user_input == "rf" or user_input == "RF" or user_input == "recordfile":
+        elif user_input in ["rf", "RF", "recordfile"]:
             # if no filename is provided try to auto detect
             # else if ".mp3" is provided, use libmp3lame to force write to mp3
+            try:
+                user_input = input("Enter output filename: ")
+            except EOFError:
+                print()
+                log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+                kill_background_ffplays()
+                sys.exit(0)
 
-            user_input = input("Enter output filename: ")
             # try to get extension from filename
             try:
                 file_name, file_ext = user_input.split(".")
@@ -310,29 +416,29 @@ def handle_listen_keypress(
                     record_file_format,
                     loglevel,
                 )
+        elif user_input in ["i", "I", "info"]:
+            handle_show_station_info()
 
-        elif user_input == "f" or user_input == "F" or user_input == "fav":
+        elif user_input in ["f", "F", "fav"]:
             handle_add_to_favorite(alias, station_name, station_url)
 
-        elif user_input == "q" or user_input == "Q" or user_input == "quit":
+        elif user_input in ["q", "Q", "quit"]:
             kill_background_ffplays()
             sys.exit(0)
-        elif user_input == "w" or user_input == "W" or user_input == "list":
+        elif user_input in ["w", "W", "list"]:
             alias.generate_map()
             handle_favorite_table(alias)
+        elif user_input in ["t", "T", "track"]:
+            handle_fetch_song_title(target_url)
 
-        elif (
-            user_input == "h"
-            or user_input == "H"
-            or user_input == "?"
-            or user_input == "help"
-        ):
+        elif user_input in ["h", "H", "?", "help"]:
+            log.info("t/track: Current track info")
+            log.info("i/info: Station information")
+            log.info("r/record: Record a station")
+            log.info("rf/recordfile: Specify a filename for the recording")
+            log.info("f/fav: Add station to favorite list")
             log.info("h/help/?: Show this help message")
             log.info("q/quit: Quit radioactive")
-            log.info("r/record: Record a station")
-            log.info("f/fav: Add station to favorite list")
-            log.info("rf/recordfile: Specify a filename for the recording")
-            # TODO: u for uuid, link for url, p for setting path
 
 
 def handle_current_play_panel(curr_station_name=""):
@@ -344,6 +450,8 @@ def handle_current_play_panel(curr_station_name=""):
 
 
 def handle_user_choice_from_search_result(handler, response):
+    global global_current_station_info
+
     if not response:
         log.debug("No result found!")
         sys.exit(0)
@@ -351,9 +459,16 @@ def handle_user_choice_from_search_result(handler, response):
         # single station found
         log.debug("Exactly one result found")
 
-        user_input = input("Want to play this station? Y/N: ")
+        try:
+            user_input = input("Want to play this station? Y/N: ")
+        except EOFError:
+            print()
+            sys.exit(0)
+
         if user_input == ("y" or "Y"):
             log.debug("Playing UUID from single response")
+            global_current_station_info = response[0]
+
             return handle_station_uuid_play(handler, response[0]["stationuuid"])
         else:
             log.debug("Quitting")
@@ -362,12 +477,30 @@ def handle_user_choice_from_search_result(handler, response):
         # multiple station
         log.debug("Asking for user input")
 
-        user_input = input("Type the result ID to play: ")
         try:
+            log.info("Type 'r' to play a random station")
+            user_input = input("Type the result ID to play: ")
+        except EOFError:
+            print()
+            log.info("Exiting")
+            log.debug("EOF reached, quitting")
+            sys.exit(0)
+
+        try:
+            if user_input in ["r", "R", "random"]:
+                # pick a random integer withing range
+                user_input = randint(1, len(response) - 1)
+                log.debug(f"Radom station id: {user_input}")
+
             user_input = int(user_input) - 1  # because ID starts from 1
             if user_input in range(0, len(response)):
                 target_response = response[user_input]
                 log.debug("Selected: {}".format(target_response))
+                # log.info("UUID: {}".format(target_response["stationuuid"]))
+
+                # saving global info
+                global_current_station_info = target_response
+
                 return handle_station_uuid_play(handler, target_response["stationuuid"])
             else:
                 log.error("Please enter an ID within the range")
@@ -379,11 +512,14 @@ def handle_user_choice_from_search_result(handler, response):
 
 def handle_direct_play(alias, station_name_or_url=""):
     """Play a station directly with UUID or direct stream URL"""
-    if "http" in station_name_or_url.strip():
+    if "://" in station_name_or_url.strip():
         log.debug("Direct play: URL provided")
         # stream URL
         # call using URL with no station name N/A
-        return "N/A", station_name_or_url
+        # let's attempt to get station name from url headers
+        # station_name = handle_station_name_from_headers(station_name_or_url)
+        station_name = handle_get_station_name_from_metadata(station_name_or_url)
+        return station_name, station_name_or_url
     else:
         log.debug("Direct play: station name provided")
         # station name from fav list
@@ -401,3 +537,65 @@ def handle_direct_play(alias, station_name_or_url=""):
 def handle_play_last_station(last_station):
     station_obj = last_station.get_info()
     return station_obj["name"], station_obj["uuid_or_url"]
+
+
+# uses ffprobe to fetch station name
+def handle_get_station_name_from_metadata(url):
+    """Get ICY metadata from ffprobe"""
+    log.info("Fetching the station name")
+    log.debug("Attempting to retrieve station name from: {}".format(url))
+    # Run ffprobe command and capture the metadata
+    cmd = [
+        "ffprobe",
+        "-v",
+        "quiet",
+        "-print_format",
+        "json",
+        "-show_format",
+        "-show_entries",
+        "format=icy",
+        url,
+    ]
+    station_name = "Unknown Station"
+
+    try:
+        output = subprocess.check_output(cmd).decode("utf-8")
+        data = json.loads(output)
+        log.debug(f"station info: {data}")
+
+        # Extract the station name (icy-name) if available
+        station_name = (
+            data.get("format", {}).get("tags", {}).get("icy-name", "Unknown Station")
+        )
+    except:
+        log.error("Could not fetch the station name")
+
+    return station_name
+
+
+# uses requests module to fetch station name [deprecated]
+def handle_station_name_from_headers(url):
+    # Get headers from URL so that we can get radio station
+    log.info("Fetching the station name")
+    log.debug("Attempting to retrieve station name from: {}".format(url))
+    station_name = "Unknown Station"
+    try:
+        # sync call, with timeout
+        response = requests.get(url, timeout=5)
+        if response.status_code == requests.codes.ok:
+            if response.headers.get("Icy-Name"):
+                station_name = response.headers.get("Icy-Name")
+            else:
+                log.error("Station name not found")
+        else:
+            log.debug("Response code received is: {}".format(response.status_code()))
+    except Exception as e:
+        # except requests.HTTPError and requests.exceptions.ReadTimeout as e:
+        log.error("Could not fetch the station name")
+        log.debug(
+            """An error occurred: {}
+    The response code was {}""".format(
+                e, e.errno
+            )
+        )
+    return station_name

@@ -37,6 +37,7 @@ class Parser:
             dest="search_station_name",
             help="Specify a station name",
         )
+
         self.parser.add_argument(
             "--play",
             "-P",
@@ -107,6 +108,14 @@ class Parser:
         )
 
         self.parser.add_argument(
+            "--sort",
+            action="store",
+            dest="stations_sort_by",
+            default="name",
+            help="Sort stations",
+        )
+
+        self.parser.add_argument(
             "--add",
             "-A",
             action="store_true",
@@ -129,6 +138,14 @@ class Parser:
             dest="show_favorite_list",
             default=False,
             help="Show your favorite list in table format",
+        )
+
+        self.parser.add_argument(
+            "--remove",
+            action="store_true",
+            default=False,
+            dest="remove_fav_stations",
+            help="Remove stations from favorite list",
         )
 
         self.parser.add_argument(

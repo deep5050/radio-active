@@ -1,3 +1,14 @@
+## 2.9.0
+
+1. Fetch current playing track info from runtime commands 🎶 ⚡
+2. Sort results with several parameters like: click-count, popularity, bitrate, random etc. `--sort`
+3. Select stations from favorite menu to remove them `--remove`
+4. Result page will adjust width according to the actual terminal window size
+5. Squashed CTRL+D unhandled bugs
+6. Detect station name while playing with direct url
+7. Play a random station from result page
+8. See station information from runtime command
+
 ## 2.8.0
 
 1. Selection menu added for `--country` and `--tag` results. Play directly from result page.
@@ -15,7 +26,7 @@
 4. Runtime command feature added. Perform actions on demand ⚡
 5. A caching mechanism was added for fewer API calls. Faster radio playbacks!
 6. Code refactored. It is easier for contributors to implement new features.
-7. BREAKING CHANGES: `--station` -> `--search`, `--discover-by-country` -> `--country`, `--discover-by-tag` -> `--tag`, `--discover-by-state` -> `--state`, `--discover-by-language` -> `--lamguage`, `--add-station` -> `--add`, `--add-to-favorite` -> `--favorite`, `--show-favorite-list` -> `--list`
+7. BREAKING CHANGES: `--station` -> `--search`, `--discover-by-country` -> `--country`, `--discover-by-tag` -> `--tag`, `--discover-by-state` -> `--state`, `--discover-by-language` -> `--language`, `--add-station` -> `--add`, `--add-to-favorite` -> `--favorite`, `--show-favorite-list` -> `--list`
 
 
 ## 2.6.0
@@ -60,7 +71,7 @@
 ## 2.4.0
 
 1. Crashes on Windows fixed
-Fixed setup-related issues (development purpose)
+2. Fixed setup-related issues (development purpose)
 
 ## 2.3.0
 

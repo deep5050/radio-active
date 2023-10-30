@@ -27,11 +27,14 @@
 
 </div>
 
+
 ### Features
 
 - [x] Supports more than 40K stations !! :radio:
+- [x] Record audio from live radio on demand :zap:
+- [x] Get song information on run-time 🎶
 - [x] Saves last station information
-- [x] Favorite stations (Aliasing) :heart:
+- [x] Favorite stations :heart:
 - [x] Selection menu for favorite stations
 - [x] Supports user-added stations :wrench:
 - [x] Looks minimal and user-friendly
@@ -39,18 +42,17 @@
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
-- [x] Record audio from live radio on demand :zap:
 - [ ] I'm feeling lucky! Play Random stations
 - [ ] VLC, MPV player support
 
 
-> See my progress ➡️ [here]([https://github.com/deep5050/radio-active/projects/1](https://github.com/users/deep5050/projects/5))
+> See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)
 
 ### Why radioactive?
 
 While there are various CLI-based radio players like [PyRadio](https://github.com/coderholic/pyradio) and [TERA](https://github.com/shinokada/tera), Radioactive stands out for its simplicity. It's designed to work seamlessly right from the start. You don't need to be a hardcore Linux or Vim expert to enjoy radio stations with Radioactive. The goal of Radioactive is to offer a straightforward user interface that's easy to grasp and comes preconfigured, without unnecessary complexities.
 
-### Showcase
+### In the Spotlight
 
 The praise from YouTube channels and blogs underscores Radioactive's emergence as a top choice for radio enthusiasts. Its simple yet powerful features, make it a must-try application for radio lovers of all expertise levels. Discover the world of radio with ease – experience Radioactive today.
 
@@ -61,6 +63,7 @@ The praise from YouTube channels and blogs underscores Radioactive's emergence a
 5. ThingsAndStuff: https://wiki.thingsandstuff.org/Streaming#:~:text=com/billniakas/bash_radio_gr-,radio%2Dactive,-https%3A//github.com
 6. Awesome-stars: https://arbal.github.io/awesome-stars/#:~:text=deep5050/radio%2Dactive%20%2D%20Play%20any%20radios%20around%20the%20globe%20right%20from%20the%20terminal%20%3Azap%3A
 7. OpenSourceAgenda: https://www.opensourceagenda.com/projects/my-awesome-stars#:~:text=deep5050/radio%2Dactive%20%2D%20Play%20any%20radios%20around%20the%20globe%20right%20from%20the%20terminal%20%3Azap%3A
+
 
 ### Install
 
@@ -111,39 +114,41 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 
 <!-- <a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src=https://user-images.githubusercontent.com/27947066/267328820-f7264e02-edc1-46f3-9548-5dfb50a6627d.jpg /> </a>
 <hr> -->
-<a align=center href="https://asciinema.org/a/611668" target="_blank"><img src="https://asciinema.org/a/611668.svg" /></a>
-
+<a align=center href="https://asciinema.org/a/611668" target="_blank"><img src="https://asciinema.org/a/617580.svg" /></a>
 
 
 ### Options
 
 
-| Argument           | Note                                | Description                                    | Default       |
-| ------------------ | ----------------------------------- | ---------------------------------------------- | ------------- |
-| `--search`, `-S`   | Required (Optional from second run) | Station name                                   | None          |
-| `--play`, `-P`     | Optional                            | A station from fav list or url for direct play | None          |
-| `--last`           | Optional                            | Play last played station                       | False         |
-| `--uuid`, `-U`     | Optional                            | ID of the station                              | None          |
-| `--loglevel`       | Optional                            | Log level of the program                       | Info          |
-| `--add` , `-A`     | Optional                            | Add an entry to fav list                       | False         |
-| `--list`, `-W`     | Optional                            | Show fav list                                  | False         |
-| `--favorite`, `-F` | Optional                            | Add current station to fav list                | False         |
-| `--flush`          | Optional                            | Remove all the entries from fav list           | False         |
-| `--country`, `-C`  | Optional                            | Discover stations by country code              | False         |
-| `--state`          | Optional                            | Discover stations by country state             | False         |
-| `--tag`            | Optional                            | Discover stations by tags/genre                | False         |
-| `--language`       | optional                            | Discover stations by                           | False         |
-| `--limit`          | Optional                            | Limit the # of results in the Discover table   | 100           |
-| `--volume` , `-V`  | Optional                            | Change the volume passed into ffplay           | 80            |
-| `--kill` , `-K`    | Optional                            | Kill background radios.                        | False         |
-| `--record` , `-R`  | Optional                            | Record a station and save to file              | False         |
-| `--filename`, `-N` | Optional                            | Filename to used to save the recorded audio    | None          |
-| `--filepath`       | Optional                            | Path to save the recordings                    | <DEFAULT_DIR> |
-| `--filetype`, `-T` | Optional                            | Format of the recording (mp3/auto)             | mp3           |
+| Argument           | Note     | Description                                    | Default       |
+| ------------------ | -------- | ---------------------------------------------- | ------------- |
+| `--search`, `-S`   | Optional | Station name                                   | None          |
+| `--play`, `-P`     | Optional | A station from fav list or url for direct play | None          |
+| `--country`, `-C`  | Optional | Discover stations by country code              | False         |
+| `--state`          | Optional | Discover stations by country state             | False         |
+| `--language`       | optional | Discover stations by                           | False         |
+| `--tag`            | Optional | Discover stations by tags/genre                | False         |
+| `--uuid`, `-U`     | Optional | ID of the station                              | None          |
+| `--record` , `-R`  | Optional | Record a station and save to file              | False         |
+| `--filename`, `-N` | Optional | Filename to used to save the recorded audio    | None          |
+| `--filepath`       | Optional | Path to save the recordings                    | <DEFAULT_DIR> |
+| `--filetype`, `-T` | Optional | Format of the recording (mp3/auto)             | mp3           |
+| `--last`           | Optional | Play last played station                       | False         |
+| `--sort`           | Optional | Sort the result page                           | name          |
+| `--limit`          | Optional | Limit the # of results in the Discover table   | 100           |
+| `--volume` , `-V`  | Optional | Change the volume passed into ffplay           | 80            |
+| `--favorite`, `-F` | Optional | Add current station to fav list                | False         |
+| `--add` , `-A`     | Optional | Add an entry to fav list                       | False         |
+| `--list`, `-W`     | Optional | Show fav list                                  | False         |
+| `--remove`         | Optional | Remove entries from favorite list              | False         |
+| `--flush`          | Optional | Remove all the entries from fav list           | False         |
+| `--kill` , `-K`    | Optional | Kill background radios.                        | False         |
+| `--loglevel`       | Optional | Log level of the program                       | Info          |
 
 <hr>
 
 
+> **NOTE:** Once you save/play at least one station, invoking `radio` without any options will show a selection menu
 
 > `--search`, `-S`: Search for a station online.
 
@@ -172,13 +177,26 @@ Input a command during the radio playback to perform an action. Available comman
 ```
 Enter a command to perform an action: ?
 
-q/Q/quit: Quit radioactive
-h/H/help/?: Show this help message
+t/T/track: Current song name (track info)
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
 rf/RF/recordfile: Specify a filename for the recording.
+h/H/help/?: Show this help message
+q/Q/quit: Quit radioactive
 ```
 
+### sort parameters
+
+you can sort the result page with these parameters:
+- `name` (default)
+- `votes` (based on user votes)
+- `codec`
+- `bitrate`
+- `lastcheckok` (active stations)
+- `lastchecktime` (recent active)
+- `clickcount` (total play count)
+- `clicktrend` (currently trending stations)
+- `random`
 
 ### Bonus Tips
 
@@ -230,6 +248,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://www.bjoli.com"><img src="https://avatars.githubusercontent.com/u/48383?v=4?s=100" width="100px;" alt="Joe Smith"/><br /><sub><b>Joe Smith</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=Yasumoto" title="Tests">⚠️</a> <a href="https://github.com/deep5050/radio-active/commits?author=Yasumoto" title="Code">💻</a> <a href="#ideas-Yasumoto" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/salehjafarli"><img src="https://avatars.githubusercontent.com/u/81613563?v=4?s=100" width="100px;" alt="salehjafarli"/><br /><sub><b>salehjafarli</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=salehjafarli" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/marvoh"><img src="https://avatars.githubusercontent.com/u/5451142?v=4?s=100" width="100px;" alt="marvoh"/><br /><sub><b>marvoh</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=marvoh" title="Code">💻</a> <a href="https://github.com/deep5050/radio-active/issues?q=author%3Amarvoh" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>

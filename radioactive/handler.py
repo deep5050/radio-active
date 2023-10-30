@@ -16,10 +16,88 @@ console = Console()
 
 
 def trim_string(text, max_length=40):
+    """
+    Trim a string to a maximum length and add ellipsis if needed.
+
+    Args:
+    text (str): The input text to be trimmed.
+    max_length (int, optional): The maximum length of the trimmed string. Defaults to 40.
+
+    Returns:
+    str: The trimmed string, possibly with an ellipsis (...) if it was shortened.
+    """
     if len(text) > max_length:
         return text[:max_length] + "..."
     else:
         return text
+
+
+def print_table(response, columns, sort_by="name"):
+    """
+    Print the table applying the sort logic.
+
+    Args:
+    response (list): A list of data to be displayed in the table.
+    columns (list): List of column specifications in the format "col_name:response_key@max_str".
+    sort_by (str): The column by which to sort the table.
+
+    Returns:
+    list: The original response data.
+    """
+
+    if not response:
+        log.error("No stations found")
+        sys.exit(1)
+
+    if len(response) >= 1:
+        table = Table(
+            show_header=True,
+            header_style="magenta",
+            expand=True,
+            min_width=85,
+            safe_box=True,
+            # show_footer=True,
+            # show_lines=True,
+            # padding=0.1,
+            # collapse_padding=True,
+        )
+        table.add_column("ID", justify="center")
+
+        for col_spec in columns:
+            col_name, response_key, max_str = (
+                col_spec.split(":")[0],
+                col_spec.split(":")[1].split("@")[0],
+                int(col_spec.split("@")[1]),
+            )
+            table.add_column(col_name, justify="left")
+
+        # do not need extra columns for these cases
+        if sort_by not in ["name", "random"]:
+            table.add_column(sort_by, justify="left")
+
+    for i, station in enumerate(response):
+        row_data = [str(i + 1)]  # for ID
+
+        for col_spec in columns:
+            col_name, response_key, max_str = (
+                col_spec.split(":")[0],
+                col_spec.split(":")[1].split("@")[0],
+                int(col_spec.split("@")[1]),
+            )
+            row_data.append(
+                trim_string(station.get(response_key, ""), max_length=max_str)
+            )
+
+        if sort_by not in ["name", "random"]:
+            row_data.append(str(station.get(sort_by, "")))
+
+        table.add_row(*row_data)
+
+    console.print(table)
+    # log.info(
+    #     "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit, and retry"
+    # )
+    return response
 
 
 class Handler:
@@ -51,61 +129,34 @@ class Handler:
                 return country["iso_3166_1"]
         return None
 
-    def station_validator(self):
-        """Validates a response from the API and takes appropriate decision"""
-
-        # when no response from the API
-        if not self.response:
-            log.error("No stations found by the name")
-            return []
-
-        # when multiple results found
-        if len(self.response) > 1:
-            table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("ID", justify="center")
-            table.add_column("Station", justify="left")
-            # table.add_column("UUID", justify="center")
-            table.add_column("Country", justify="center")
-            table.add_column("Tags", justify="center")
-
-            log.warn("showing {} stations with the name!".format(len(self.response)))
-
-            for i in range(0, len(self.response)):
-                station = self.response[i]
-                table.add_row(
-                    str(i + 1),
-                    trim_string(station["name"], max_length=50),
-                    # station["stationuuid"],
-                    station["countrycode"],
-                    trim_string(
-                        station["tags"]
-                    ),  # trimming tags to make the table shorter
-                )
-
-            console.print(table)
-            log.info(
-                "If the table does not fit into your screen, \
-                \ntry to maximize the window , decrease the font by a bit and retry"
-            )
-            return self.response
-
-        # when exactly one response found
+    def validate_uuid_station(self):
         if len(self.response) == 1:
-            log.info("Station found: {}".format(self.response[0]["name"].strip()))
             log.debug(json.dumps(self.response[0], indent=3))
             self.target_station = self.response[0]
+
             # register a valid click to increase its popularity
             self.API.click_counter(self.target_station["stationuuid"])
 
             return self.response
-            # return self.response[0]["name"].strip()
 
     # ---------------------------- NAME -------------------------------- #
-    def search_by_station_name(self, _name=None, limit=100):
+    def search_by_station_name(self, _name=None, limit=100, sort_by: str = "name"):
         """search and play a station by its name"""
+        reversed = sort_by != "name"
+
         try:
-            self.response = self.API.search(name=_name, name_exact=False, limit=limit)
-            return self.station_validator()
+            response = self.API.search(
+                name=_name,
+                name_exact=False,
+                limit=limit,
+                order=str(sort_by),
+                reverse=reversed,
+            )
+            return print_table(
+                response,
+                ["Station:name@30", "Country:country@20", "Tags:tags@20"],
+                sort_by=sort_by,
+            )
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
@@ -116,21 +167,27 @@ class Handler:
         """search and play station by its stationuuid"""
         try:
             self.response = self.API.station_by_uuid(_uuid)
-            return self.station_validator()  # should return a station name also
+            return self.validate_uuid_station()
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
     # -------------------------- COUNTRY ----------------------#
-    def discover_by_country(self, country_code_or_name, limit):
+    def discover_by_country(self, country_code_or_name, limit, sort_by: str = "name"):
+        # set reverse to false if name is is the parameter for sorting
+        reversed = sort_by != "name"
+
         # check if it is a code or name
         if len(country_code_or_name.strip()) == 2:
             # it's a code
-            log.debug("Country code {} provided".format(country_code_or_name))
+            log.debug("Country code '{}' provided".format(country_code_or_name))
             try:
                 response = self.API.search(
-                    countrycode=country_code_or_name, limit=limit
+                    countrycode=country_code_or_name,
+                    limit=limit,
+                    order=str(sort_by),
+                    reverse=reversed,
                 )
             except Exception as e:
                 log.debug("Error: {}".format(e))
@@ -138,12 +195,16 @@ class Handler:
                 sys.exit(1)
         else:
             # it's name
-            log.debug("Country name {} provided".format(country_code_or_name))
+            log.debug("Country name '{}' provided".format(country_code_or_name))
             code = self.get_country_code(country_code_or_name)
             if code:
                 try:
                     response = self.API.search(
-                        countrycode=code, limit=limit, country_exact=True
+                        countrycode=code,
+                        limit=limit,
+                        country_exact=True,
+                        order=str(sort_by),
+                        reverse=reversed,
                     )
                 except Exception as e:
                     log.debug("Error: {}".format(e))
@@ -153,150 +214,94 @@ class Handler:
                 log.error("Not a valid country name")
                 sys.exit(1)
 
-        if len(response) > 1:
-            log.info("Result for country: {}".format(response[0]["country"]))
-            table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("ID", justify="center")
-            table.add_column("Station", justify="left")
-            # table.add_column("UUID", justify="center")
-            table.add_column("State", justify="center")
-            table.add_column("Tags", justify="center")
-            table.add_column("Language", justify="center")
-
-            for i in range(0, len(response)):
-                current_response = response[i]
-                table.add_row(
-                    str(i + 1),
-                    trim_string(current_response["name"], max_length=30),
-                    # res["stationuuid"],
-                    current_response["state"],
-                    trim_string(current_response["tags"], max_length=20),
-                    trim_string(current_response["language"], max_length=20),
-                )
-            console.print(table)
-            log.info(
-                "If the table does not fit into your screen,\
-                    \ntry to maximize the window , decrease the font by a bit and retry"
-            )
-
-            return response
-        else:
-            log.error("No stations found for the country code/name, recheck it")
-            sys.exit(1)
+        # display the result
+        print_table(
+            response,
+            [
+                "Station:name@30",
+                "State:state@20",
+                "Tags:tags@20",
+                "Language:language@20",
+            ],
+            sort_by=sort_by,
+        )
+        return response
 
     # ------------------- by state ---------------------
 
-    def discover_by_state(self, state, limit):
+    def discover_by_state(self, state, limit, sort_by: str = "name"):
+        reversed = sort_by != "name"
+
         try:
-            discover_result = self.API.search(state=state, limit=limit)
+            response = self.API.search(
+                state=state, limit=limit, order=str(sort_by), reverse=reversed
+            )
         except Exception:
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
-        if len(discover_result) > 1:
-            table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("ID", justify="center")
-            table.add_column("Station", justify="left")
-            # table.add_column("UUID", justify="center")
-            table.add_column("Country", justify="center")
-            table.add_column("Tags", justify="center")
-            table.add_column("Language", justify="center")
-
-            for i in range(0, len(discover_result)):
-                res = discover_result[i]
-                table.add_row(
-                    str(i + 1),
-                    trim_string(res["name"], max_length=30),
-                    # res["stationuuid"],
-                    trim_string(res["country"], max_length=20),
-                    trim_string(res["tags"], max_length=20),
-                    trim_string(res["language"], max_length=20),
-                )
-            console.print(table)
-            log.info(
-                "If the table does not fit into your screen, \ntry to maximize the window , decrease the font by a bit and retry"
-            )
-
-            return discover_result
-        else:
-            log.error("No stations found for the state, recheck it")
-            sys.exit(1)
+        return print_table(
+            response,
+            [
+                "Station:name@30",
+                "Country:country@20",
+                "State:state@20",
+                "Tags:tags@20",
+                "Language:language@20",
+            ],
+            sort_by=sort_by,
+        )
 
     # -----------------by language --------------------
 
-    def discover_by_language(self, language, limit):
+    def discover_by_language(self, language, limit, sort_by: str = "name"):
+        reversed = sort_by != "name"
+
         try:
-            discover_result = self.API.search(language=language, limit=limit)
+            response = self.API.search(
+                language=language, limit=limit, order=str(sort_by), reverse=reversed
+            )
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
-        if len(discover_result) > 1:
-            table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("ID", justify="center")
-            table.add_column("Station", justify="left")
-            # table.add_column("UUID", justify="center")
-            table.add_column("Country", justify="center")
-            table.add_column("Tags", justify="center")
-
-            for i in range(0, len(discover_result)):
-                res = discover_result[i]
-                table.add_row(
-                    str(i + 1),
-                    trim_string(res["name"], max_length=30),
-                    # res["stationuuid"],
-                    trim_string(res["country"], max_length=20),
-                    trim_string(res["tags"], max_length=30),
-                )
-            console.print(table)
-            log.info(
-                "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit and retry"
-            )
-
-            return discover_result
-        else:
-            log.error("No stations found for the language, recheck it")
-            sys.exit(1)
+        return print_table(
+            response,
+            [
+                "Station:name@30",
+                "Country:country@20",
+                "Language:language@20",
+                "Tags:tags@20",
+            ],
+            sort_by,
+        )
 
     # -------------------- by tag ---------------------- #
+    def discover_by_tag(self, tag, limit, sort_by: str = "name"):
+        reversed = sort_by != "name"
 
-    def discover_by_tag(self, tag, limit):
         try:
-            discover_result = self.API.search(tag=tag, limit=limit)
+            response = self.API.search(
+                tag=tag, limit=limit, order=str(sort_by), reverse=reversed
+            )
         except Exception as e:
             log.debug("Error: {}".format(e))
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
-        if len(discover_result) > 1:
-            table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("ID", justify="center")
-            table.add_column("Station", justify="left")
-            # table.add_column("UUID", justify="center")
-            table.add_column("country", justify="center")
-            table.add_column("Language", justify="center")
+        return print_table(
+            response,
+            [
+                "Station:name@30",
+                "Country:country@20",
+                "Language:language@20",
+                "Tags:tags@50",
+            ],
+            sort_by,
+        )
 
-            for i in range(0, len(discover_result)):
-                res = discover_result[i]
-                table.add_row(
-                    str(i + 1),
-                    trim_string(res["name"], max_length=30),
-                    # res["stationuuid"],
-                    trim_string(res["country"], max_length=20),
-                    trim_string(res["language"], max_length=20),
-                )
-            console.print(table)
-            log.info(
-                "If the table does not fit into your screen, \
-                \ntry to maximize the window , decrease the font by a bit and retry"
-            )
-            return discover_result
-        else:
-            log.error("No stations found for the tag, recheck it")
-            sys.exit(1)
-
-    # ---- increase click count ------------- #
+    # ---- Increase click count ------------- #
     def vote_for_uuid(self, UUID):
         try:
             result = self.API.click_counter(UUID)
