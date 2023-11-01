@@ -55,6 +55,14 @@ class Parser:
         )
 
         self.parser.add_argument(
+            "--random",
+            action="store_true",
+            default=False,
+            dest="play_random_station",
+            help="Play random station from fav list.",
+        )
+
+        self.parser.add_argument(
             "--uuid",
             "-U",
             action="store",

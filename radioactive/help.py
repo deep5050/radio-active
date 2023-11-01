@@ -61,6 +61,11 @@ def show_help():
         "Play last played station",
         "False",
     )
+    table.add_row(
+        "--random",
+        "Play a random station from favorite list",
+        "False",
+    )
 
     table.add_row(
         "--add , -A",

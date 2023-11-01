@@ -599,3 +599,12 @@ def handle_station_name_from_headers(url):
             )
         )
     return station_name
+
+
+def handle_play_random_station(alias):
+    """Select a random station from favorite menu"""
+    log.debug("playing a random station")
+    alias_map = alias.alias_map
+    index = randint(0, len(alias_map))
+    station = alias_map[index]
+    return station["name"], station["uuid_or_url"]

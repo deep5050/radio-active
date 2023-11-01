@@ -134,6 +134,7 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 | `--filepath`       | Optional | Path to save the recordings                    | <DEFAULT_DIR> |
 | `--filetype`, `-T` | Optional | Format of the recording (mp3/auto)             | mp3           |
 | `--last`           | Optional | Play last played station                       | False         |
+| `--random`         | Optional | Play a random station from favorite list       | False         |
 | `--sort`           | Optional | Sort the result page                           | name          |
 | `--limit`          | Optional | Limit the # of results in the Discover table   | 100           |
 | `--volume` , `-V`  | Optional | Change the volume passed into ffplay           | 80            |

@@ -22,6 +22,7 @@ from radioactive.utilities import (
     handle_favorite_table,
     handle_listen_keypress,
     handle_play_last_station,
+    handle_play_random_station,
     handle_record,
     handle_save_last_station,
     handle_search_stations,
@@ -193,6 +194,7 @@ def main():
         and options["search_station_uuid"] is None
         and options["direct_play"] is None
         and not options["play_last_station"]
+        and not options["play_random"]
     ):
         (
             options["curr_station_name"],
@@ -237,6 +239,13 @@ def main():
         options["curr_station_name"], options["target_url"] = handle_direct_play(
             alias, options["direct_play"]
         )
+        final_step(options, last_station, alias, handler)
+
+    if options["play_random"]:
+        (
+            options["curr_station_name"],
+            options["target_url"],
+        ) = handle_play_random_station(alias)
         final_step(options, last_station, alias, handler)
 
     if options["play_last_station"]:
