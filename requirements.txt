@@ -1,3 +1,4 @@
+setuptools
 requests
 urllib3
 psutil

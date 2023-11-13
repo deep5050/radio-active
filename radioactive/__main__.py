@@ -48,6 +48,7 @@ def final_step(options, last_station, alias, handler):
     if options["curr_station_name"].strip() == "":
         options["curr_station_name"] = "N/A"
 
+    # TODO: MPV,VLC support
     player = Player(options["target_url"], options["volume"], options["loglevel"])
 
     handle_save_last_station(

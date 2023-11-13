@@ -478,7 +478,7 @@ def handle_user_choice_from_search_result(handler, response):
         log.debug("Asking for user input")
 
         try:
-            log.info("Type 'r' to play a random station")
+            log.info("Type 'r' to play a random station, 'f' to fuzzy find")
             user_input = input("Type the result ID to play: ")
         except EOFError:
             print()
@@ -491,6 +491,9 @@ def handle_user_choice_from_search_result(handler, response):
                 # pick a random integer withing range
                 user_input = randint(1, len(response) - 1)
                 log.debug(f"Radom station id: {user_input}")
+            elif user_input in ["f", "F", "fuzzy"]:
+                # fuzzy find all the stations, and return the selected station id
+                user_input = fuzzy_find(response)
 
             user_input = int(user_input) - 1  # because ID starts from 1
             if user_input in range(0, len(response)):
