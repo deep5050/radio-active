@@ -43,7 +43,7 @@
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
 - [ ] I'm feeling lucky! Play Random stations
-- [ ] VLC, MPV player support
+- [x] VLC, MPV player support
 
 
 > See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)
