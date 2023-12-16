@@ -465,7 +465,7 @@ def handle_user_choice_from_search_result(handler, response):
             print()
             sys.exit(0)
 
-        if user_input == ("y" or "Y"):
+        if user_input in ["y","Y"]:
             log.debug("Playing UUID from single response")
             global_current_station_info = response[0]
 
