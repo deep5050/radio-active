@@ -150,6 +150,12 @@ def show_help():
         "info",
     )
 
+    table.add_row(
+        "--player",
+        "Media player to use. vlc/mpv/ffplay",
+        "ffplay",
+    )
+
     console.print(table)
     print(
         "For more details : https://github.com/deep5050/radio-active/blob/main/README.md"

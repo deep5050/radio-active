@@ -146,7 +146,7 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 | `--flush`          | Optional | Remove all the entries from fav list           | False         |                        |
 | `--kill` , `-K`    | Optional | Kill background radios.                        | False         |                        |
 | `--loglevel`       | Optional | Log level of the program                       | Info          | `info`,  `warning`, `error`, `debug` |
-|                    |          |                                                |               |                        |
+| `--player`         | Optional | Media player to use                            |  ffplay       | `vlc`, `mpv`, `ffplay`              |
 
 <hr>
 
