@@ -219,6 +219,15 @@ class Parser:
             help="specify the audio format for recording. auto/mp3",
         )
 
+        self.parser.add_argument(
+            "--player",
+            action="store",
+            dest="audio_player",
+            default="ffplay",
+            help="specify the audio player to use. ffplay/vlc/mpv",
+        )
+
+
     def parse(self):
         self.result = self.parser.parse_args()
         if self.result is None:

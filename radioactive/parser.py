@@ -54,5 +54,6 @@ def parse_options():
 
     options["target_url"] = ""
     options["volume"] = args.volume
+    options["audio_player"] = args.audio_player
 
     return options

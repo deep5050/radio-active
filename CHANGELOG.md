@@ -1,6 +1,8 @@
 ## 2.9.1
 
 1. Play a random station from favorite list `--random`
+2. Mutiple media player support ( MPV, VLC, FFplay) `--player`
+3. Fixed minor bugs while giving commands
 
 
 ## 2.9.0

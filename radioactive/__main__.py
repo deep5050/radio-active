@@ -12,7 +12,8 @@ from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.parser import parse_options
-from radioactive.player import Player, kill_background_ffplays
+from radioactive.ffplay import Ffplay, kill_background_ffplays
+
 from radioactive.utilities import (
     check_sort_by_parameter,
     handle_add_station,
@@ -35,21 +36,47 @@ from radioactive.utilities import (
 
 # globally needed as signal handler needs it
 # to terminate main() properly
-player = None
+ffplay = None
+
+
+################
+
+
+
 
 
 def final_step(options, last_station, alias, handler):
-    global player
+
+    global ffplay # always needed
+
     # check target URL for the last time
     if options["target_url"].strip() == "":
         log.error("something is wrong with the url")
         sys.exit(1)
 
+    if options["audio_player"] == "vlc":
+        from radioactive.vlc import VLC
+        vlc = VLC()
+        vlc.start(options["target_url"])
+
+    elif options["audio_player"] == "mpv":
+        from radioactive.mpv import MPV
+        
+        mpv = MPV()
+        mpv.start(options["target_url"])
+
+    elif options["audio_player"] == "ffplay":
+        ffplay = Ffplay(options["target_url"], options["volume"], options["loglevel"])
+
+    else:
+        log.error("Unsupported media player selected")
+        sys.exit(1)
+
+
+
     if options["curr_station_name"].strip() == "":
         options["curr_station_name"] = "N/A"
 
-    # TODO: MPV,VLC support
-    player = Player(options["target_url"], options["volume"], options["loglevel"])
 
     handle_save_last_station(
         last_station, options["curr_station_name"], options["target_url"]
@@ -83,6 +110,9 @@ def final_step(options, last_station, alias, handler):
         loglevel=options["loglevel"],
     )
 
+    ############### ffplay ##################
+
+
 
 def main():
     log.level("info")
@@ -91,7 +121,6 @@ def main():
 
     options = parse_options()
 
-    handle_welcome_screen()
 
     VERSION = app.get_version()
 
@@ -106,6 +135,8 @@ def main():
         log.info("RADIO-ACTIVE : version {}".format(VERSION))
         sys.exit(0)
 
+    handle_welcome_screen()
+    
     if options["show_help_table"]:
         show_help()
         sys.exit(0)
@@ -269,11 +300,11 @@ def main():
 
 
 def signal_handler(sig, frame):
-    global player
+    global ffplay
     log.debug("You pressed Ctrl+C!")
     log.debug("Stopping the radio")
-    if player and player.is_playing:
-        player.stop()
+    if ffplay and ffplay.is_playing:
+        ffplay.stop()
     log.info("Exiting now")
     sys.exit(0)
 

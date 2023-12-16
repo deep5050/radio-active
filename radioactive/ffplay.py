@@ -34,7 +34,7 @@ def kill_background_ffplays():
         log.info("No background radios are running!")
 
 
-class Player:
+class Ffplay:
 
     """FFPlayer handler, it holds all the attributes to properly execute ffplay
     FFmepg required to be installed separately
