@@ -1,8 +1,9 @@
 ## 2.9.1
 
 1. Play a random station from favorite list `--random`
-2. Mutiple media player support ( MPV, VLC, FFplay) `--player`
-3. Fixed minor bugs while giving commands
+2. Multiple media player support ( MPV, VLC, FFplay) `--player`
+3. Default config file support added
+4. Fixed minor bugs while giving runtime commands
 
 
 ## 2.9.0

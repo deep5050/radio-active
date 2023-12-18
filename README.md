@@ -44,6 +44,7 @@
 - [x] Discovers stations by language
 - [ ] I'm feeling lucky! Play Random stations
 - [x] VLC, MPV player support
+- [x] Default config file
 
 
 > See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)

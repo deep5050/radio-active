@@ -1,7 +1,8 @@
 # VLC player
-from shutil import which
 import subprocess
 import sys
+from shutil import which
+
 from zenlog import log
 
 
@@ -16,11 +17,11 @@ class VLC:
             log.critical("VLC not found, install it first please")
             sys.exit(1)
 
-    def start(self,url):
+    def start(self, url):
         # call vlc with URL
         self.vlc_commands = [
-        self.exe_path,
-        url,
+            self.exe_path,
+            url,
         ]
 
         try:

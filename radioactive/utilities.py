@@ -16,8 +16,8 @@ from rich.table import Table
 from rich.text import Text
 from zenlog import log
 
-from radioactive.last_station import Last_station
 from radioactive.ffplay import kill_background_ffplays
+from radioactive.last_station import Last_station
 from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
 
 RED_COLOR = "\033[91m"
@@ -465,7 +465,7 @@ def handle_user_choice_from_search_result(handler, response):
             print()
             sys.exit(0)
 
-        if user_input in ["y","Y"]:
+        if user_input in ["y", "Y"]:
             log.debug("Playing UUID from single response")
             global_current_station_info = response[0]
 
@@ -491,9 +491,9 @@ def handle_user_choice_from_search_result(handler, response):
                 # pick a random integer withing range
                 user_input = randint(1, len(response) - 1)
                 log.debug(f"Radom station id: {user_input}")
-            #elif user_input in ["f", "F", "fuzzy"]:
-                # fuzzy find all the stations, and return the selected station id
-                #user_input = fuzzy_find(response)
+            # elif user_input in ["f", "F", "fuzzy"]:
+            # fuzzy find all the stations, and return the selected station id
+            # user_input = fuzzy_find(response)
 
             user_input = int(user_input) - 1  # because ID starts from 1
             if user_input in range(0, len(response)):
@@ -608,6 +608,6 @@ def handle_play_random_station(alias):
     """Select a random station from favorite menu"""
     log.debug("playing a random station")
     alias_map = alias.alias_map
-    index = randint(0, len(alias_map) -1 )
+    index = randint(0, len(alias_map) - 1)
     station = alias_map[index]
     return station["name"], station["uuid_or_url"]

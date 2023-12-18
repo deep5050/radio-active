@@ -8,12 +8,11 @@ from zenlog import log
 
 from radioactive.alias import Alias
 from radioactive.app import App
+from radioactive.ffplay import Ffplay, kill_background_ffplays
 from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
 from radioactive.parser import parse_options
-from radioactive.ffplay import Ffplay, kill_background_ffplays
-
 from radioactive.utilities import (
     check_sort_by_parameter,
     handle_add_station,
@@ -39,15 +38,8 @@ from radioactive.utilities import (
 ffplay = None
 
 
-################
-
-
-
-
-
 def final_step(options, last_station, alias, handler):
-
-    global ffplay # always needed
+    global ffplay  # always needed
 
     # check target URL for the last time
     if options["target_url"].strip() == "":
@@ -56,12 +48,13 @@ def final_step(options, last_station, alias, handler):
 
     if options["audio_player"] == "vlc":
         from radioactive.vlc import VLC
+
         vlc = VLC()
         vlc.start(options["target_url"])
 
     elif options["audio_player"] == "mpv":
         from radioactive.mpv import MPV
-        
+
         mpv = MPV()
         mpv.start(options["target_url"])
 
@@ -72,11 +65,8 @@ def final_step(options, last_station, alias, handler):
         log.error("Unsupported media player selected")
         sys.exit(1)
 
-
-
     if options["curr_station_name"].strip() == "":
         options["curr_station_name"] = "N/A"
-
 
     handle_save_last_station(
         last_station, options["curr_station_name"], options["target_url"]
@@ -110,8 +100,6 @@ def final_step(options, last_station, alias, handler):
         loglevel=options["loglevel"],
     )
 
-    ############### ffplay ##################
-
 
 
 def main():
@@ -120,7 +108,6 @@ def main():
     app = App()
 
     options = parse_options()
-
 
     VERSION = app.get_version()
 
@@ -136,7 +123,7 @@ def main():
         sys.exit(0)
 
     handle_welcome_screen()
-    
+
     if options["show_help_table"]:
         show_help()
         sys.exit(0)
