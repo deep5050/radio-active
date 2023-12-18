@@ -96,7 +96,9 @@ def handle_record(
 
     elif not record_file_path:
         log.debug("filepath: fallback to default path")
-        record_file_path = os.path.join(os.path.expanduser("~"), "Music/radioactive")
+        record_file_path = os.path.join(
+            os.path.expanduser("~"), "Music/radioactive"
+        )  # fallback path
         try:
             os.makedirs(record_file_path, exist_ok=True)
         except Exception as e:

@@ -101,7 +101,6 @@ def final_step(options, last_station, alias, handler):
     )
 
 
-
 def main():
     log.level("info")
 

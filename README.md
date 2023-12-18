@@ -42,9 +42,9 @@
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
-- [ ] I'm feeling lucky! Play Random stations
 - [x] VLC, MPV player support
 - [x] Default config file
+- [ ] I'm feeling lucky! Play Random stations
 
 
 > See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)
@@ -201,6 +201,24 @@ you can sort the result page with these parameters:
 - `clickcount` (total play count)
 - `clicktrend` (currently trending stations)
 - `random`
+
+
+### Default configs
+
+Default configuration file is added into your home directory as `.radio-active-configs.ini`
+
+```bash
+[AppConfig]
+loglevel = info
+limit = 100
+sort = votes
+volume = 80
+filepath = /home/{user}/recordings/radioactive/
+filetype = mp3
+player = ffplay
+```
+
+Do NOT modify the keys, only change the values. you can give any absolute or relative path as filepath.
 
 ### Bonus Tips
 

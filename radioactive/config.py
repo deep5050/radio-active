@@ -1,6 +1,7 @@
 # load configs from a file and apply.
 # If any options are given on command line it will override the configs
 import configparser
+import getpass
 import os
 import sys
 
@@ -17,7 +18,7 @@ def write_a_sample_config_file():
         "limit": "100",
         "sort": "votes",
         "volume": "80",
-        "filepath": "/home/radioactive/recordings",
+        "filepath": "/home/{user}/recordings/radioactive/",
         "filetype": "mp3",
         "player": "ffplay",
     }
@@ -33,7 +34,7 @@ def write_a_sample_config_file():
         with open(file_path, "w") as config_file:
             config.write(config_file)
 
-        log.info(f"A sample configuration file added at: {file_path}")
+        log.info(f"A sample default configuration file added at: {file_path}")
 
     except Exception as e:
         print(f"Error writing the configuration file: {e}")
@@ -56,6 +57,11 @@ class Configs:
             options["sort"] = self.config.get("AppConfig", "sort")
             options["limit"] = self.config.get("AppConfig", "limit")
             options["filepath"] = self.config.get("AppConfig", "filepath")
+            # if filepath has any placeholder, replace
+            # {user} to actual user map
+            options["filepath"] = options["filepath"].replace(
+                "{user}", getpass.getuser()
+            )
             options["filetype"] = self.config.get("AppConfig", "filetype")
             options["player"] = self.config.get("AppConfig", "player")
 
@@ -65,5 +71,5 @@ class Configs:
             log.error("Something went wrong while parsing the config file")
             # write the example config file
             write_a_sample_config_file()
-            log.info("Rerun radioative")
+            log.info("Re-run radioative")
             sys.exit(1)
