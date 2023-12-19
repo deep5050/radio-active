@@ -356,6 +356,7 @@ def handle_save_last_station(last_station, station_name, station_url):
 
 def handle_listen_keypress(
     alias,
+    player,
     target_url,
     station_name,
     station_url,
@@ -432,8 +433,13 @@ def handle_listen_keypress(
             handle_favorite_table(alias)
         elif user_input in ["t", "T", "track"]:
             handle_fetch_song_title(target_url)
+        elif user_input in ["p", "P"]:
+            # toggle the player (start/stop)
+            player.toggle()
+            # TODO: toggle the player
 
         elif user_input in ["h", "H", "?", "help"]:
+            log.info("p: Play/Pause current station")
             log.info("t/track: Current track info")
             log.info("i/info: Station information")
             log.info("r/record: Record a station")

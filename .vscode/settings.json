@@ -23,5 +23,6 @@
     "editor.experimentalWhitespaceRendering": "font",
     "editor.fontFamily": "'Fira Code', Consolas, 'Courier New', monospace",
     "editor.codeLensFontFamily": "'Fira Code'",
-    "editor.fontLigatures": true
+    "editor.fontLigatures": true,
+    "editor.defaultFormatter": "ms-python.black-formatter"
 }

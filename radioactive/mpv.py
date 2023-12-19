@@ -1,4 +1,3 @@
-# mpv player
 import subprocess
 import sys
 from shutil import which
@@ -8,33 +7,48 @@ from zenlog import log
 
 class MPV:
     def __init__(self):
-        # check if mpv is installed
         self.program_name = "mpv"
         self.exe_path = which(self.program_name)
-        log.debug("mpv: {}".format(self.exe_path))
+        log.debug(f"{self.program_name}: {self.exe_path}")
 
         if self.exe_path is None:
-            log.critical("MPV not found, install it first please")
+            log.critical(f"{self.program_name} not found, install it first please")
             sys.exit(1)
 
+        self.is_running = False
+        self.process = None
+        self.url = None
+
+    def _construct_mpv_commands(self, url):
+        return [self.exe_path, url]
+
     def start(self, url):
-        # call mpv with URL
-        self.mpv_commands = [
-            self.exe_path,
-            url,
-        ]
+        self.url = url
+        mpv_commands = self._construct_mpv_commands(url)
 
         try:
             self.process = subprocess.Popen(
-                self.mpv_commands,
+                mpv_commands,
                 shell=False,
-                stdout=subprocess.PIPE,  # Capture standard output
-                stderr=subprocess.PIPE,  # Capture standard error
-                text=True,  # Use text mode to capture strings
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
             )
             self.is_running = True
-            log.debug("player: MPV => PID {} initiated".format(self.process.pid))
+            log.debug(
+                f"player: {self.program_name} => PID {self.process.pid} initiated"
+            )
 
         except Exception as e:
-            # Handle exceptions that might occur during process setup
-            log.error("Error while starting radio: {}".format(e))
+            log.error(f"Error while starting player: {e}")
+
+    def stop(self):
+        if self.is_running:
+            self.process.kill()
+            self.is_running = False
+
+    def toggle(self):
+        if self.is_running:
+            self.stop()
+        else:
+            self.start(self.url)

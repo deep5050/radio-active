@@ -152,6 +152,7 @@ class Handler:
                 order=str(sort_by),
                 reverse=reversed,
             )
+            print(response)
             return print_table(
                 response,
                 ["Station:name@30", "Country:country@20", "Tags:tags@20"],

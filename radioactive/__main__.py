@@ -40,6 +40,7 @@ ffplay = None
 
 def final_step(options, last_station, alias, handler):
     global ffplay  # always needed
+    current_player = None
 
     # check target URL for the last time
     if options["target_url"].strip() == "":
@@ -51,15 +52,18 @@ def final_step(options, last_station, alias, handler):
 
         vlc = VLC()
         vlc.start(options["target_url"])
+        current_player = vlc
 
     elif options["audio_player"] == "mpv":
         from radioactive.mpv import MPV
 
         mpv = MPV()
         mpv.start(options["target_url"])
+        current_player = mpv
 
     elif options["audio_player"] == "ffplay":
         ffplay = Ffplay(options["target_url"], options["volume"], options["loglevel"])
+        current_player = ffplay
 
     else:
         log.error("Unsupported media player selected")
@@ -91,6 +95,7 @@ def final_step(options, last_station, alias, handler):
 
     handle_listen_keypress(
         alias,
+        current_player,
         target_url=options["target_url"],
         station_name=options["curr_station_name"],
         station_url=options["target_url"],
