@@ -68,7 +68,7 @@ class Configs:
             return options
 
         except Exception as e:
-            log.error("Something went wrong while parsing the config file: {e}")
+            log.error(f"Something went wrong while parsing the config file: {e}")
             # write the example config file
             write_a_sample_config_file()
             log.info("Re-run radioactive")
