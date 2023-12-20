@@ -1,3 +1,11 @@
+## 2.9.1
+
+1. Play a random station from favorite list `--random`
+2. Multiple media player support ( MPV, VLC, FFplay) `--player`
+3. Default config file support added
+4. Fixed minor bugs while giving runtime commands
+
+
 ## 2.9.0
 
 1. Fetch current playing track info from runtime commands 🎶 ⚡

@@ -3,6 +3,16 @@ import sys
 
 from zenlog import log
 
+from radioactive.config import Configs
+
+
+# load default configs
+def load_default_configs():
+    # load config file and apply configs
+    configs = Configs()
+    default_configs = configs.load()
+    return default_configs
+
 
 class Parser:
 
@@ -11,6 +21,7 @@ class Parser:
     def __init__(self):
         self.parser = None
         self.result = None
+        self.defaults = load_default_configs()
 
         self.parser = argparse.ArgumentParser(
             description="Play any radio around the globe right from the CLI ",
@@ -55,6 +66,14 @@ class Parser:
         )
 
         self.parser.add_argument(
+            "--random",
+            action="store_true",
+            default=False,
+            dest="play_random_station",
+            help="Play random station from fav list.",
+        )
+
+        self.parser.add_argument(
             "--uuid",
             "-U",
             action="store",
@@ -65,7 +84,7 @@ class Parser:
         self.parser.add_argument(
             "--loglevel",
             action="store",
-            default="info",
+            default=self.defaults["loglevel"],
             dest="log_level",
             help="Specify log level",
         )
@@ -103,7 +122,7 @@ class Parser:
             "-L",
             action="store",
             dest="limit",
-            default=100,
+            default=self.defaults["limit"],
             help="Limit of entries in discover table",
         )
 
@@ -111,7 +130,7 @@ class Parser:
             "--sort",
             action="store",
             dest="stations_sort_by",
-            default="name",
+            default=self.defaults["sort"],
             help="Sort stations",
         )
 
@@ -161,7 +180,7 @@ class Parser:
             "-V",
             action="store",
             dest="volume",
-            default=80,
+            default=self.defaults["volume"],
             type=int,
             choices=range(0, 101, 10),
             help="Volume to pass down to ffplay",
@@ -189,7 +208,7 @@ class Parser:
             "--filepath",
             action="store",
             dest="record_file_path",
-            default="",
+            default=self.defaults["filepath"],
             help="specify the audio format for recording",
         )
 
@@ -207,8 +226,16 @@ class Parser:
             "-T",
             action="store",
             dest="record_file_format",
-            default="mp3",
+            default=self.defaults["filetype"],
             help="specify the audio format for recording. auto/mp3",
+        )
+
+        self.parser.add_argument(
+            "--player",
+            action="store",
+            dest="audio_player",
+            default=self.defaults["player"],
+            help="specify the audio player to use. ffplay/vlc/mpv",
         )
 
     def parse(self):

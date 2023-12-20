@@ -61,6 +61,11 @@ def show_help():
         "Play last played station",
         "False",
     )
+    table.add_row(
+        "--random",
+        "Play a random station from favorite list",
+        "False",
+    )
 
     table.add_row(
         "--add , -A",
@@ -143,6 +148,12 @@ def show_help():
         "--loglevel",
         "Log level of the program: info,warning,error,debug",
         "info",
+    )
+
+    table.add_row(
+        "--player",
+        "Media player to use. vlc/mpv/ffplay",
+        "ffplay",
     )
 
     console.print(table)

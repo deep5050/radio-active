@@ -29,6 +29,7 @@ def parse_options():
 
     options["play_last_station"] = args.play_last_station
     options["direct_play"] = args.direct_play
+    options["play_random"] = args.play_random_station
 
     options["sort_by"] = args.stations_sort_by
 
@@ -53,5 +54,6 @@ def parse_options():
 
     options["target_url"] = ""
     options["volume"] = args.volume
+    options["audio_player"] = args.audio_player
 
     return options

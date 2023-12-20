@@ -42,8 +42,9 @@
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
+- [x] VLC, MPV player support
+- [x] Default config file
 - [ ] I'm feeling lucky! Play Random stations
-- [ ] VLC, MPV player support
 
 
 > See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)
@@ -120,30 +121,33 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 ### Options
 
 
-| Argument           | Note     | Description                                    | Default       |
-| ------------------ | -------- | ---------------------------------------------- | ------------- |
-| `--search`, `-S`   | Optional | Station name                                   | None          |
-| `--play`, `-P`     | Optional | A station from fav list or url for direct play | None          |
-| `--country`, `-C`  | Optional | Discover stations by country code              | False         |
-| `--state`          | Optional | Discover stations by country state             | False         |
-| `--language`       | optional | Discover stations by                           | False         |
-| `--tag`            | Optional | Discover stations by tags/genre                | False         |
-| `--uuid`, `-U`     | Optional | ID of the station                              | None          |
-| `--record` , `-R`  | Optional | Record a station and save to file              | False         |
-| `--filename`, `-N` | Optional | Filename to used to save the recorded audio    | None          |
-| `--filepath`       | Optional | Path to save the recordings                    | <DEFAULT_DIR> |
-| `--filetype`, `-T` | Optional | Format of the recording (mp3/auto)             | mp3           |
-| `--last`           | Optional | Play last played station                       | False         |
-| `--sort`           | Optional | Sort the result page                           | name          |
-| `--limit`          | Optional | Limit the # of results in the Discover table   | 100           |
-| `--volume` , `-V`  | Optional | Change the volume passed into ffplay           | 80            |
-| `--favorite`, `-F` | Optional | Add current station to fav list                | False         |
-| `--add` , `-A`     | Optional | Add an entry to fav list                       | False         |
-| `--list`, `-W`     | Optional | Show fav list                                  | False         |
-| `--remove`         | Optional | Remove entries from favorite list              | False         |
-| `--flush`          | Optional | Remove all the entries from fav list           | False         |
-| `--kill` , `-K`    | Optional | Kill background radios.                        | False         |
-| `--loglevel`       | Optional | Log level of the program                       | Info          |
+| Options            | Note     | Description                                    | Default       | Values                 |
+| ------------------ | -------- | ---------------------------------------------- | ------------- | ---------------------- |
+| (No Option)        | Optional | Select a station from menu to play             | False         |                        |
+| `--search`, `-S`   | Optional | Station name                                   | None          |                        |
+| `--play`, `-P`     | Optional | A station from fav list or url for direct play | None          |                        |
+| `--country`, `-C`  | Optional | Discover stations by country code              | False         |                        |
+| `--state`          | Optional | Discover stations by country state             | False         |                        |
+| `--language`       | optional | Discover stations by                           | False         |                        |
+| `--tag`            | Optional | Discover stations by tags/genre                | False         |                        |
+| `--uuid`, `-U`     | Optional | ID of the station                              | None          |                        |
+| `--record` , `-R`  | Optional | Record a station and save to file              | False         |                        |
+| `--filename`, `-N` | Optional | Filename to used to save the recorded audio    | None          |                        |
+| `--filepath`       | Optional | Path to save the recordings                    | <DEFAULT_DIR> |                        |
+| `--filetype`, `-T` | Optional | Format of the recording                        | mp3           | `mp3`,`auto`             |
+| `--last`           | Optional | Play last played station                       | False         |                        |
+| `--random`         | Optional | Play a random station from favorite list       | False         |                        |
+| `--sort`           | Optional | Sort the result page                           | name          |                        |
+| `--limit`          | Optional | Limit the # of results in the Discover table   | 100           |                        |
+| `--volume` , `-V`  | Optional | Change the volume passed into ffplay           | 80            | [0-100]                |
+| `--favorite`, `-F` | Optional | Add current station to fav list                | False         |                        |
+| `--add` , `-A`     | Optional | Add an entry to fav list                       | False         |                        |
+| `--list`, `-W`     | Optional | Show fav list                                  | False         |                        |
+| `--remove`         | Optional | Remove entries from favorite list              | False         |                        |
+| `--flush`          | Optional | Remove all the entries from fav list           | False         |                        |
+| `--kill` , `-K`    | Optional | Kill background radios.                        | False         |                        |
+| `--loglevel`       | Optional | Log level of the program                       | Info          | `info`,  `warning`, `error`, `debug` |
+| `--player`         | Optional | Media player to use                            |  ffplay       | `vlc`, `mpv`, `ffplay`              |
 
 <hr>
 
@@ -197,6 +201,24 @@ you can sort the result page with these parameters:
 - `clickcount` (total play count)
 - `clicktrend` (currently trending stations)
 - `random`
+
+
+### Default configs
+
+Default configuration file is added into your home directory as `.radio-active-configs.ini`
+
+```bash
+[AppConfig]
+loglevel = info
+limit = 100
+sort = votes
+volume = 80
+filepath = /home/{user}/recordings/radioactive/
+filetype = mp3
+player = ffplay
+```
+
+Do NOT modify the keys, only change the values. you can give any absolute or relative path as filepath.
 
 ### Bonus Tips
 
