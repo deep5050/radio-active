@@ -20,7 +20,7 @@ class Last_station:
         self.last_station_path = None
 
         self.last_station_path = os.path.join(
-            os.path.expanduser("~"), ".radio-active-last-station"
+            os.path.expandvars("$XDG_CONFIG_HOME"), "radio-active/radio-active-last-station"
         )
 
     def get_info(self):
