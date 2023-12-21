@@ -135,6 +135,14 @@ class Parser:
         )
 
         self.parser.add_argument(
+            "--filter",
+            action="store",
+            dest="stations_filter_with",
+            default=self.defaults["filter"],
+            help="Filter Results",
+        )
+
+        self.parser.add_argument(
             "--add",
             "-A",
             action="store_true",

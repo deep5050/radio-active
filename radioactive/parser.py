@@ -32,6 +32,7 @@ def parse_options():
     options["play_random"] = args.play_random_station
 
     options["sort_by"] = args.stations_sort_by
+    options["filter_with"] = args.stations_filter_with
 
     options["discover_country_code"] = args.discover_country_code
     options["discover_state"] = args.discover_state

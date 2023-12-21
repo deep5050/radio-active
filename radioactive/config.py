@@ -17,6 +17,7 @@ def write_a_sample_config_file():
         "loglevel": "info",
         "limit": "100",
         "sort": "votes",
+        "filter": "none",
         "volume": "80",
         "filepath": "/home/{user}/recordings/radioactive/",
         "filetype": "mp3",
@@ -55,6 +56,7 @@ class Configs:
             options["volume"] = self.config.get("AppConfig", "volume")
             options["loglevel"] = self.config.get("AppConfig", "loglevel")
             options["sort"] = self.config.get("AppConfig", "sort")
+            options["filter"] = self.config.get("AppConfig", "filter")
             options["limit"] = self.config.get("AppConfig", "limit")
             options["filepath"] = self.config.get("AppConfig", "filepath")
             # if filepath has any placeholder, replace
@@ -67,8 +69,8 @@ class Configs:
 
             return options
 
-        except:
-            log.error("Something went wrong while parsing the config file")
+        except Exception as e:
+            log.error(f"Something went wrong while parsing the config file: {e}")
             # write the example config file
             write_a_sample_config_file()
             log.info("Re-run radioative")

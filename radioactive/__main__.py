@@ -158,7 +158,10 @@ def main():
     # ----------- country ----------- #
     if options["discover_country_code"]:
         response = handler.discover_by_country(
-            options["discover_country_code"], options["limit"], options["sort_by"]
+            options["discover_country_code"],
+            options["limit"],
+            options["sort_by"],
+            options["filter_with"],
         )
         if response is not None:
             (
@@ -172,7 +175,10 @@ def main():
     # -------------- state ------------- #
     if options["discover_state"]:
         response = handler.discover_by_state(
-            options["discover_state"], options["limit"], options["sort_by"]
+            options["discover_state"],
+            options["limit"],
+            options["sort_by"],
+            options["filter_with"],
         )
         if response is not None:
             (
@@ -186,7 +192,10 @@ def main():
     # ----------- language ------------ #
     if options["discover_language"]:
         response = handler.discover_by_language(
-            options["discover_language"], options["limit"], options["sort_by"]
+            options["discover_language"],
+            options["limit"],
+            options["sort_by"],
+            options["filter_with"],
         )
         if response is not None:
             (
@@ -200,7 +209,10 @@ def main():
     # -------------- tag ------------- #
     if options["discover_tag"]:
         response = handler.discover_by_tag(
-            options["discover_tag"], options["limit"], options["sort_by"]
+            options["discover_tag"],
+            options["limit"],
+            options["sort_by"],
+            options["filter_with"],
         )
         if response is not None:
             (
@@ -246,6 +258,7 @@ def main():
             options["search_station_name"],
             options["limit"],
             options["sort_by"],
+            options["filter_with"],
         )
         if response is not None:
             (

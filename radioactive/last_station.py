@@ -9,8 +9,8 @@ from zenlog import log
 
 class Last_station:
 
-    """Saves the last played radio station information, when user don't provide any -S or -U
-    it looks for the information.
+    """Saves the last played radio station information,
+    when user don't provide any -S or -U it looks for the information.
 
     on every successful run, it saves the station information.
     The file it uses to store the data is a hidden file under users' home directory

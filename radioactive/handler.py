@@ -12,6 +12,8 @@ from rich.console import Console
 from rich.table import Table
 from zenlog import log
 
+from radioactive.filter import filter_expressions
+
 console = Console()
 
 
@@ -32,7 +34,7 @@ def trim_string(text, max_length=40):
         return text
 
 
-def print_table(response, columns, sort_by="name"):
+def print_table(response, columns, sort_by, filter_expression):
     """
     Print the table applying the sort logic.
 
@@ -48,6 +50,16 @@ def print_table(response, columns, sort_by="name"):
     if not response:
         log.error("No stations found")
         sys.exit(1)
+
+    # need to filter?
+    if filter_expression.lower() != "none":
+        response = filter_expressions(response, filter_expression)
+
+        if not response:
+            log.error("No stations found after filtering")
+            sys.exit(1)
+    else:
+        log.debug("Not filtering")
 
     if len(response) >= 1:
         table = Table(
@@ -75,29 +87,32 @@ def print_table(response, columns, sort_by="name"):
         if sort_by not in ["name", "random"]:
             table.add_column(sort_by, justify="left")
 
-    for i, station in enumerate(response):
-        row_data = [str(i + 1)]  # for ID
+        for i, station in enumerate(response):
+            row_data = [str(i + 1)]  # for ID
 
-        for col_spec in columns:
-            col_name, response_key, max_str = (
-                col_spec.split(":")[0],
-                col_spec.split(":")[1].split("@")[0],
-                int(col_spec.split("@")[1]),
-            )
-            row_data.append(
-                trim_string(station.get(response_key, ""), max_length=max_str)
-            )
+            for col_spec in columns:
+                col_name, response_key, max_str = (
+                    col_spec.split(":")[0],
+                    col_spec.split(":")[1].split("@")[0],
+                    int(col_spec.split("@")[1]),
+                )
+                row_data.append(
+                    trim_string(station.get(response_key, ""), max_length=max_str)
+                )
 
-        if sort_by not in ["name", "random"]:
-            row_data.append(str(station.get(sort_by, "")))
+            if sort_by not in ["name", "random"]:
+                row_data.append(str(station.get(sort_by, "")))
 
-        table.add_row(*row_data)
+            table.add_row(*row_data)
 
-    console.print(table)
-    # log.info(
-    #     "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit, and retry"
-    # )
-    return response
+        console.print(table)
+        # log.info(
+        #     "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit, and retry"
+        # )
+        return response
+    else:
+        log.info("No stations found")
+        sys.exit(0)
 
 
 class Handler:
@@ -140,7 +155,7 @@ class Handler:
             return self.response
 
     # ---------------------------- NAME -------------------------------- #
-    def search_by_station_name(self, _name=None, limit=100, sort_by: str = "name"):
+    def search_by_station_name(self, _name, limit, sort_by, filter_with):
         """search and play a station by its name"""
         reversed = sort_by != "name"
 
@@ -152,11 +167,11 @@ class Handler:
                 order=str(sort_by),
                 reverse=reversed,
             )
-            print(response)
             return print_table(
                 response,
                 ["Station:name@30", "Country:country@20", "Tags:tags@20"],
                 sort_by=sort_by,
+                filter_expression=filter_with,
             )
         except Exception as e:
             log.debug("Error: {}".format(e))
@@ -175,7 +190,7 @@ class Handler:
             sys.exit(1)
 
     # -------------------------- COUNTRY ----------------------#
-    def discover_by_country(self, country_code_or_name, limit, sort_by: str = "name"):
+    def discover_by_country(self, country_code_or_name, limit, sort_by, filter_with):
         # set reverse to false if name is is the parameter for sorting
         reversed = sort_by != "name"
 
@@ -224,13 +239,14 @@ class Handler:
                 "Tags:tags@20",
                 "Language:language@20",
             ],
-            sort_by=sort_by,
+            sort_by,
+            filter_with,
         )
         return response
 
     # ------------------- by state ---------------------
 
-    def discover_by_state(self, state, limit, sort_by: str = "name"):
+    def discover_by_state(self, state, limit, sort_by, filter_with):
         reversed = sort_by != "name"
 
         try:
@@ -250,12 +266,13 @@ class Handler:
                 "Tags:tags@20",
                 "Language:language@20",
             ],
-            sort_by=sort_by,
+            sort_by,
+            filter_with,
         )
 
     # -----------------by language --------------------
 
-    def discover_by_language(self, language, limit, sort_by: str = "name"):
+    def discover_by_language(self, language, limit, sort_by, filter_with):
         reversed = sort_by != "name"
 
         try:
@@ -276,10 +293,11 @@ class Handler:
                 "Tags:tags@20",
             ],
             sort_by,
+            filter_with,
         )
 
     # -------------------- by tag ---------------------- #
-    def discover_by_tag(self, tag, limit, sort_by: str = "name"):
+    def discover_by_tag(self, tag, limit, sort_by, filter_with):
         reversed = sort_by != "name"
 
         try:
@@ -300,6 +318,7 @@ class Handler:
                 "Tags:tags@50",
             ],
             sort_by,
+            filter_with,
         )
 
     # ---- Increase click count ------------- #

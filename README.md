@@ -81,7 +81,7 @@ I recommend installing it using `pipx install radio-active`
 ### External Dependency
 
 It needs [FFmpeg](https://ffmpeg.org/download.html) to be installed on your
-system in order to play the audio
+system in order to record the audio
 
 on Ubuntu-based system >= 20.04 Run
 
@@ -189,7 +189,7 @@ h/H/help/?: Show this help message
 q/Q/quit: Quit radioactive
 ```
 
-### sort parameters
+### Sort Parameters
 
 you can sort the result page with these parameters:
 - `name` (default)
@@ -202,8 +202,38 @@ you can sort the result page with these parameters:
 - `clicktrend` (currently trending stations)
 - `random`
 
+### Filter Parameters
 
-### Default configs
+Filter search results with `--filter`. Possible expressions are
+- `--filter "name=shows"`
+- `--filter "name=shows,talks,tv"`
+- `--filter "name!=news,shows"`
+- `--filter "country=in"`
+- `--filter "language=bengali,nepali"`
+- `--filter "bitrate>64"`
+- `--filter "votes<500"`
+- `--filter "codec=mp3"`
+- `--filter "tags!=rock,pop"`
+
+Allowed operators are: 
+
+-  `=`
+- `,`
+- `!=`
+- `>`
+- `<`
+- `&`
+
+Allowed keys are: `name`, `country` (countrycode as value), `language`, `bitrate`, `votes`, `codec`, `tags`
+
+Provide multiple filters at one go, use `&`
+
+A complex filter example: `--filter "country!=CA&tags!=islamic,classical&votes>500"`
+
+> NOTE: set `--limit` to a higher value while filtering results
+
+
+### Default Configs
 
 Default configuration file is added into your home directory as `.radio-active-configs.ini`
 
@@ -212,6 +242,7 @@ Default configuration file is added into your home directory as `.radio-active-c
 loglevel = info
 limit = 100
 sort = votes
+filter = none
 volume = 80
 filepath = /home/{user}/recordings/radioactive/
 filetype = mp3

@@ -17,12 +17,15 @@
     ],
     "files.autoSave": "off",
     "editor.wordWrap": "wordWrapColumn",
-    "workbench.colorTheme": "GitHub Light High Contrast",
+    "workbench.colorTheme": "GitHub Dark",
     "editor.minimap.autohide": true,
     "editor.minimap.renderCharacters": false,
     "editor.experimentalWhitespaceRendering": "font",
     "editor.fontFamily": "'Fira Code', Consolas, 'Courier New', monospace",
     "editor.codeLensFontFamily": "'Fira Code'",
     "editor.fontLigatures": true,
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
 }

@@ -281,10 +281,10 @@ def check_sort_by_parameter(sort_by):
     return sort_by
 
 
-def handle_search_stations(handler, station_name, limit, sort_by):
+def handle_search_stations(handler, station_name, limit, sort_by, filter_with):
     log.debug("Searching API for: {}".format(station_name))
 
-    return handler.search_by_station_name(station_name, limit, sort_by)
+    return handler.search_by_station_name(station_name, limit, sort_by, filter_with)
 
 
 def handle_station_selection_menu(handler, last_station, alias):
