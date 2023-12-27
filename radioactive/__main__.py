@@ -36,11 +36,12 @@ from radioactive.utilities import (
 # globally needed as signal handler needs it
 # to terminate main() properly
 ffplay = None
+player = None
 
 
 def final_step(options, last_station, alias, handler):
     global ffplay  # always needed
-    current_player = None
+    global player
 
     # check target URL for the last time
     if options["target_url"].strip() == "":
@@ -52,18 +53,18 @@ def final_step(options, last_station, alias, handler):
 
         vlc = VLC()
         vlc.start(options["target_url"])
-        current_player = vlc
+        player = vlc
 
     elif options["audio_player"] == "mpv":
         from radioactive.mpv import MPV
 
         mpv = MPV()
         mpv.start(options["target_url"])
-        current_player = mpv
+        player = mpv
 
     elif options["audio_player"] == "ffplay":
         ffplay = Ffplay(options["target_url"], options["volume"], options["loglevel"])
-        current_player = ffplay
+        player = ffplay
 
     else:
         log.error("Unsupported media player selected")
@@ -95,7 +96,7 @@ def final_step(options, last_station, alias, handler):
 
     handle_listen_keypress(
         alias,
-        current_player,
+        player,
         target_url=options["target_url"],
         station_name=options["curr_station_name"],
         station_url=options["target_url"],
@@ -305,10 +306,14 @@ def main():
 
 def signal_handler(sig, frame):
     global ffplay
+    global player
     log.debug("You pressed Ctrl+C!")
     log.debug("Stopping the radio")
     if ffplay and ffplay.is_playing:
         ffplay.stop()
+        #  kill the player
+        player.stop()
+
     log.info("Exiting now")
     sys.exit(0)
 

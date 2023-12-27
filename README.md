@@ -134,10 +134,11 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 | `--record` , `-R`  | Optional | Record a station and save to file              | False         |                        |
 | `--filename`, `-N` | Optional | Filename to used to save the recorded audio    | None          |                        |
 | `--filepath`       | Optional | Path to save the recordings                    | <DEFAULT_DIR> |                        |
-| `--filetype`, `-T` | Optional | Format of the recording                        | mp3           | `mp3`,`auto`             |
+| `--filetype`, `-T` | Optional | Format of the recording                        | mp3           | `mp3`,`auto`           |
 | `--last`           | Optional | Play last played station                       | False         |                        |
 | `--random`         | Optional | Play a random station from favorite list       | False         |                        |
-| `--sort`           | Optional | Sort the result page                           | name          |                        |
+| `--sort`           | Optional | Sort the result page                           | votes         |                        |
+| `--filter`         | Optional | Filter search results                          | None          |                        |
 | `--limit`          | Optional | Limit the # of results in the Discover table   | 100           |                        |
 | `--volume` , `-V`  | Optional | Change the volume passed into ffplay           | 80            | [0-100]                |
 | `--favorite`, `-F` | Optional | Add current station to fav list                | False         |                        |
@@ -204,7 +205,7 @@ you can sort the result page with these parameters:
 
 ### Filter Parameters
 
-Filter search results with `--filter`. Possible expressions are
+Filter search results with `--filter`. Some possible expressions are
 - `--filter "name=shows"`
 - `--filter "name=shows,talks,tv"`
 - `--filter "name!=news,shows"`

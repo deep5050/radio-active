@@ -426,7 +426,8 @@ def handle_listen_keypress(
             handle_add_to_favorite(alias, station_name, station_url)
 
         elif user_input in ["q", "Q", "quit"]:
-            kill_background_ffplays()
+            # kill_background_ffplays()
+            player.stop()
             sys.exit(0)
         elif user_input in ["w", "W", "list"]:
             alias.generate_map()
