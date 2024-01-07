@@ -16,8 +16,8 @@ from rich.table import Table
 from rich.text import Text
 from zenlog import log
 
+from radioactive.ffplay import kill_background_ffplays
 from radioactive.last_station import Last_station
-from radioactive.player import kill_background_ffplays
 from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
 
 RED_COLOR = "\033[91m"
@@ -96,7 +96,9 @@ def handle_record(
 
     elif not record_file_path:
         log.debug("filepath: fallback to default path")
-        record_file_path = os.path.join(os.path.expanduser("~"), "Music/radioactive")
+        record_file_path = os.path.join(
+            os.path.expanduser("~"), "Music/radioactive"
+        )  # fallback path
         try:
             os.makedirs(record_file_path, exist_ok=True)
         except Exception as e:
@@ -279,10 +281,10 @@ def check_sort_by_parameter(sort_by):
     return sort_by
 
 
-def handle_search_stations(handler, station_name, limit, sort_by):
+def handle_search_stations(handler, station_name, limit, sort_by, filter_with):
     log.debug("Searching API for: {}".format(station_name))
 
-    return handler.search_by_station_name(station_name, limit, sort_by)
+    return handler.search_by_station_name(station_name, limit, sort_by, filter_with)
 
 
 def handle_station_selection_menu(handler, last_station, alias):
@@ -354,6 +356,7 @@ def handle_save_last_station(last_station, station_name, station_url):
 
 def handle_listen_keypress(
     alias,
+    player,
     target_url,
     station_name,
     station_url,
@@ -423,15 +426,21 @@ def handle_listen_keypress(
             handle_add_to_favorite(alias, station_name, station_url)
 
         elif user_input in ["q", "Q", "quit"]:
-            kill_background_ffplays()
+            # kill_background_ffplays()
+            player.stop()
             sys.exit(0)
         elif user_input in ["w", "W", "list"]:
             alias.generate_map()
             handle_favorite_table(alias)
         elif user_input in ["t", "T", "track"]:
             handle_fetch_song_title(target_url)
+        elif user_input in ["p", "P"]:
+            # toggle the player (start/stop)
+            player.toggle()
+            # TODO: toggle the player
 
         elif user_input in ["h", "H", "?", "help"]:
+            log.info("p: Play/Pause current station")
             log.info("t/track: Current track info")
             log.info("i/info: Station information")
             log.info("r/record: Record a station")
@@ -465,7 +474,7 @@ def handle_user_choice_from_search_result(handler, response):
             print()
             sys.exit(0)
 
-        if user_input == ("y" or "Y"):
+        if user_input in ["y", "Y"]:
             log.debug("Playing UUID from single response")
             global_current_station_info = response[0]
 
@@ -491,6 +500,9 @@ def handle_user_choice_from_search_result(handler, response):
                 # pick a random integer withing range
                 user_input = randint(1, len(response) - 1)
                 log.debug(f"Radom station id: {user_input}")
+            # elif user_input in ["f", "F", "fuzzy"]:
+            # fuzzy find all the stations, and return the selected station id
+            # user_input = fuzzy_find(response)
 
             user_input = int(user_input) - 1  # because ID starts from 1
             if user_input in range(0, len(response)):
@@ -599,3 +611,12 @@ def handle_station_name_from_headers(url):
             )
         )
     return station_name
+
+
+def handle_play_random_station(alias):
+    """Select a random station from favorite menu"""
+    log.debug("playing a random station")
+    alias_map = alias.alias_map
+    index = randint(0, len(alias_map) - 1)
+    station = alias_map[index]
+    return station["name"], station["uuid_or_url"]

@@ -42,8 +42,9 @@
 - [x] Finds nearby stations
 - [x] Discovers stations by genre
 - [x] Discovers stations by language
+- [x] VLC, MPV player support
+- [x] Default config file
 - [ ] I'm feeling lucky! Play Random stations
-- [ ] VLC, MPV player support
 
 
 > See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)
@@ -80,7 +81,7 @@ I recommend installing it using `pipx install radio-active`
 ### External Dependency
 
 It needs [FFmpeg](https://ffmpeg.org/download.html) to be installed on your
-system in order to play the audio
+system in order to record the audio
 
 on Ubuntu-based system >= 20.04 Run
 
@@ -120,30 +121,34 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 ### Options
 
 
-| Argument           | Note     | Description                                    | Default       |
-| ------------------ | -------- | ---------------------------------------------- | ------------- |
-| `--search`, `-S`   | Optional | Station name                                   | None          |
-| `--play`, `-P`     | Optional | A station from fav list or url for direct play | None          |
-| `--country`, `-C`  | Optional | Discover stations by country code              | False         |
-| `--state`          | Optional | Discover stations by country state             | False         |
-| `--language`       | optional | Discover stations by                           | False         |
-| `--tag`            | Optional | Discover stations by tags/genre                | False         |
-| `--uuid`, `-U`     | Optional | ID of the station                              | None          |
-| `--record` , `-R`  | Optional | Record a station and save to file              | False         |
-| `--filename`, `-N` | Optional | Filename to used to save the recorded audio    | None          |
-| `--filepath`       | Optional | Path to save the recordings                    | <DEFAULT_DIR> |
-| `--filetype`, `-T` | Optional | Format of the recording (mp3/auto)             | mp3           |
-| `--last`           | Optional | Play last played station                       | False         |
-| `--sort`           | Optional | Sort the result page                           | name          |
-| `--limit`          | Optional | Limit the # of results in the Discover table   | 100           |
-| `--volume` , `-V`  | Optional | Change the volume passed into ffplay           | 80            |
-| `--favorite`, `-F` | Optional | Add current station to fav list                | False         |
-| `--add` , `-A`     | Optional | Add an entry to fav list                       | False         |
-| `--list`, `-W`     | Optional | Show fav list                                  | False         |
-| `--remove`         | Optional | Remove entries from favorite list              | False         |
-| `--flush`          | Optional | Remove all the entries from fav list           | False         |
-| `--kill` , `-K`    | Optional | Kill background radios.                        | False         |
-| `--loglevel`       | Optional | Log level of the program                       | Info          |
+| Options            | Note     | Description                                    | Default       | Values                 |
+| ------------------ | -------- | ---------------------------------------------- | ------------- | ---------------------- |
+| (No Option)        | Optional | Select a station from menu to play             | False         |                        |
+| `--search`, `-S`   | Optional | Station name                                   | None          |                        |
+| `--play`, `-P`     | Optional | A station from fav list or url for direct play | None          |                        |
+| `--country`, `-C`  | Optional | Discover stations by country code              | False         |                        |
+| `--state`          | Optional | Discover stations by country state             | False         |                        |
+| `--language`       | optional | Discover stations by                           | False         |                        |
+| `--tag`            | Optional | Discover stations by tags/genre                | False         |                        |
+| `--uuid`, `-U`     | Optional | ID of the station                              | None          |                        |
+| `--record` , `-R`  | Optional | Record a station and save to file              | False         |                        |
+| `--filename`, `-N` | Optional | Filename to used to save the recorded audio    | None          |                        |
+| `--filepath`       | Optional | Path to save the recordings                    | <DEFAULT_DIR> |                        |
+| `--filetype`, `-T` | Optional | Format of the recording                        | mp3           | `mp3`,`auto`           |
+| `--last`           | Optional | Play last played station                       | False         |                        |
+| `--random`         | Optional | Play a random station from favorite list       | False         |                        |
+| `--sort`           | Optional | Sort the result page                           | votes         |                        |
+| `--filter`         | Optional | Filter search results                          | None          |                        |
+| `--limit`          | Optional | Limit the # of results in the Discover table   | 100           |                        |
+| `--volume` , `-V`  | Optional | Change the volume passed into ffplay           | 80            | [0-100]                |
+| `--favorite`, `-F` | Optional | Add current station to fav list                | False         |                        |
+| `--add` , `-A`     | Optional | Add an entry to fav list                       | False         |                        |
+| `--list`, `-W`     | Optional | Show fav list                                  | False         |                        |
+| `--remove`         | Optional | Remove entries from favorite list              | False         |                        |
+| `--flush`          | Optional | Remove all the entries from fav list           | False         |                        |
+| `--kill` , `-K`    | Optional | Kill background radios.                        | False         |                        |
+| `--loglevel`       | Optional | Log level of the program                       | Info          | `info`,  `warning`, `error`, `debug` |
+| `--player`         | Optional | Media player to use                            |  ffplay       | `vlc`, `mpv`, `ffplay`              |
 
 <hr>
 
@@ -185,7 +190,7 @@ h/H/help/?: Show this help message
 q/Q/quit: Quit radioactive
 ```
 
-### sort parameters
+### Sort Parameters
 
 you can sort the result page with these parameters:
 - `name` (default)
@@ -197,6 +202,55 @@ you can sort the result page with these parameters:
 - `clickcount` (total play count)
 - `clicktrend` (currently trending stations)
 - `random`
+
+### Filter Parameters
+
+Filter search results with `--filter`. Some possible expressions are
+- `--filter "name=shows"`
+- `--filter "name=shows,talks,tv"`
+- `--filter "name!=news,shows"`
+- `--filter "country=in"`
+- `--filter "language=bengali,nepali"`
+- `--filter "bitrate>64"`
+- `--filter "votes<500"`
+- `--filter "codec=mp3"`
+- `--filter "tags!=rock,pop"`
+
+Allowed operators are: 
+
+-  `=`
+- `,`
+- `!=`
+- `>`
+- `<`
+- `&`
+
+Allowed keys are: `name`, `country` (countrycode as value), `language`, `bitrate`, `votes`, `codec`, `tags`
+
+Provide multiple filters at one go, use `&`
+
+A complex filter example: `--filter "country!=CA&tags!=islamic,classical&votes>500"`
+
+> NOTE: set `--limit` to a higher value while filtering results
+
+
+### Default Configs
+
+Default configuration file is added into your home directory as `.radio-active-configs.ini`
+
+```bash
+[AppConfig]
+loglevel = info
+limit = 100
+sort = votes
+filter = none
+volume = 80
+filepath = /home/{user}/recordings/radioactive/
+filetype = mp3
+player = ffplay
+```
+
+Do NOT modify the keys, only change the values. you can give any absolute or relative path as filepath.
 
 ### Bonus Tips
 

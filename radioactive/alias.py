@@ -76,6 +76,7 @@ class Alias:
 
     def add_entry(self, left, right):
         """Adds a new entry to the fav list"""
+        self.generate_map()
         if self.search(left) is not None:
             log.warning("An entry with same name already exists, try another name")
             return False
