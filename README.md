@@ -321,6 +321,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
+![Alt](https://repobeats.axiom.co/api/embed/753765f73315fcacbddcacbabc672771d939ebcb.svg "Repobeats analytics image")
+
 <div align=center>
 <p>
 <img src=https://stars.medv.io/deep5050/radio-active.svg align=center>
