@@ -160,7 +160,8 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 <hr>
 
 
-> **NOTE:** Once you save/play at least one station, invoking `radio` without any options will show a selection menu
+> [!NOTE]
+> Once you save/play at least one station, invoking `radio` without any options will show a selection menu
 
 > `--search`, `-S`: Search for a station online.
 
@@ -238,7 +239,8 @@ Provide multiple filters at one go, use `&`
 
 A complex filter example: `--filter "country!=CA&tags!=islamic,classical&votes>500"`
 
-> NOTE: set `--limit` to a higher value while filtering results
+> [!NOTE]
+> set `--limit` to a higher value while filtering results
 
 
 ### Default Configs
@@ -257,7 +259,8 @@ filetype = mp3
 player = ffplay
 ```
 
-Do NOT modify the keys, only change the values. you can give any absolute or relative path as filepath.
+> [!WARNING]
+> Do NOT modify the keys, only change the values. you can give any absolute or relative path as filepath.
 
 ### Bonus Tips
 
