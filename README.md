@@ -13,7 +13,7 @@
 
  <p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p>
  <p>
-<img width="500px" alt="UPI" src="https://user-images.githubusercontent.com/27947066/235618869-8c9d9bce-096d-469e-8f61-c29cc01eacc3.png">
+<img width="500px" alt="UPI" src="https://raw.githubusercontent.com/deep5050/random-shits-happen-here/main/235618869-8c9d9bce-096d-469e-8f61-c29cc01eacc3%20(1).png">
 </p>
 
 <p align=center>
