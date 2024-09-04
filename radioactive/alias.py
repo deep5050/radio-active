@@ -9,7 +9,7 @@ class Alias:
         self.alias_map = []
         self.found = False
 
-        self.alias_path = os.path.join(os.path.expanduser("~"), ".radio-active-alias")
+        self.alias_path = os.path.join(os.path.expandvars("$XDG_CONFIG_HOME"), "radio-active/radio-active-alias")
 
     def write_stations(self, station_map):
         """Write stations file from generated map"""
