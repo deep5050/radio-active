@@ -40,7 +40,7 @@ def _filter_entries_by_key(data, filter_param, key):
 def _filter_entries_by_numeric_key(data, filter_param, key):
     filtered_entries = []
 
-    filter_key = filter_param.split(key)[0]  # most left hand of the expression
+    # filter_key = filter_param.split(key)[0]  # most left hand of the expression
     filter_param = filter_param.split(key)[1]  # portion after the operator
     filter_operator = filter_param[0]  # operator part
     filter_value = int(filter_param[1:])  # value part
