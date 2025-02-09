@@ -67,7 +67,7 @@ def record_audio_from_url(input_url, output_file, force_mp3, loglevel):
         subprocess.run(ffmpeg_command, check=True)
 
         log.debug("Record: {}".format(str(ffmpeg_command)))
-        log.info(f"Audio recorded successfully.")
+        log.info("Audio recorded successfully.")
 
     except subprocess.CalledProcessError as e:
         log.debug("Error: {}".format(e))
