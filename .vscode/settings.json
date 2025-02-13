@@ -17,7 +17,7 @@
     ],
     "files.autoSave": "off",
     "editor.wordWrap": "wordWrapColumn",
-    "workbench.colorTheme": "GitHub Dark",
+    "workbench.colorTheme": "GitHub Light",
     "editor.minimap.autohide": true,
     "editor.minimap.renderCharacters": false,
     "editor.experimentalWhitespaceRendering": "font",

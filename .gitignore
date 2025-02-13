@@ -138,3 +138,5 @@ tests/
 
 *.mp3
 cache.sqlite
+tags
+.vscode/settings.json

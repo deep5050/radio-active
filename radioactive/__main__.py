@@ -307,14 +307,25 @@ def main():
 def signal_handler(sig, frame):
     global ffplay
     global player
-    log.debug("You pressed Ctrl+C!")
-    log.debug("Stopping the radio")
-    if ffplay and ffplay.is_playing:
-        ffplay.stop()
-        #  kill the player
-        player.stop()
+    log.debug("SIGINT received. Initiating shutdown.")
 
-    log.info("Exiting now")
+    # Stop ffplay if it exists and is currently playing
+    try:
+        if ffplay and getattr(ffplay, "is_playing", False):
+            log.debug("Stopping ffplay...")
+            ffplay.stop()
+    except Exception as e:
+        log.error(f"Error while stopping ffplay: {e}")
+
+    # Stop the player if it exists
+    try:
+        if player:
+            log.debug("Stopping player...")
+            player.stop()
+    except Exception as e:
+        log.error(f"Error while stopping player: {e}")
+
+    log.info("Shutdown complete. Exiting now.")
     sys.exit(0)
 
 

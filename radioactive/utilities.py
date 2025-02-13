@@ -16,6 +16,7 @@ from rich.table import Table
 from rich.text import Text
 from zenlog import log
 
+from radioactive.default_path import default_record_file_path, handle_default_path
 from radioactive.ffplay import kill_background_ffplays
 from radioactive.last_station import Last_station
 from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
@@ -24,7 +25,6 @@ RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
 
 global_current_station_info = {}
-
 
 def handle_fetch_song_title(url):
     """Fetch currently playing track information"""
@@ -92,19 +92,18 @@ def handle_record(
 
     if record_file_path and not os.path.exists(record_file_path):
         log.debug("filepath: {}".format(record_file_path))
-        os.makedirs(record_file_path, exist_ok=True)
-
-    elif not record_file_path:
-        log.debug("filepath: fallback to default path")
-        record_file_path = os.path.join(
-            os.path.expanduser("~"), "Music/radioactive"
-        )  # fallback path
         try:
             os.makedirs(record_file_path, exist_ok=True)
-        except Exception as e:
-            log.debug("{}".format(e))
-            log.error("Could not make default directory")
-            sys.exit(1)
+        except:
+            log.error("Could not make directory: {}".format(record_file_path))
+            log.info("Falling back to default path")
+            handle_default_path(default_record_file_path)
+            record_file_path = default_record_file_path
+
+    elif not record_file_path:
+        handle_default_path(default_record_file_path)
+        record_file_path = default_record_file_path
+
 
     now = datetime.datetime.now()
     month_name = now.strftime("%b").upper()

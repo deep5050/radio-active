@@ -22,12 +22,13 @@ def kill_background_ffplays():
                 p.terminate()
                 count += 1
                 log.info(f"Terminated ffplay process with PID {pid}")
+                # Ensure process has time to terminate
+                sleep(0.5)
                 if p.is_running():
                     p.kill()
                     log.debug(f"Forcefully killing ffplay process with PID {pid}")
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            # Handle exceptions, such as processes that no longer exist or access denied
-            log.debug("Could not terminate a ffplay processes!")
+            log.debug("Could not terminate a ffplay process!")
     if count == 0:
         log.info("No background radios are running!")
 
@@ -40,6 +41,7 @@ class Ffplay:
         self.loglevel = loglevel
         self.is_playing = False
         self.process = None
+        self.is_running = False
 
         self._check_ffplay_installation()
         self.start_process()
@@ -70,13 +72,13 @@ class Ffplay:
                 stderr=subprocess.PIPE,
                 text=True,
             )
-
             self.is_running = True
             self.is_playing = True
             self._start_error_thread()
-
         except Exception as e:
             log.error("Error while starting radio: {}".format(e))
+            self.is_running = False
+            self.is_playing = False
 
     def _start_error_thread(self):
         error_thread = threading.Thread(target=self._check_error_output)
@@ -84,23 +86,26 @@ class Ffplay:
         error_thread.start()
 
     def _check_error_output(self):
-        while self.is_running:
+        while self.is_running and self.process and self.process.stderr:
             stderr_result = self.process.stderr.readline()
             if stderr_result:
                 self._handle_error(stderr_result)
                 self.is_running = False
                 self.stop()
+                break
             sleep(2)
 
     def _handle_error(self, stderr_result):
-        print()
         log.error("Could not connect to the station")
         try:
             log.debug(stderr_result)
-            log.error(stderr_result.split(": ")[1])
+            parts = stderr_result.split(": ")
+            if len(parts) > 1:
+                log.error(parts[1].strip())
+            else:
+                log.error(stderr_result.strip())
         except Exception as e:
             log.debug("Error: {}".format(e))
-            pass
 
     def terminate_parent_process(self):
         parent_pid = os.getppid()
@@ -132,7 +137,7 @@ class Ffplay:
             self.start_process()
 
     def stop(self):
-        if self.is_playing:
+        if self.is_playing and self.process:
             try:
                 self.process.kill()
                 self.process.wait(timeout=5)
@@ -145,6 +150,7 @@ class Ffplay:
                 raise
             finally:
                 self.is_playing = False
+                self.is_running = False
                 self.process = None
         else:
             log.debug("Radio is not currently playing")

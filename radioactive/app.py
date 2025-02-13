@@ -10,7 +10,7 @@ import requests
 
 class App:
     def __init__(self):
-        self.__VERSION__ = "2.9.1"  # change this on every update #
+        self.__VERSION__ = "2.9.2"  # change this on every update #
         self.pypi_api = "https://pypi.org/pypi/radio-active/json"
         self.remote_version = ""
 

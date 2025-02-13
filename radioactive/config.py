@@ -6,6 +6,7 @@ import os
 import sys
 
 from zenlog import log
+from radioactive.default_path import default_appconfig_file_path, handle_default_path
 
 
 def write_a_sample_config_file():
@@ -24,11 +25,8 @@ def write_a_sample_config_file():
         "player": "ffplay",
     }
 
-    # Get the user's home directory
-    home_directory = os.path.expanduser("~")
-
-    # Specify the file path
-    file_path = os.path.join(home_directory, ".radio-active-configs.ini")
+    handle_default_path(default_appconfig_file_path)
+    file_path = os.path.join(default_appconfig_file_path, ".radio-active-configs.ini")
 
     try:
         # Write the configuration to the file
