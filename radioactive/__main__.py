@@ -31,6 +31,7 @@ from radioactive.utilities import (
     handle_update_screen,
     handle_user_choice_from_search_result,
     handle_welcome_screen,
+    store_search_results_for_cycling,
 )
 
 # globally needed as signal handler needs it
@@ -97,6 +98,8 @@ def final_step(options, last_station, alias, handler):
     handle_listen_keypress(
         alias,
         player,
+        handler,
+        last_station,
         target_url=options["target_url"],
         station_name=options["curr_station_name"],
         station_url=options["target_url"],
@@ -104,6 +107,7 @@ def final_step(options, last_station, alias, handler):
         record_file=options["record_file"],
         record_file_format=options["record_file_format"],
         loglevel=options["loglevel"],
+        volume=options["volume"],
     )
 
 
@@ -164,6 +168,8 @@ def main():
             options["sort_by"],
             options["filter_with"],
         )
+        # Store results for cycling
+        store_search_results_for_cycling(response, "country discovery")
         if response is not None:
             (
                 options["curr_station_name"],
@@ -181,6 +187,8 @@ def main():
             options["sort_by"],
             options["filter_with"],
         )
+        # Store results for cycling
+        store_search_results_for_cycling(response, "state discovery")
         if response is not None:
             (
                 options["curr_station_name"],
@@ -198,6 +206,8 @@ def main():
             options["sort_by"],
             options["filter_with"],
         )
+        # Store results for cycling
+        store_search_results_for_cycling(response, "language discovery")
         if response is not None:
             (
                 options["curr_station_name"],
@@ -215,6 +225,8 @@ def main():
             options["sort_by"],
             options["filter_with"],
         )
+        # Store results for cycling
+        store_search_results_for_cycling(response, "tag discovery")
         if response is not None:
             (
                 options["curr_station_name"],

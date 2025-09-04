@@ -85,11 +85,18 @@ class Ffplay:
 
     def _check_error_output(self):
         while self.is_running:
-            stderr_result = self.process.stderr.readline()
-            if stderr_result:
-                self._handle_error(stderr_result)
-                self.is_running = False
-                self.stop()
+            # Check if process is still valid before accessing stderr
+            if self.process is None:
+                break
+            try:
+                stderr_result = self.process.stderr.readline()
+                if stderr_result:
+                    self._handle_error(stderr_result)
+                    self.is_running = False
+                    self.stop()
+            except (AttributeError, ValueError):
+                # Process was stopped or stderr is no longer available
+                break
             sleep(2)
 
     def _handle_error(self, stderr_result):

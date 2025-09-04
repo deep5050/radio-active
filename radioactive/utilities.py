@@ -24,6 +24,8 @@ RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"
 
 global_current_station_info = {}
+# Global variable to store last search results for cycle functionality
+global_last_search_results = []
 
 
 def handle_fetch_song_title(url):
@@ -281,10 +283,25 @@ def check_sort_by_parameter(sort_by):
     return sort_by
 
 
+def store_search_results_for_cycling(response, search_type="search"):
+    """Store search/discovery results globally for cycle functionality"""
+    global global_last_search_results
+    
+    if response is not None and len(response) > 0:
+        global_last_search_results = response
+        log.debug(f"Stored {len(global_last_search_results)} results from {search_type} for cycling")
+
+
 def handle_search_stations(handler, station_name, limit, sort_by, filter_with):
+    """Search for stations and store results globally for cycling"""
     log.debug("Searching API for: {}".format(station_name))
 
-    return handler.search_by_station_name(station_name, limit, sort_by, filter_with)
+    response = handler.search_by_station_name(station_name, limit, sort_by, filter_with)
+    
+    # Store search results globally for cycle functionality
+    store_search_results_for_cycling(response, "station search")
+    
+    return response
 
 
 def handle_station_selection_menu(handler, last_station, alias):
@@ -357,6 +374,8 @@ def handle_save_last_station(last_station, station_name, station_url):
 def handle_listen_keypress(
     alias,
     player,
+    handler,
+    last_station,
     target_url,
     station_name,
     station_url,
@@ -364,8 +383,16 @@ def handle_listen_keypress(
     record_file,
     record_file_format,
     loglevel,
+    volume,
 ):
     log.info("Press '?' to see available commands\n")
+    
+    # Keep track of current station info for potential updates
+    current_target_url = target_url
+    current_station_name = station_name
+    current_station_url = station_url
+    current_player = player  # Track current player instance
+    
     while True:
         try:
             user_input = input("Enter a command to perform an action: ")
@@ -377,8 +404,8 @@ def handle_listen_keypress(
 
         if user_input in ["r", "R", "record"]:
             handle_record(
-                target_url,
-                station_name,
+                current_target_url,
+                current_station_name,
                 record_file_path,
                 record_file,
                 record_file_format,
@@ -412,8 +439,8 @@ def handle_listen_keypress(
 
             if user_input.strip() != "":
                 handle_record(
-                    target_url,
-                    station_name,
+                    current_target_url,
+                    current_station_name,
                     record_file_path,
                     file_name,
                     record_file_format,
@@ -423,29 +450,69 @@ def handle_listen_keypress(
             handle_show_station_info()
 
         elif user_input in ["f", "F", "fav"]:
-            handle_add_to_favorite(alias, station_name, station_url)
+            handle_add_to_favorite(alias, current_station_name, current_station_url)
+
+        elif user_input in ["s", "S", "search"]:
+            # New search functionality
+            log.info("Searching for new stations...")
+            log.info("Tip: You can search by station name, genre, or any keyword")
+            new_station_name, new_target_url, new_player = handle_runtime_search_and_switch(
+                handler, current_player, alias, last_station, loglevel, volume
+            )
+            
+            # Update current station info if a new station was selected
+            if new_station_name and new_target_url:
+                current_station_name = new_station_name
+                current_target_url = new_target_url
+                current_station_url = new_target_url
+                # Update player instance if a new one was created (FFplay case)
+                if new_player:
+                    current_player = new_player
+                    log.debug("Updated to new player instance")
+                log.info(f"Now playing: {current_station_name}")
+
+        elif user_input in ["c", "C", "cycle"]:
+            # Cycle through last search results
+            log.info("Cycling through previous search results...")
+            new_station_name, new_target_url, new_player = handle_runtime_cycle_stations(
+                handler, current_player, alias, last_station, loglevel, volume
+            )
+            
+            # Update current station info if a new station was selected
+            if new_station_name and new_target_url:
+                current_station_name = new_station_name
+                current_target_url = new_target_url
+                current_station_url = new_target_url
+                # Update player instance if a new one was created (FFplay case)
+                if new_player:
+                    current_player = new_player
+                    log.debug("Updated to new player instance")
+                log.info(f"Now playing: {current_station_name}")
 
         elif user_input in ["q", "Q", "quit"]:
             # kill_background_ffplays()
-            player.stop()
+            current_player.stop()
             sys.exit(0)
         elif user_input in ["w", "W", "list"]:
             alias.generate_map()
             handle_favorite_table(alias)
         elif user_input in ["t", "T", "track"]:
-            handle_fetch_song_title(target_url)
+            handle_fetch_song_title(current_target_url)
         elif user_input in ["p", "P"]:
             # toggle the player (start/stop)
-            player.toggle()
+            current_player.toggle()
             # TODO: toggle the player
 
         elif user_input in ["h", "H", "?", "help"]:
             log.info("p: Play/Pause current station")
+            log.info("s/search: Search and switch to new station")
+            log.info("c/cycle: Choose different station from last search")
             log.info("t/track: Current track info")
             log.info("i/info: Station information")
             log.info("r/record: Record a station")
             log.info("rf/recordfile: Specify a filename for the recording")
             log.info("f/fav: Add station to favorite list")
+            log.info("w/list: Show favorite stations")
             log.info("h/help/?: Show this help message")
             log.info("q/quit: Quit radioactive")
 
@@ -549,6 +616,153 @@ def handle_direct_play(alias, station_name_or_url=""):
 def handle_play_last_station(last_station):
     station_obj = last_station.get_info()
     return station_obj["name"], station_obj["uuid_or_url"]
+
+
+def handle_runtime_search_and_switch(handler, player, alias, last_station, loglevel, volume):
+    """Handle runtime search for new stations and switch to selected station"""
+    global global_last_search_results
+    
+    try:
+        search_term = input("Enter station name to search: ")
+    except EOFError:
+        print()
+        log.debug("Ctrl+D (EOF) detected during search input.")
+        return None, None, None
+
+    if search_term.strip() == "":
+        log.info("Search cancelled")
+        return None, None, None
+
+    log.info(f"Searching for: {search_term}")
+    
+    # Use default values from config for search parameters
+    # These could be made configurable in the future
+    limit = 100
+    sort_by = "votes"
+    filter_with = "none"
+    
+    try:
+        # Search for stations
+        response = handle_search_stations(handler, search_term, limit, sort_by, filter_with)
+        
+        if response is not None and len(response) > 0:
+            # Store search results for cycle functionality
+            global_last_search_results = response
+            log.debug(f"Stored {len(global_last_search_results)} search results for cycling")
+            
+            # Let user select from search results
+            new_station_name, new_target_url = handle_user_choice_from_search_result(handler, response)
+            
+            if new_station_name and new_target_url:
+                return switch_to_new_station(player, new_station_name, new_target_url, last_station, loglevel, volume)
+            
+    except Exception as e:
+        log.error(f"Error during search: {e}")
+        log.debug(f"Search error details: {str(e)}")
+        log.info("Continuing with current station...")
+    
+    return None, None, None
+
+
+def handle_runtime_cycle_stations(handler, player, alias, last_station, loglevel, volume):
+    """Cycle through last search results to pick a different station"""
+    global global_last_search_results
+    
+    log.debug(f"Cycle: Found {len(global_last_search_results)} stored results")
+    
+    if not global_last_search_results:
+        log.info("No previous search results available. Use 's/search' first.")
+        return None, None, None
+    
+    log.info(f"Showing {len(global_last_search_results)} stations from previous search:")
+    
+    try:
+        # Show the stored search results table again
+        from radioactive.handler import print_table
+        print_table(global_last_search_results, 
+                   ["Station:name@30", "Country:country@20", "Tags:tags@20"], 
+                   "votes", "none")
+        
+        # Let user select from previous results
+        new_station_name, new_target_url = handle_user_choice_from_search_result(handler, global_last_search_results)
+        
+        if new_station_name and new_target_url:
+            return switch_to_new_station(player, new_station_name, new_target_url, last_station, loglevel, volume)
+            
+    except Exception as e:
+        log.error(f"Error during cycle: {e}")
+        log.debug(f"Cycle error details: {str(e)}")
+        log.info("Continuing with current station...")
+    
+    return None, None, None
+
+
+def switch_to_new_station(player, new_station_name, new_target_url, last_station, loglevel, volume):
+    """Helper function to switch to a new station regardless of player type"""
+    try:
+        # Stop current player and ensure it's fully stopped
+        log.info("Switching to new station...")
+        
+        # Force stop current player
+        if player and hasattr(player, 'stop'):
+            player.stop()
+        
+        # Kill any background ffplay processes to prevent simultaneous playback
+        kill_background_ffplays()
+        
+        # Small delay to ensure cleanup
+        from time import sleep
+        sleep(0.5)
+        
+        # Handle different player types
+        if hasattr(player, 'program_name'):
+            if player.program_name == "ffplay":
+                # FFplay needs to be reinitialized - return new instance
+                from radioactive.ffplay import Ffplay
+                new_player = Ffplay(new_target_url, volume, loglevel)
+                log.debug("FFplay reinitialized for new station")
+                
+                # Save as last station
+                handle_save_last_station(last_station, new_station_name, new_target_url)
+                
+                # Show new station panel
+                handle_current_play_panel(new_station_name)
+                
+                # Return the new player instance along with station info
+                return new_station_name, new_target_url, new_player
+                
+            elif player.program_name == "vlc":
+                # VLC has start method
+                player.url = new_target_url
+                player.start(new_target_url)
+                
+            elif player.program_name == "mpv":
+                # MPV has start method  
+                player.url = new_target_url
+                player.start(new_target_url)
+        else:
+            # Fallback - try the start method for other players
+            if hasattr(player, 'url'):
+                player.url = new_target_url
+            if hasattr(player, 'start'):
+                player.start(new_target_url)
+            else:
+                log.warning("Could not restart player - player type not recognized")
+                return new_station_name, new_target_url, None
+        
+        # Save as last station
+        handle_save_last_station(last_station, new_station_name, new_target_url)
+        
+        # Show new station panel
+        handle_current_play_panel(new_station_name)
+        
+        # Return None for player if no new instance was created
+        return new_station_name, new_target_url, None
+        
+    except Exception as e:
+        log.error(f"Error switching station: {e}")
+        log.debug(f"Detailed error: {str(e)}")
+        return None, None, None
 
 
 # uses ffprobe to fetch station name
