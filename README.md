@@ -40,6 +40,7 @@
 - [x] Supports more than 40K stations !! :radio:
 - [x] Record audio from live radio on demand :zap:
 - [x] Get song information on run-time 🎶
+- [x] Runtime station search and switching :mag:
 - [x] Saves last station information
 - [x] Favorite stations :heart:
 - [x] Selection menu for favorite stations
@@ -190,10 +191,14 @@ Input a command during the radio playback to perform an action. Available comman
 ```
 Enter a command to perform an action: ?
 
+p/P: Play/Pause current station
+s/S/search: Search and switch to new station
+c/C/cycle: Choose different station from last search
 t/T/track: Current song name (track info)
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
-rf/RF/recordfile: Specify a filename for the recording.
+rf/RF/recordfile: Specify a filename for the recording
+w/W/list: Show favorite stations
 h/H/help/?: Show this help message
 q/Q/quit: Quit radioactive
 ```
