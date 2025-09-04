@@ -646,15 +646,43 @@ def handle_runtime_search_and_switch(handler, player, alias, last_station, logle
         response = handle_search_stations(handler, search_term, limit, sort_by, filter_with)
         
         if response is not None and len(response) > 0:
-            # Store search results for cycle functionality
+            # Store search results globally for cycle functionality
             global_last_search_results = response
             log.debug(f"Stored {len(global_last_search_results)} search results for cycling")
             
-            # Let user select from search results
-            new_station_name, new_target_url = handle_user_choice_from_search_result(handler, response)
-            
-            if new_station_name and new_target_url:
-                return switch_to_new_station(player, new_station_name, new_target_url, last_station, loglevel, volume)
+            # Keep trying stations until one connects or user gives up
+            while True:
+                # Let user select from search results
+                new_station_name, new_target_url = handle_user_choice_from_search_result(handler, response)
+                
+                if new_station_name and new_target_url:
+                    result_name, result_url, new_player = switch_to_new_station(
+                        player, new_station_name, new_target_url, last_station, loglevel, volume
+                    )
+                    
+                    if result_name == "CONNECTION_FAILED":
+                        # Connection failed, ask if user wants to try another station
+                        try:
+                            retry_choice = input("Try another station from this search? (y/n): ")
+                            if retry_choice.lower() in ['y', 'yes', '']:
+                                # Show the table again and let user pick another station
+                                from radioactive.handler import print_table
+                                print_table(response, 
+                                           ["Station:name@30", "Country:country@20", "Tags:tags@20"], 
+                                           sort_by, filter_with)
+                                continue  # Go back to station selection
+                            else:
+                                log.info("Returning to command prompt...")
+                                return None, None, None
+                        except EOFError:
+                            print()
+                            return None, None, None
+                    else:
+                        # Success! Return the new station info
+                        return result_name, result_url, new_player
+                else:
+                    # User cancelled selection
+                    return None, None, None
             
     except Exception as e:
         log.error(f"Error during search: {e}")
@@ -677,17 +705,40 @@ def handle_runtime_cycle_stations(handler, player, alias, last_station, loglevel
     log.info(f"Showing {len(global_last_search_results)} stations from previous search:")
     
     try:
-        # Show the stored search results table again
-        from radioactive.handler import print_table
-        print_table(global_last_search_results, 
-                   ["Station:name@30", "Country:country@20", "Tags:tags@20"], 
-                   "votes", "none")
-        
-        # Let user select from previous results
-        new_station_name, new_target_url = handle_user_choice_from_search_result(handler, global_last_search_results)
-        
-        if new_station_name and new_target_url:
-            return switch_to_new_station(player, new_station_name, new_target_url, last_station, loglevel, volume)
+        # Keep trying stations until one connects or user gives up
+        while True:
+            # Show the stored search results table again
+            from radioactive.handler import print_table
+            print_table(global_last_search_results, 
+                       ["Station:name@30", "Country:country@20", "Tags:tags@20"], 
+                       "votes", "none")
+            
+            # Let user select from previous results
+            new_station_name, new_target_url = handle_user_choice_from_search_result(handler, global_last_search_results)
+            
+            if new_station_name and new_target_url:
+                result_name, result_url, new_player = switch_to_new_station(
+                    player, new_station_name, new_target_url, last_station, loglevel, volume
+                )
+                
+                if result_name == "CONNECTION_FAILED":
+                    # Connection failed, ask if user wants to try another station
+                    try:
+                        retry_choice = input("Try another station from this list? (y/n): ")
+                        if retry_choice.lower() in ['y', 'yes', '']:
+                            continue  # Go back to station selection
+                        else:
+                            log.info("Returning to command prompt...")
+                            return None, None, None
+                    except EOFError:
+                        print()
+                        return None, None, None
+                else:
+                    # Success! Return the new station info
+                    return result_name, result_url, new_player
+            else:
+                # User cancelled selection
+                return None, None, None
             
     except Exception as e:
         log.error(f"Error during cycle: {e}")
@@ -714,12 +765,23 @@ def switch_to_new_station(player, new_station_name, new_target_url, last_station
         from time import sleep
         sleep(0.5)
         
+        new_player_instance = None
+        
         # Handle different player types
         if hasattr(player, 'program_name'):
             if player.program_name == "ffplay":
                 # FFplay needs to be reinitialized - return new instance
                 from radioactive.ffplay import Ffplay
-                new_player = Ffplay(new_target_url, volume, loglevel)
+                new_player_instance = Ffplay(new_target_url, volume, loglevel)
+                
+                # Give FFplay a moment to start and check if it's working
+                sleep(1)
+                if not new_player_instance.is_active():
+                    log.error(f"Failed to connect to station: {new_station_name}")
+                    log.info("Connection failed. Please try another station.")
+                    new_player_instance.stop()
+                    return "CONNECTION_FAILED", None, None
+                
                 log.debug("FFplay reinitialized for new station")
                 
                 # Save as last station
@@ -729,7 +791,7 @@ def switch_to_new_station(player, new_station_name, new_target_url, last_station
                 handle_current_play_panel(new_station_name)
                 
                 # Return the new player instance along with station info
-                return new_station_name, new_target_url, new_player
+                return new_station_name, new_target_url, new_player_instance
                 
             elif player.program_name == "vlc":
                 # VLC has start method
