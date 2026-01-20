@@ -8,6 +8,7 @@ import sys
 from zenlog import log
 
 
+## TODO: remove dead code or move to cli option for writing config file
 def write_a_sample_config_file():
     # Create a ConfigParser object
     config = configparser.ConfigParser()
@@ -43,35 +44,50 @@ def write_a_sample_config_file():
 
 class Configs:
     def __init__(self):
-        self.config_path = os.path.join(
-            os.path.expanduser("~"), ".radio-active-configs.ini"
-        )
+        home = os.path.expanduser("~")
+
+        xdg_config_home = os.environ.get("XDG_CONFIG_HOME") or os.path.join(home, ".config")
+
+        xdg_config_dirs = [xdg_config_home] + (os.environ.get("XDG_CONFIG_DIRS") or "/etc/xdg").split(":")
+
+        self.config_paths = [
+            os.path.join( home, ".radio-active-configs.ini" ),
+        ] + [
+            os.path.join(x, "radio-active", "configs.ini") for x in xdg_config_dirs
+        ]
+
+        self.defaults = {
+            "AppConfig": {
+                "loglevel": "info",
+                "limit": "100",
+                "sort": "votes",
+                "filter": "none",
+                "volume": "80",
+                "filepath": "/home/{user}/recordings/radioactive/",
+                "filetype": "mp3",
+                "player": "ffplay",
+            }
+        }
 
     def load(self):
-        self.config = configparser.ConfigParser()
+        self.config = configparser.ConfigParser(defaults=self.defaults)
 
         try:
-            self.config.read(self.config_path)
+            self.config.read(self.config_paths)
+        except Exception as e:
+            log.error(f"Something went wrong while parsing the config file: {e}")
+            log.info("Using default configurations instead")
+        finally:
             options = {}
-            options["volume"] = self.config.get("AppConfig", "volume")
-            options["loglevel"] = self.config.get("AppConfig", "loglevel")
-            options["sort"] = self.config.get("AppConfig", "sort")
-            options["filter"] = self.config.get("AppConfig", "filter")
-            options["limit"] = self.config.get("AppConfig", "limit")
-            options["filepath"] = self.config.get("AppConfig", "filepath")
+            for section, option in self.defaults.items():
+                for key, value in option.items():
+                    options[key] = self.config.get(section, key, fallback=value)
+
             # if filepath has any placeholder, replace
             # {user} to actual user map
             options["filepath"] = options["filepath"].replace(
                 "{user}", getpass.getuser()
             )
-            options["filetype"] = self.config.get("AppConfig", "filetype")
-            options["player"] = self.config.get("AppConfig", "player")
 
             return options
 
-        except Exception as e:
-            log.error(f"Something went wrong while parsing the config file: {e}")
-            # write the example config file
-            write_a_sample_config_file()
-            log.info("Re-run radioative")
-            sys.exit(1)
