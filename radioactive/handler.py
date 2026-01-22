@@ -15,6 +15,11 @@ from zenlog import log
 
 from radioactive.filter import filter_expressions
 
+try:
+    from radioactive.feature_flags import MINIMAL_FEATURE
+except ImportError:
+    MINIMAL_FEATURE = False
+
 # constants
 DEFAULT_CACHE_RETENTION_DAYS = 3
 BYTES_TO_MB_DIVISOR = 1024 * 1024
@@ -59,6 +64,9 @@ def print_table(
     Returns:
         list: The original (or filtered) response data.
     """
+
+    if MINIMAL_FEATURE:
+        columns = [col for col in columns if "Tags" not in col]
 
     if not response:
         log.error("No stations found")
