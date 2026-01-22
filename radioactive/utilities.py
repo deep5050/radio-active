@@ -17,12 +17,14 @@ try:
         TRACK_FEATURE,
         SEARCH_FEATURE,
         CYCLE_FEATURE,
+        INFO_FEATURE,
     )
 except ImportError:
     RECORDING_FEATURE = True
     TRACK_FEATURE = True
     SEARCH_FEATURE = True
     CYCLE_FEATURE = True
+    INFO_FEATURE = True
 
 # Re-export functions for backward compatibility and aggregation
 from radioactive.ui import (
@@ -260,7 +262,7 @@ def handle_listen_keypress(
                         loglevel,
                     )
 
-        if user_input in ["i", "I", "info"]:
+        if INFO_FEATURE and user_input in ["i", "I", "info"]:
             handle_show_station_info()
 
         elif user_input in ["f", "F", "fav"]:
@@ -363,7 +365,8 @@ def handle_listen_keypress(
             log.info("p: Play/Pause current station")
             if TRACK_FEATURE:
                 log.info("t/track: Current track info")
-            log.info("i/info: Station information")
+            if INFO_FEATURE:
+                log.info("i/info: Station information")
             if RECORDING_FEATURE:
                 log.info("r/record: Record a station")
                 log.info("rf/recordfile: Specify a filename for the recording")

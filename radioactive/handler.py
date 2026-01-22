@@ -66,7 +66,13 @@ def print_table(
     """
 
     if MINIMAL_FEATURE:
-        columns = [col for col in columns if "Tags" not in col]
+        columns = [
+            col
+            for col in columns
+            if all(x not in col for x in ["Tags", "Country", "Language"])
+        ]
+        if len(response) > 10:
+            response = response[:10]
 
     if not response:
         log.error("No stations found")
