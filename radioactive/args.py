@@ -6,9 +6,10 @@ from zenlog import log
 from radioactive.config import Configs
 
 try:
-    from radioactive.feature_flags import RECORDING_FEATURE
+    from radioactive.feature_flags import RECORDING_FEATURE, SEARCH_FEATURE
 except ImportError:
     RECORDING_FEATURE = True
+    SEARCH_FEATURE = True
 
 
 # load default configs

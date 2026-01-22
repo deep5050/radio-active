@@ -33,7 +33,7 @@ def parse_options() -> Dict[str, Any]:
     options["limit"] = int(limit) if limit else 100
     log.debug("limit is set to: {}".format(limit))
 
-    options["search_station_name"] = args.search_station_name
+    options["search_station_name"] = getattr(args, "search_station_name", None)
     options["search_station_uuid"] = args.search_station_uuid
 
     options["play_last_station"] = args.play_last_station
