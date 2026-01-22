@@ -35,7 +35,7 @@ def trim_string(text: str, max_length: int = 40) -> str:
     """
     if not isinstance(text, str):
         return str(text)
-        
+
     if len(text) > max_length:
         return text[:max_length] + "..."
     return text
@@ -45,7 +45,7 @@ def print_table(
     response: List[Dict[str, Any]],
     columns: List[str],
     sort_by: str,
-    filter_expression: str
+    filter_expression: str,
 ) -> List[Dict[str, Any]]:
     """
     Print the table applying the sort logic.
@@ -91,7 +91,7 @@ def print_table(
             rest = parts[1].split("@")
             response_key = rest[0]
             max_str = int(rest[1])
-            
+
             parsed_columns.append((col_name, response_key, max_str))
             table.add_column(col_name, justify="left")
 
@@ -143,10 +143,10 @@ class Handler:
     def get_country_code(self, name: str) -> Optional[str]:
         """
         Get the ISO 3166-1 alpha-2 country code for a given country name.
-        
+
         Args:
             name (str): The name of the country.
-            
+
         Returns:
             str: The country code if found, None otherwise.
         """
@@ -159,7 +159,7 @@ class Handler:
     def validate_uuid_station(self) -> List[Dict[str, Any]]:
         """
         Validate that a station UUID search returned exactly one result and register a click.
-        
+
         Returns:
             list: The response list containing the station details.
         """
@@ -172,27 +172,23 @@ class Handler:
             self.vote_for_uuid(self.target_station["stationuuid"])
 
             return self.response
-        
+
         log.error("Station found by UUID is invalid or empty")
         sys.exit(1)
 
     # ---------------------------- NAME -------------------------------- #
     def search_by_station_name(
-        self, 
-        name: str, 
-        limit: int, 
-        sort_by: str, 
-        filter_with: str
+        self, name: str, limit: int, sort_by: str, filter_with: str
     ) -> List[Dict[str, Any]]:
         """
         Search and play a station by its name.
-        
+
         Args:
             name (str): Station name to search for.
             limit (int): Max number of results.
             sort_by (str): Field to sort by.
             filter_with (str): Filter expression.
-            
+
         Returns:
             list: List of found stations.
         """
@@ -222,10 +218,10 @@ class Handler:
     def play_by_station_uuid(self, uuid: str) -> List[Dict[str, Any]]:
         """
         Search and play station by its stationuuid.
-        
+
         Args:
             uuid (str): The UUID of the station.
-            
+
         Returns:
             list: Confirmed station details.
         """
@@ -239,11 +235,7 @@ class Handler:
 
     # -------------------------- COUNTRY ----------------------#
     def discover_by_country(
-        self, 
-        country_code_or_name: str, 
-        limit: int, 
-        sort_by: str, 
-        filter_with: str
+        self, country_code_or_name: str, limit: int, sort_by: str, filter_with: str
     ) -> List[Dict[str, Any]]:
         """
         Discover stations by country code or name.
@@ -303,11 +295,7 @@ class Handler:
     # ------------------- by state ---------------------
 
     def discover_by_state(
-        self, 
-        state: str, 
-        limit: int, 
-        sort_by: str, 
-        filter_with: str
+        self, state: str, limit: int, sort_by: str, filter_with: str
     ) -> List[Dict[str, Any]]:
         """Discover stations by state."""
         is_reverse = sort_by != "name"
@@ -337,21 +325,14 @@ class Handler:
     # -----------------by language --------------------
 
     def discover_by_language(
-        self, 
-        language: str, 
-        limit: int, 
-        sort_by: str, 
-        filter_with: str
+        self, language: str, limit: int, sort_by: str, filter_with: str
     ) -> List[Dict[str, Any]]:
         """Discover stations by language."""
         is_reverse = sort_by != "name"
 
         try:
             response = self.API.search(
-                language=language, 
-                limit=limit, 
-                order=str(sort_by), 
-                reverse=is_reverse
+                language=language, limit=limit, order=str(sort_by), reverse=is_reverse
             )
         except Exception as e:
             log.debug(f"Error discover_by_language: {e}")
@@ -372,11 +353,7 @@ class Handler:
 
     # -------------------- by tag ---------------------- #
     def discover_by_tag(
-        self, 
-        tag: str, 
-        limit: int, 
-        sort_by: str, 
-        filter_with: str
+        self, tag: str, limit: int, sort_by: str, filter_with: str
     ) -> List[Dict[str, Any]]:
         """Discover stations by tag."""
         is_reverse = sort_by != "name"

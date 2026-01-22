@@ -105,7 +105,7 @@ def final_step(options, last_station, alias, handler, station_list=None):
         record_file_format=options["record_file_format"],
         loglevel=options["loglevel"],
         handler=handler,
-        station_list=station_list
+        station_list=station_list,
     )
 
 
@@ -295,7 +295,7 @@ def main():
 
     # final_step()
     # If response is not defined yet, initialize it
-    if 'response' not in locals():
+    if "response" not in locals():
         response = []
 
     final_step(options, last_station, alias, handler, response)

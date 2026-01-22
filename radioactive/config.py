@@ -33,6 +33,7 @@ def write_a_sample_config_file() -> None:
 
     try:
         from radioactive.paths import get_config_path
+
         # Specify the file path
         file_path = get_config_path()
 
@@ -50,8 +51,10 @@ class Configs:
     """
     Class to handle loading and parsing of the configuration file.
     """
+
     def __init__(self):
         from radioactive.paths import get_config_path
+
         self.config_path = get_config_path()
         self.config: Optional[configparser.ConfigParser] = None
 
@@ -67,7 +70,7 @@ class Configs:
         try:
             self.config.read(self.config_path)
             options: Dict[str, str] = {}
-            
+
             # Helper to safely get config values with defaults if section missing
             def get_option(key: str, default: str = "") -> str:
                 try:
@@ -80,14 +83,16 @@ class Configs:
             options["sort"] = get_option("sort", "votes")
             options["filter"] = get_option("filter", "none")
             options["limit"] = get_option("limit", "100")
-            options["filepath"] = get_option("filepath", "/home/{user}/recordings/radioactive/")
-            
+            options["filepath"] = get_option(
+                "filepath", "/home/{user}/recordings/radioactive/"
+            )
+
             # if filepath has any placeholder, replace {user} to actual user map
             if "{user}" in options["filepath"]:
                 options["filepath"] = options["filepath"].replace(
                     "{user}", getpass.getuser()
                 )
-                
+
             options["filetype"] = get_option("filetype", "mp3")
             options["player"] = get_option("player", "ffplay")
 

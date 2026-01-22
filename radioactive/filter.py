@@ -9,9 +9,7 @@ from zenlog import log
 
 
 def _filter_entries_by_key(
-    data: List[Dict[str, Any]], 
-    filter_param: str, 
-    key: str
+    data: List[Dict[str, Any]], filter_param: str, key: str
 ) -> List[Dict[str, Any]]:
     """
     Filter list of dictionaries by a string key using inclusion (=) or exclusion (!=).
@@ -25,10 +23,10 @@ def _filter_entries_by_key(
         # Ensure value is a string for comparison
         if value is None:
             continue
-        
+
         str_value = str(value)
         if str_value == "":
-            continue    
+            continue
 
         if "!=" in filter_param:
             # Handle exclusion
@@ -57,9 +55,7 @@ def _filter_entries_by_key(
 
 
 def _filter_entries_by_numeric_key(
-    data: List[Dict[str, Any]], 
-    filter_param: str, 
-    key: str
+    data: List[Dict[str, Any]], filter_param: str, key: str
 ) -> List[Dict[str, Any]]:
     """
     Filter list of dictionaries by a numeric key.
@@ -68,25 +64,25 @@ def _filter_entries_by_numeric_key(
     filtered_entries = []
 
     try:
-        # Split logic needs to be robust. 
+        # Split logic needs to be robust.
         # Expected format: keyOPvalue e.g. votes>100
         # We know the key, so we can split by key
         parts = filter_param.split(key)
         if len(parts) < 2:
             log.warning(f"Invalid filter format: {filter_param}")
             return data
-            
+
         param_part = parts[1]  # portion after the key name e.g. >100, =50
         if not param_part:
             return data
 
         filter_operator = param_part[0]  # operator part
         filter_value_str = param_part[1:]  # value part
-        
+
         if not filter_value_str:
             log.warning(f"No value provided for filter: {filter_param}")
             return data
-            
+
         filter_value = int(filter_value_str)
 
         for entry in data:
@@ -182,7 +178,9 @@ def _filter_results(data: List[Dict], expression: str) -> List[Dict]:
 
 
 # Top most function for multiple filtering expressions with '&'
-def filter_expressions(data: List[Dict[str, Any]], input_expression: str) -> List[Dict[str, Any]]:
+def filter_expressions(
+    data: List[Dict[str, Any]], input_expression: str
+) -> List[Dict[str, Any]]:
     """
     Filter the list of stations based on the input expression.
     Supports multiple filters separated by '&'.

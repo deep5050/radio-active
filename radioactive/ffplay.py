@@ -44,6 +44,7 @@ class Ffplay:
     """
     Wrapper class to manage the FFplay process for audio playback.
     """
+
     def __init__(self, URL: str, volume: int, loglevel: str):
         self.program_name = "ffplay"
         self.url = URL
@@ -68,7 +69,7 @@ class Ffplay:
         """Construct the command line arguments for ffplay."""
         # Ensure volume is within valid range (0-100) though ffplay accepts 0-100
         # Actually ffplay volume is 0-100
-        
+
         if self.exe_path is None:
             raise RuntimeError("FFplay executable path is not set")
 
@@ -121,8 +122,8 @@ class Ffplay:
                     self.stop()
                     break
             except ValueError:
-                 # ValueError: I/O operation on closed file.
-                 break
+                # ValueError: I/O operation on closed file.
+                break
             except Exception:
                 break
             sleep(0.5)
@@ -180,7 +181,7 @@ class Ffplay:
     def stop(self) -> None:
         """Stop playback and terminate the process."""
         if self.is_playing and self.process:
-            self.is_running = False # Stop the error thread loop
+            self.is_running = False  # Stop the error thread loop
             try:
                 self.process.terminate()
                 try:
@@ -188,7 +189,7 @@ class Ffplay:
                 except subprocess.TimeoutExpired:
                     self.process.kill()
                     self.process.wait(timeout=2)
-                
+
                 log.debug("Radio playback stopped successfully")
             except Exception as e:
                 log.error(f"Error while stopping radio: {e}")

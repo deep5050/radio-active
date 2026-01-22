@@ -5,6 +5,11 @@ from zenlog import log
 
 from radioactive.config import Configs
 
+try:
+    from radioactive.feature_flags import RECORDING_FEATURE
+except ImportError:
+    RECORDING_FEATURE = True
+
 
 # load default configs
 def load_default_configs():
@@ -15,7 +20,6 @@ def load_default_configs():
 
 
 class Parser:
-
     """Parse the command-line args and return result to the __main__"""
 
     def __init__(self):
@@ -203,40 +207,41 @@ class Parser:
             help="kill all the ffplay process initiated by radioactive",
         )
 
-        self.parser.add_argument(
-            "--record",
-            "-R",
-            action="store_true",
-            dest="record_stream",
-            default=False,
-            help="record a station and save as audio file",
-        )
+        if RECORDING_FEATURE:
+            self.parser.add_argument(
+                "--record",
+                "-R",
+                action="store_true",
+                dest="record_stream",
+                default=False,
+                help="record a station and save as audio file",
+            )
 
-        self.parser.add_argument(
-            "--filepath",
-            action="store",
-            dest="record_file_path",
-            default=self.defaults["filepath"],
-            help="specify the audio format for recording",
-        )
+            self.parser.add_argument(
+                "--filepath",
+                action="store",
+                dest="record_file_path",
+                default=self.defaults["filepath"],
+                help="specify the audio format for recording",
+            )
 
-        self.parser.add_argument(
-            "--filename",
-            "-N",
-            action="store",
-            dest="record_file",
-            default="",
-            help="specify the output filename of the recorded audio",
-        )
+            self.parser.add_argument(
+                "--filename",
+                "-N",
+                action="store",
+                dest="record_file",
+                default="",
+                help="specify the output filename of the recorded audio",
+            )
 
-        self.parser.add_argument(
-            "--filetype",
-            "-T",
-            action="store",
-            dest="record_file_format",
-            default=self.defaults["filetype"],
-            help="specify the audio format for recording. auto/mp3",
-        )
+            self.parser.add_argument(
+                "--filetype",
+                "-T",
+                action="store",
+                dest="record_file_format",
+                default=self.defaults["filetype"],
+                help="specify the audio format for recording. auto/mp3",
+            )
 
         self.parser.add_argument(
             "--player",

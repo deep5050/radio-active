@@ -37,7 +37,7 @@ def handle_welcome_screen() -> None:
 def handle_update_screen(app) -> None:
     """
     Check for updates and print a message if available.
-    
+
     Args:
         app: The App instance to check for updates.
     """
@@ -59,7 +59,7 @@ def handle_update_screen(app) -> None:
 def handle_favorite_table(alias) -> None:
     """
     Print the user's favorite list in a table.
-    
+
     Args:
         alias: The Alias instance containing the favorite map.
     """
@@ -72,7 +72,7 @@ def handle_favorite_table(alias) -> None:
     )
     table.add_column("Station", justify="left")
     table.add_column("URL / UUID", justify="left")
-    
+
     if len(alias.alias_map) > 0:
         for entry in alias.alias_map:
             table.add_row(entry["name"], entry["uuid_or_url"])
@@ -105,7 +105,7 @@ def handle_show_station_info() -> None:
 def handle_current_play_panel(curr_station_name: str = "") -> None:
     """
     Print the currently playing station panel.
-    
+
     Args:
         curr_station_name (str): Name of the station.
     """

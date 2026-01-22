@@ -3,6 +3,7 @@
     it needs to be updated in every release)
     and to check if an updated version available for the app or not
 """
+
 import json
 
 import requests

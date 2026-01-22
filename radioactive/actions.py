@@ -13,7 +13,14 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import requests
 from zenlog import log
 
-from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
+try:
+    from radioactive.feature_flags import RECORDING_FEATURE
+except ImportError:
+    # Default to True if file not found (e.g. dev mode without configure)
+    RECORDING_FEATURE = True
+
+if RECORDING_FEATURE:
+    from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
 from radioactive.last_station import Last_station
 
 
@@ -62,6 +69,10 @@ def handle_record(
     """
     Handle audio recording logic.
     """
+    if not RECORDING_FEATURE:
+        log.error("Recording feature is not compiled/enabled in this build.")
+        sys.exit(1)
+
     log.info("Press 'q' to stop recording")
     force_mp3 = False
 
@@ -164,7 +175,7 @@ def handle_add_to_favorite(alias, station_name: str, station_uuid_url: str) -> N
 def handle_save_last_station(last_station, station_name: str, station_url: str) -> None:
     """Save the last played station."""
     # last_station = Last_station() # Provided as arg now
-    
+
     last_played_station = {}
     last_played_station["name"] = station_name
     last_played_station["uuid_or_url"] = station_url
@@ -198,11 +209,7 @@ def check_sort_by_parameter(sort_by: str) -> str:
 
 
 def handle_search_stations(
-    handler, 
-    station_name: str, 
-    limit: int, 
-    sort_by: str, 
-    filter_with: str
+    handler, station_name: str, limit: int, sort_by: str, filter_with: str
 ) -> Any:
     """Wrapper to search stations by name."""
     log.debug(f"Searching API for: {station_name}")
@@ -321,7 +328,7 @@ def handle_play_random_station(alias) -> Tuple[str, str]:
     if not alias_map:
         log.error("No favorite stations found")
         sys.exit(1)
-        
+
     index = randint(0, len(alias_map) - 1)
     station = alias_map[index]
     return station["name"], station["uuid_or_url"]

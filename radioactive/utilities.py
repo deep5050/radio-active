@@ -8,7 +8,13 @@ from random import randint
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pick import pick
+from pick import pick
 from zenlog import log
+
+try:
+    from radioactive.feature_flags import RECORDING_FEATURE
+except ImportError:
+    RECORDING_FEATURE = True
 
 # Re-export functions for backward compatibility and aggregation
 from radioactive.ui import (
@@ -108,7 +114,7 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
     if not response:
         log.debug("No result found!")
         sys.exit(0)
-        
+
     if len(response) == 1:
         # single station found
         log.debug("Exactly one result found")
@@ -163,8 +169,8 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
                 log.error("Please enter an ID within the range")
                 sys.exit(1)
         except ValueError:
-             log.error("Please enter an valid ID number")
-             sys.exit(1)
+            log.error("Please enter an valid ID number")
+            sys.exit(1)
         except Exception as e:
             log.error(f"Error: {e}")
             sys.exit(1)
@@ -197,52 +203,56 @@ def handle_listen_keypress(
             kill_background_ffplays()
             sys.exit(0)
 
-        if user_input in ["r", "R", "record"]:
-            handle_record(
-                target_url,
-                station_name,
-                record_file_path,
-                record_file,
-                record_file_format,
-                loglevel,
-            )
-        elif user_input in ["rf", "RF", "recordfile"]:
-            try:
-                user_input = input("Enter output filename: ")
-            except EOFError:
-                print()
-                log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
-                kill_background_ffplays()
-                sys.exit(0)
-
-            # try to get extension from filename
-            try:
-                file_name_parts = user_input.split(".")
-                if len(file_name_parts) > 1 and file_name_parts[-1] == "mp3":
-                    log.debug("codec: force mp3")
-                    # overwrite original codec with "mp3"
-                    record_file_format = "mp3"
-                    file_name = user_input.rsplit(".", 1)[0] # Handle filename with dots
-                else:
-                     if len(file_name_parts) > 1 and file_name_parts[-1] != "mp3":
-                        log.warning("You can only specify mp3 as file extension.\n")
-                        log.warning(
-                            "Do not provide any extension to autodetect the codec.\n"
-                        )
-                     file_name = user_input 
-            except Exception:
-                file_name = user_input
-
-            if user_input.strip() != "":
+        if RECORDING_FEATURE:
+            if user_input in ["r", "R", "record"]:
                 handle_record(
                     target_url,
                     station_name,
                     record_file_path,
-                    file_name,
+                    record_file,
                     record_file_format,
                     loglevel,
                 )
-        elif user_input in ["i", "I", "info"]:
+            elif user_input in ["rf", "RF", "recordfile"]:
+                try:
+                    user_input = input("Enter output filename: ")
+                except EOFError:
+                    print()
+                    log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+                    kill_background_ffplays()
+                    sys.exit(0)
+
+                # try to get extension from filename
+                try:
+                    file_name_parts = user_input.split(".")
+                    if len(file_name_parts) > 1 and file_name_parts[-1] == "mp3":
+                        log.debug("codec: force mp3")
+                        # overwrite original codec with "mp3"
+                        record_file_format = "mp3"
+                        file_name = user_input.rsplit(".", 1)[
+                            0
+                        ]  # Handle filename with dots
+                    else:
+                        if len(file_name_parts) > 1 and file_name_parts[-1] != "mp3":
+                            log.warning("You can only specify mp3 as file extension.\n")
+                            log.warning(
+                                "Do not provide any extension to autodetect the codec.\n"
+                            )
+                        file_name = user_input
+                except Exception:
+                    file_name = user_input
+
+                if user_input.strip() != "":
+                    handle_record(
+                        target_url,
+                        station_name,
+                        record_file_path,
+                        file_name,
+                        record_file_format,
+                        loglevel,
+                    )
+
+        if user_input in ["i", "I", "info"]:
             handle_show_station_info()
 
         elif user_input in ["f", "F", "fav"]:
@@ -251,14 +261,14 @@ def handle_listen_keypress(
         elif user_input in ["q", "Q", "quit"]:
             player.stop()
             sys.exit(0)
-            
+
         elif user_input in ["w", "W", "list"]:
             alias.generate_map()
             handle_favorite_table(alias)
-            
+
         elif user_input in ["t", "T", "track"]:
             handle_fetch_song_title(target_url)
-            
+
         elif user_input in ["p", "P"]:
             player.toggle()
 
@@ -268,16 +278,18 @@ def handle_listen_keypress(
                     query = input("Enter station name to search: ")
                 except EOFError:
                     continue
-                
+
                 if query.strip():
                     station_list = handle_search_stations(
-                         handler, query, limit=100, sort_by="votes", filter_with="none"
+                        handler, query, limit=100, sort_by="votes", filter_with="none"
                     )
                     if station_list:
                         # Find valid station choice
                         try:
-                            station_name, target_url = handle_user_choice_from_search_result(
-                                handler, station_list
+                            station_name, target_url = (
+                                handle_user_choice_from_search_result(
+                                    handler, station_list
+                                )
                             )
                             # Stop current, switch
                             player.stop()
@@ -287,10 +299,10 @@ def handle_listen_keypress(
                             # Update loop variables
                             station_url = target_url
                         except SystemExit:
-                             # handle_user_choice might try to exit on cancel
+                            # handle_user_choice might try to exit on cancel
                             pass
             else:
-                 log.warning("Search unavailable (handler not initialized)")
+                log.warning("Search unavailable (handler not initialized)")
 
         elif user_input in ["c", "C", "cycle"]:
             if station_list and handler:
@@ -301,38 +313,38 @@ def handle_listen_keypress(
                     if st.get("stationuuid") == current_uuid:
                         current_index = idx
                         break
-                
+
                 # Next index
                 next_index = (current_index + 1) % len(station_list)
-                
+
                 # Try to play next valid station
                 # We loop until we find one that works or we exhaust list
                 attempts = 0
                 max_attempts = len(station_list)
-                
+
                 while attempts < max_attempts:
-                     target_station = station_list[next_index]
-                     set_global_station_info(target_station)
-                     log.info(f"Switching to: {target_station.get('name')}")
-                     
-                     try:
+                    target_station = station_list[next_index]
+                    set_global_station_info(target_station)
+                    log.info(f"Switching to: {target_station.get('name')}")
+
+                    try:
                         station_name, target_url = handle_station_uuid_play(
                             handler, target_station["stationuuid"]
                         )
                         player.stop()
                         player.url = target_url
                         player.play()
-                        
+
                         # Check if successful (basic check)
                         # The player runs in threads, so strict check is hard, but we can trust if it didn't error immediately
                         handle_current_play_panel(station_name)
                         station_url = target_url
                         break
-                     except Exception as e:
+                    except Exception as e:
                         log.error(f"Failed to play {target_station.get('name')}: {e}")
                         next_index = (next_index + 1) % len(station_list)
                         attempts += 1
-                
+
                 if attempts >= max_attempts:
                     log.error("Could not play any station from the list")
 
@@ -343,8 +355,9 @@ def handle_listen_keypress(
             log.info("p: Play/Pause current station")
             log.info("t/track: Current track info")
             log.info("i/info: Station information")
-            log.info("r/record: Record a station")
-            log.info("rf/recordfile: Specify a filename for the recording")
+            if RECORDING_FEATURE:
+                log.info("r/record: Record a station")
+                log.info("rf/recordfile: Specify a filename for the recording")
             log.info("f/fav: Add station to favorite list")
             log.info("s/search: Search for a new station")
             log.info("c/cycle: Cycle to next station in search results")

@@ -8,7 +8,6 @@ from zenlog import log
 
 
 class Last_station:
-
     """Saves the last played radio station information,
     when user don't provide any -S or -U it looks for the information.
 
@@ -18,6 +17,7 @@ class Last_station:
 
     def __init__(self):
         from radioactive.paths import get_last_station_path
+
         self.last_station_path = get_last_station_path()
 
     def get_info(self):

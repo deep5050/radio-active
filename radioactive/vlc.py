@@ -13,9 +13,20 @@ class VLC:
         # Check common locations on Windows
         if self.exe_path is None and sys.platform.startswith("win"):
             import os
+
             common_paths = [
-                os.path.join(os.environ.get("ProgramFiles", "C:\\Program Files"), "VideoLAN", "VLC", "vlc.exe"),
-                os.path.join(os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)"), "VideoLAN", "VLC", "vlc.exe"),
+                os.path.join(
+                    os.environ.get("ProgramFiles", "C:\\Program Files"),
+                    "VideoLAN",
+                    "VLC",
+                    "vlc.exe",
+                ),
+                os.path.join(
+                    os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)"),
+                    "VideoLAN",
+                    "VLC",
+                    "vlc.exe",
+                ),
             ]
             for path in common_paths:
                 if os.path.exists(path):

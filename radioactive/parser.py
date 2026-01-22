@@ -57,10 +57,10 @@ def parse_options() -> Dict[str, Any]:
 
     options["kill_ffplays"] = args.kill_ffplays
 
-    options["record_stream"] = args.record_stream
-    options["record_file"] = args.record_file
-    options["record_file_format"] = args.record_file_format
-    options["record_file_path"] = args.record_file_path
+    options["record_stream"] = getattr(args, "record_stream", False)
+    options["record_file"] = getattr(args, "record_file", "")
+    options["record_file_format"] = getattr(args, "record_file_format", "mp3")
+    options["record_file_path"] = getattr(args, "record_file_path", "")
 
     options["target_url"] = ""
     options["volume"] = args.volume
