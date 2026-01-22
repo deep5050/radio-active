@@ -5,6 +5,7 @@
 import datetime
 import json
 import sys
+from typing import List, Optional, Union, Dict, Any
 
 import requests_cache
 from pyradios import RadioBrowser
@@ -14,44 +15,56 @@ from zenlog import log
 
 from radioactive.filter import filter_expressions
 
+# constants
+DEFAULT_CACHE_RETENTION_DAYS = 3
+BYTES_TO_MB_DIVISOR = 1024 * 1024
+
 console = Console()
 
 
-def trim_string(text, max_length=40):
+def trim_string(text: str, max_length: int = 40) -> str:
     """
     Trim a string to a maximum length and add ellipsis if needed.
 
     Args:
-    text (str): The input text to be trimmed.
-    max_length (int, optional): The maximum length of the trimmed string. Defaults to 40.
+        text (str): The input text to be trimmed.
+        max_length (int, optional): The maximum length of the trimmed string. Defaults to 40.
 
     Returns:
-    str: The trimmed string, possibly with an ellipsis (...) if it was shortened.
+        str: The trimmed string, possibly with an ellipsis (...) if it was shortened.
     """
+    if not isinstance(text, str):
+        return str(text)
+        
     if len(text) > max_length:
         return text[:max_length] + "..."
-    else:
-        return text
+    return text
 
 
-def print_table(response, columns, sort_by, filter_expression):
+def print_table(
+    response: List[Dict[str, Any]],
+    columns: List[str],
+    sort_by: str,
+    filter_expression: str
+) -> List[Dict[str, Any]]:
     """
     Print the table applying the sort logic.
 
     Args:
-    response (list): A list of data to be displayed in the table.
-    columns (list): List of column specifications in the format "col_name:response_key@max_str".
-    sort_by (str): The column by which to sort the table.
+        response (list): A list of data to be displayed in the table.
+        columns (list): List of column specifications in the format "col_name:response_key@max_str".
+        sort_by (str): The column by which to sort the table.
+        filter_expression (str): Filter expression to apply strings.
 
     Returns:
-    list: The original response data.
+        list: The original (or filtered) response data.
     """
 
     if not response:
         log.error("No stations found")
         sys.exit(1)
 
-    # need to filter?
+    # Apply filtering if needed
     if filter_expression.lower() != "none":
         response = filter_expressions(response, filter_expression)
 
@@ -61,44 +74,37 @@ def print_table(response, columns, sort_by, filter_expression):
     else:
         log.debug("Not filtering")
 
-    if len(response) >= 1:
+    if response:
         table = Table(
             show_header=True,
             header_style="magenta",
             expand=True,
             min_width=85,
             safe_box=True,
-            # show_footer=True,
-            # show_lines=True,
-            # padding=0.1,
-            # collapse_padding=True,
         )
         table.add_column("ID", justify="center")
 
+        parsed_columns = []
         for col_spec in columns:
-            col_name, response_key, max_str = (
-                col_spec.split(":")[0],
-                col_spec.split(":")[1].split("@")[0],
-                int(col_spec.split("@")[1]),
-            )
+            parts = col_spec.split(":")
+            col_name = parts[0]
+            rest = parts[1].split("@")
+            response_key = rest[0]
+            max_str = int(rest[1])
+            
+            parsed_columns.append((col_name, response_key, max_str))
             table.add_column(col_name, justify="left")
 
-        # do not need extra columns for these cases
+        # Add the sort column if it's not already displayed (and not generic 'name' or 'random')
         if sort_by not in ["name", "random"]:
             table.add_column(sort_by, justify="left")
 
         for i, station in enumerate(response):
             row_data = [str(i + 1)]  # for ID
 
-            for col_spec in columns:
-                col_name, response_key, max_str = (
-                    col_spec.split(":")[0],
-                    col_spec.split(":")[1].split("@")[0],
-                    int(col_spec.split("@")[1]),
-                )
-                row_data.append(
-                    trim_string(station.get(response_key, ""), max_length=max_str)
-                )
+            for _, response_key, max_str in parsed_columns:
+                val = station.get(response_key, "")
+                row_data.append(trim_string(val, max_length=max_str))
 
             if sort_by not in ["name", "random"]:
                 row_data.append(str(station.get(sort_by, "")))
@@ -106,9 +112,6 @@ def print_table(response, columns, sort_by, filter_expression):
             table.add_row(*row_data)
 
         console.print(table)
-        # log.info(
-        #     "If the table does not fit into your screen, \ntry to maximize the window, decrease the font by a bit, and retry"
-        # )
         return response
     else:
         log.info("No stations found")
@@ -117,7 +120,7 @@ def print_table(response, columns, sort_by, filter_expression):
 
 class Handler:
     """
-    radio-browser API handler. This module communicates with the underlying API via PyRadios
+    radio-browser API handler. This module communicates with the underlying API via PyRadios.
     """
 
     def __init__(self):
@@ -127,45 +130,82 @@ class Handler:
 
         # When RadioBrowser can not be initiated properly due to no internet (probably)
         try:
-            expire_after = datetime.timedelta(days=3)
+            expire_after = datetime.timedelta(days=DEFAULT_CACHE_RETENTION_DAYS)
             session = requests_cache.CachedSession(
                 cache_name="cache", backend="sqlite", expire_after=expire_after
             )
             self.API = RadioBrowser(session=session)
         except Exception as e:
-            log.debug("Error: {}".format(e))
+            log.debug(f"Error initializing RadioBrowser: {e}")
             log.critical("Something is wrong with your internet connection")
             sys.exit(1)
 
-    def get_country_code(self, name):
+    def get_country_code(self, name: str) -> Optional[str]:
+        """
+        Get the ISO 3166-1 alpha-2 country code for a given country name.
+        
+        Args:
+            name (str): The name of the country.
+            
+        Returns:
+            str: The country code if found, None otherwise.
+        """
         self.countries = self.API.countries()
         for country in self.countries:
             if country["name"].lower() == name.lower():
                 return country["iso_3166_1"]
         return None
 
-    def validate_uuid_station(self):
-        if len(self.response) == 1:
+    def validate_uuid_station(self) -> List[Dict[str, Any]]:
+        """
+        Validate that a station UUID search returned exactly one result and register a click.
+        
+        Returns:
+            list: The response list containing the station details.
+        """
+        if self.response and len(self.response) >= 1:
+            # We take the first one if multiple (unlikely for UUID but possible in theory)
             log.debug(json.dumps(self.response[0], indent=3))
             self.target_station = self.response[0]
 
             # register a valid click to increase its popularity
-            self.API.click_counter(self.target_station["stationuuid"])
+            self.vote_for_uuid(self.target_station["stationuuid"])
 
             return self.response
+        
+        log.error("Station found by UUID is invalid or empty")
+        sys.exit(1)
 
     # ---------------------------- NAME -------------------------------- #
-    def search_by_station_name(self, _name, limit, sort_by, filter_with):
-        """search and play a station by its name"""
-        reversed = sort_by != "name"
+    def search_by_station_name(
+        self, 
+        name: str, 
+        limit: int, 
+        sort_by: str, 
+        filter_with: str
+    ) -> List[Dict[str, Any]]:
+        """
+        Search and play a station by its name.
+        
+        Args:
+            name (str): Station name to search for.
+            limit (int): Max number of results.
+            sort_by (str): Field to sort by.
+            filter_with (str): Filter expression.
+            
+        Returns:
+            list: List of found stations.
+        """
+        # Rename 'reversed' to avoid shadowing built-in
+        is_reverse = sort_by != "name"
 
         try:
             response = self.API.search(
-                name=_name,
+                name=name,
                 name_exact=False,
                 limit=limit,
                 order=str(sort_by),
-                reverse=reversed,
+                reverse=is_reverse,
             )
             return print_table(
                 response,
@@ -174,44 +214,60 @@ class Handler:
                 filter_expression=filter_with,
             )
         except Exception as e:
-            log.debug("Error: {}".format(e))
+            log.debug(f"Error in search_by_station_name: {e}")
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
     # ------------------------- UUID ------------------------ #
-    def play_by_station_uuid(self, _uuid):
-        """search and play station by its stationuuid"""
+    def play_by_station_uuid(self, uuid: str) -> List[Dict[str, Any]]:
+        """
+        Search and play station by its stationuuid.
+        
+        Args:
+            uuid (str): The UUID of the station.
+            
+        Returns:
+            list: Confirmed station details.
+        """
         try:
-            self.response = self.API.station_by_uuid(_uuid)
+            self.response = self.API.station_by_uuid(uuid)
             return self.validate_uuid_station()
         except Exception as e:
-            log.debug("Error: {}".format(e))
+            log.debug(f"Error in play_by_station_uuid: {e}")
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
     # -------------------------- COUNTRY ----------------------#
-    def discover_by_country(self, country_code_or_name, limit, sort_by, filter_with):
-        # set reverse to false if name is is the parameter for sorting
-        reversed = sort_by != "name"
+    def discover_by_country(
+        self, 
+        country_code_or_name: str, 
+        limit: int, 
+        sort_by: str, 
+        filter_with: str
+    ) -> List[Dict[str, Any]]:
+        """
+        Discover stations by country code or name.
+        """
+        is_reverse = sort_by != "name"
 
         # check if it is a code or name
         if len(country_code_or_name.strip()) == 2:
             # it's a code
-            log.debug("Country code '{}' provided".format(country_code_or_name))
+            log.debug(f"Country code '{country_code_or_name}' provided")
             try:
                 response = self.API.search(
                     countrycode=country_code_or_name,
                     limit=limit,
                     order=str(sort_by),
-                    reverse=reversed,
+                    reverse=is_reverse,
                 )
             except Exception as e:
-                log.debug("Error: {}".format(e))
+                log.debug(f"Error searching by country code: {e}")
                 log.error("Something went wrong. please try again.")
                 sys.exit(1)
         else:
             # it's name
-            log.debug("Country name '{}' provided".format(country_code_or_name))
+            log.debug(f"Country name '{country_code_or_name}' provided")
             code = self.get_country_code(country_code_or_name)
             if code:
                 try:
@@ -220,10 +276,10 @@ class Handler:
                         limit=limit,
                         country_exact=True,
                         order=str(sort_by),
-                        reverse=reversed,
+                        reverse=is_reverse,
                     )
                 except Exception as e:
-                    log.debug("Error: {}".format(e))
+                    log.debug(f"Error searching by country name: {e}")
                     log.error("Something went wrong. please try again.")
                     sys.exit(1)
             else:
@@ -246,14 +302,22 @@ class Handler:
 
     # ------------------- by state ---------------------
 
-    def discover_by_state(self, state, limit, sort_by, filter_with):
-        reversed = sort_by != "name"
+    def discover_by_state(
+        self, 
+        state: str, 
+        limit: int, 
+        sort_by: str, 
+        filter_with: str
+    ) -> List[Dict[str, Any]]:
+        """Discover stations by state."""
+        is_reverse = sort_by != "name"
 
         try:
             response = self.API.search(
-                state=state, limit=limit, order=str(sort_by), reverse=reversed
+                state=state, limit=limit, order=str(sort_by), reverse=is_reverse
             )
-        except Exception:
+        except Exception as e:
+            log.debug(f"Error discover_by_state: {e}")
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
@@ -272,15 +336,25 @@ class Handler:
 
     # -----------------by language --------------------
 
-    def discover_by_language(self, language, limit, sort_by, filter_with):
-        reversed = sort_by != "name"
+    def discover_by_language(
+        self, 
+        language: str, 
+        limit: int, 
+        sort_by: str, 
+        filter_with: str
+    ) -> List[Dict[str, Any]]:
+        """Discover stations by language."""
+        is_reverse = sort_by != "name"
 
         try:
             response = self.API.search(
-                language=language, limit=limit, order=str(sort_by), reverse=reversed
+                language=language, 
+                limit=limit, 
+                order=str(sort_by), 
+                reverse=is_reverse
             )
         except Exception as e:
-            log.debug("Error: {}".format(e))
+            log.debug(f"Error discover_by_language: {e}")
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
@@ -297,15 +371,22 @@ class Handler:
         )
 
     # -------------------- by tag ---------------------- #
-    def discover_by_tag(self, tag, limit, sort_by, filter_with):
-        reversed = sort_by != "name"
+    def discover_by_tag(
+        self, 
+        tag: str, 
+        limit: int, 
+        sort_by: str, 
+        filter_with: str
+    ) -> List[Dict[str, Any]]:
+        """Discover stations by tag."""
+        is_reverse = sort_by != "name"
 
         try:
             response = self.API.search(
-                tag=tag, limit=limit, order=str(sort_by), reverse=reversed
+                tag=tag, limit=limit, order=str(sort_by), reverse=is_reverse
             )
         except Exception as e:
-            log.debug("Error: {}".format(e))
+            log.debug(f"Error discover_by_tag: {e}")
             log.error("Something went wrong. please try again.")
             sys.exit(1)
 
@@ -322,9 +403,11 @@ class Handler:
         )
 
     # ---- Increase click count ------------- #
-    def vote_for_uuid(self, UUID):
+    def vote_for_uuid(self, uuid: str) -> Optional[Dict]:
+        """Increase the click count for a station UUID."""
         try:
-            result = self.API.click_counter(UUID)
+            result = self.API.click_counter(uuid)
             return result
         except Exception as e:
-            log.debug("Something went wrong during increasing click count:{}".format(e))
+            log.debug(f"Something went wrong during increasing click count: {e}")
+            return None

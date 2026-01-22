@@ -1,12 +1,21 @@
+from typing import Dict, Any, Optional
+
 from zenlog import log
 
 from radioactive.args import Parser
 
 
-def parse_options():
+def parse_options() -> Dict[str, Any]:
+    """
+    Parse command-line arguments and return a dictionary of options.
+
+    Returns:
+        dict: A dictionary containing all the parsed options and their values.
+    """
     parser = Parser()
     args = parser.parse()
-    options = {}
+    options: Dict[str, Any] = {}
+
     # ----------------- all the args ------------- #
     options["version"] = args.version
     options["show_help_table"] = args.help
@@ -17,7 +26,7 @@ def parse_options():
         log.level(options["loglevel"])
     else:
         log.level("info")
-        log.warning("Correct log levels are: error,warning,info(default),debug")
+        log.warning("Correct log levels are: error, warning, info(default), debug")
 
     # check is limit is a valid integer
     limit = args.limit
