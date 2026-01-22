@@ -4,6 +4,9 @@ Acts as a controller/orchestrator, delegating to UI and Actions modules.
 """
 
 import sys
+import threading
+import time
+import os
 from random import randint
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -18,6 +21,7 @@ try:
         SEARCH_FEATURE,
         CYCLE_FEATURE,
         INFO_FEATURE,
+        TIMER_FEATURE,
     )
 except ImportError:
     RECORDING_FEATURE = True
@@ -25,6 +29,7 @@ except ImportError:
     SEARCH_FEATURE = True
     CYCLE_FEATURE = True
     INFO_FEATURE = True
+    TIMER_FEATURE = True
 
 # Re-export functions for backward compatibility and aggregation
 from radioactive.ui import (
@@ -265,6 +270,36 @@ def handle_listen_keypress(
         if INFO_FEATURE and user_input in ["i", "I", "info"]:
             handle_show_station_info()
 
+        elif TIMER_FEATURE and user_input in ["timer", "sleep"]:
+            try:
+                duration_str = input("Enter sleep timer duration in minutes: ")
+                duration = float(duration_str)
+                if duration <= 0:
+                    log.error("Duration must be positive")
+                    continue
+
+                log.info(f"Sleep timer set for {duration} minutes")
+
+                def stop_playback():
+                    log.info("\nSleep timer finished. Stopping playback...")
+                    # We need to stop the player and exit.
+                    # Since we are in a thread, we can't easily exit the main input loop cleanly
+                    # without some signal, but sys.exit() or os._exit() should work strong enough.
+                    if player:
+                        player.stop()
+                    kill_background_ffplays()
+                    log.info("Exiting...")
+                    os._exit(0)  # Force exit from thread
+
+                t = threading.Timer(duration * 60, stop_playback)
+                t.daemon = True  # Ensure it doesn't block exit if we quit manually
+                t.start()
+
+            except ValueError:
+                log.error("Invalid number")
+            except Exception as e:
+                log.error(f"Error setting timer: {e}")
+
         elif user_input in ["f", "F", "fav"]:
             handle_add_to_favorite(alias, station_name, station_url)
 
@@ -375,5 +410,7 @@ def handle_listen_keypress(
                 log.info("s/search: Search for a new station")
             if CYCLE_FEATURE:
                 log.info("c/cycle: Cycle to next station in search results")
+            if TIMER_FEATURE:
+                log.info("timer/sleep: Set a sleep timer")
             log.info("h/help/?: Show this help message")
             log.info("q/quit: Quit radioactive")

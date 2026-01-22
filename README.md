@@ -51,6 +51,7 @@
 - [x] Discovers stations by language
 - [x] VLC, MPV player support
 - [x] Default config file
+- [x] Sleep Timer (pomodoro) ⏲️
 - [ ] I'm feeling lucky! Play Random stations
 
 
@@ -199,6 +200,7 @@ r/R/record: Record a station
 f/F/fav: Add station to favorite list
 s/S/search: Search for a new station
 c/C/cycle: Cycle to next station in search results
+timer/sleep: Set a sleep timer (duration in minutes)
 rf/RF/recordfile: Specify a filename for the recording.
 h/H/help/?: Show this help message
 q/Q/quit: Quit radioactive

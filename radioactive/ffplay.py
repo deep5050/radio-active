@@ -37,7 +37,8 @@ def kill_background_ffplays() -> None:
             # Handle exceptions, such as processes that no longer exist or access denied
             log.debug("Could not terminate a ffplay processes!")
     if count == 0:
-        log.info("No background radios are running!")
+        pass
+        # log.info("No background radios are running!")
 
 
 class Ffplay:
