@@ -180,9 +180,12 @@ def handle_listen_keypress(
     record_file,
     record_file_format,
     loglevel,
+    handler=None,
+    station_list=None,
 ) -> None:
     """
     Listen for user input during playback to perform actions.
+    Now with handler and station_list for runtime commands.
     """
     log.info("Press '?' to see available commands\n")
     while True:
@@ -221,11 +224,6 @@ def handle_listen_keypress(
                     record_file_format = "mp3"
                     file_name = user_input.rsplit(".", 1)[0] # Handle filename with dots
                 else:
-                     # If user typed "file.mp3", we want file_name="file.mp3" probably?
-                     # Original code logic: split('.') -> takes first part as name, second as ext.
-                     # If ext is mp3, set force mp3.
-                     # If user enters "my.song", it mistakes "song" for ext.
-                     
                      if len(file_name_parts) > 1 and file_name_parts[-1] != "mp3":
                         log.warning("You can only specify mp3 as file extension.\n")
                         log.warning(
@@ -251,17 +249,95 @@ def handle_listen_keypress(
             handle_add_to_favorite(alias, station_name, station_url)
 
         elif user_input in ["q", "Q", "quit"]:
-            # kill_background_ffplays()
             player.stop()
             sys.exit(0)
+            
         elif user_input in ["w", "W", "list"]:
             alias.generate_map()
             handle_favorite_table(alias)
+            
         elif user_input in ["t", "T", "track"]:
             handle_fetch_song_title(target_url)
+            
         elif user_input in ["p", "P"]:
-            # toggle the player (start/stop)
             player.toggle()
+
+        elif user_input in ["s", "S", "search"]:
+            if handler:
+                try:
+                    query = input("Enter station name to search: ")
+                except EOFError:
+                    continue
+                
+                if query.strip():
+                    station_list = handle_search_stations(
+                         handler, query, limit=100, sort_by="votes", filter_with="none"
+                    )
+                    if station_list:
+                        # Find valid station choice
+                        try:
+                            station_name, target_url = handle_user_choice_from_search_result(
+                                handler, station_list
+                            )
+                            # Stop current, switch
+                            player.stop()
+                            player.url = target_url
+                            player.play()
+                            handle_current_play_panel(station_name)
+                            # Update loop variables
+                            station_url = target_url
+                        except SystemExit:
+                             # handle_user_choice might try to exit on cancel
+                            pass
+            else:
+                 log.warning("Search unavailable (handler not initialized)")
+
+        elif user_input in ["c", "C", "cycle"]:
+            if station_list and handler:
+                # Find current index
+                current_uuid = global_current_station_info.get("stationuuid")
+                current_index = -1
+                for idx, st in enumerate(station_list):
+                    if st.get("stationuuid") == current_uuid:
+                        current_index = idx
+                        break
+                
+                # Next index
+                next_index = (current_index + 1) % len(station_list)
+                
+                # Try to play next valid station
+                # We loop until we find one that works or we exhaust list
+                attempts = 0
+                max_attempts = len(station_list)
+                
+                while attempts < max_attempts:
+                     target_station = station_list[next_index]
+                     set_global_station_info(target_station)
+                     log.info(f"Switching to: {target_station.get('name')}")
+                     
+                     try:
+                        station_name, target_url = handle_station_uuid_play(
+                            handler, target_station["stationuuid"]
+                        )
+                        player.stop()
+                        player.url = target_url
+                        player.play()
+                        
+                        # Check if successful (basic check)
+                        # The player runs in threads, so strict check is hard, but we can trust if it didn't error immediately
+                        handle_current_play_panel(station_name)
+                        station_url = target_url
+                        break
+                     except Exception as e:
+                        log.error(f"Failed to play {target_station.get('name')}: {e}")
+                        next_index = (next_index + 1) % len(station_list)
+                        attempts += 1
+                
+                if attempts >= max_attempts:
+                    log.error("Could not play any station from the list")
+
+            else:
+                log.warning("Cycle unavailable (no search results to cycle through)")
 
         elif user_input in ["h", "H", "?", "help"]:
             log.info("p: Play/Pause current station")
@@ -270,5 +346,7 @@ def handle_listen_keypress(
             log.info("r/record: Record a station")
             log.info("rf/recordfile: Specify a filename for the recording")
             log.info("f/fav: Add station to favorite list")
+            log.info("s/search: Search for a new station")
+            log.info("c/cycle: Cycle to next station in search results")
             log.info("h/help/?: Show this help message")
             log.info("q/quit: Quit radioactive")

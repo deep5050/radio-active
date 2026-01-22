@@ -197,6 +197,8 @@ Enter a command to perform an action: ?
 t/T/track: Current song name (track info)
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
+s/S/search: Search for a new station
+c/C/cycle: Cycle to next station in search results
 rf/RF/recordfile: Specify a filename for the recording.
 h/H/help/?: Show this help message
 q/Q/quit: Quit radioactive

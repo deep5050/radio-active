@@ -52,3 +52,7 @@ class MPV:
             self.stop()
         else:
             self.start(self.url)
+
+    def play(self):
+        if not self.is_running and self.url:
+            self.start(self.url)

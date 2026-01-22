@@ -39,7 +39,7 @@ ffplay = None
 player = None
 
 
-def final_step(options, last_station, alias, handler):
+def final_step(options, last_station, alias, handler, station_list=None):
     global ffplay  # always needed
     global player
 
@@ -104,6 +104,8 @@ def final_step(options, last_station, alias, handler):
         record_file=options["record_file"],
         record_file_format=options["record_file_format"],
         loglevel=options["loglevel"],
+        handler=handler,
+        station_list=station_list
     )
 
 
@@ -169,7 +171,7 @@ def main():
                 options["curr_station_name"],
                 options["target_url"],
             ) = handle_user_choice_from_search_result(handler, response)
-            final_step(options, last_station, alias, handler)
+            final_step(options, last_station, alias, handler, response)
         else:
             sys.exit(0)
 
@@ -186,7 +188,7 @@ def main():
                 options["curr_station_name"],
                 options["target_url"],
             ) = handle_user_choice_from_search_result(handler, response)
-            final_step(options, last_station, alias, handler)
+            final_step(options, last_station, alias, handler, response)
         else:
             sys.exit(0)
 
@@ -203,7 +205,7 @@ def main():
                 options["curr_station_name"],
                 options["target_url"],
             ) = handle_user_choice_from_search_result(handler, response)
-            final_step(options, last_station, alias, handler)
+            final_step(options, last_station, alias, handler, response)
         else:
             sys.exit(0)
 
@@ -220,7 +222,7 @@ def main():
                 options["curr_station_name"],
                 options["target_url"],
             ) = handle_user_choice_from_search_result(handler, response)
-            final_step(options, last_station, alias, handler)
+            final_step(options, last_station, alias, handler, response)
         else:
             sys.exit(0)
 
@@ -268,7 +270,7 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             # options["codec"] = response["codec"]
             # print(response)
-            final_step(options, last_station, alias, handler)
+            final_step(options, last_station, alias, handler, response)
         else:
             sys.exit(0)
     # ------------------------- direct play ------------------------#
@@ -292,6 +294,11 @@ def main():
         final_step(options, last_station, alias, handler)
 
     # final_step()
+    # If response is not defined yet, initialize it
+    if 'response' not in locals():
+        response = []
+
+    final_step(options, last_station, alias, handler, response)
 
     if os.name == "nt":
         while True:
