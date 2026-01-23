@@ -12,6 +12,7 @@ from radioactive.ffplay import Ffplay, kill_background_ffplays
 from radioactive.handler import Handler
 from radioactive.help import show_help
 from radioactive.last_station import Last_station
+from radioactive.history import History
 from radioactive.parser import parse_options
 from radioactive.utilities import (
     check_sort_by_parameter,
@@ -20,11 +21,13 @@ from radioactive.utilities import (
     handle_current_play_panel,
     handle_direct_play,
     handle_favorite_table,
+    handle_history_table,
     handle_listen_keypress,
     handle_play_last_station,
     handle_play_random_station,
     handle_record,
     handle_save_last_station,
+    handle_save_to_history,
     handle_search_stations,
     handle_station_selection_menu,
     handle_station_uuid_play,
@@ -39,7 +42,7 @@ ffplay = None
 player = None
 
 
-def final_step(options, last_station, alias, handler, station_list=None):
+def final_step(options, last_station, alias, handler, history, station_list=None):
     global ffplay  # always needed
     global player
 
@@ -76,6 +79,8 @@ def final_step(options, last_station, alias, handler, station_list=None):
     handle_save_last_station(
         last_station, options["curr_station_name"], options["target_url"]
     )
+
+    handle_save_to_history(history, options["curr_station_name"], options["target_url"])
 
     if options["add_to_favorite"]:
         handle_add_to_favorite(
@@ -122,6 +127,7 @@ def main():
     alias = Alias()
     alias.generate_map()
     last_station = Last_station()
+    history = History()
 
     # --------------- app logic starts here ------------------- #
 
@@ -144,6 +150,10 @@ def main():
 
     if options["show_favorite_list"]:
         handle_favorite_table(alias)
+        sys.exit(0)
+
+    if options["show_history_list"]:
+        handle_history_table(history)
         sys.exit(0)
 
     if options["add_station"]:
@@ -171,7 +181,7 @@ def main():
                 options["curr_station_name"],
                 options["target_url"],
             ) = handle_user_choice_from_search_result(handler, response)
-            final_step(options, last_station, alias, handler, response)
+            final_step(options, last_station, alias, handler, history, response)
         else:
             sys.exit(0)
 
@@ -188,7 +198,7 @@ def main():
                 options["curr_station_name"],
                 options["target_url"],
             ) = handle_user_choice_from_search_result(handler, response)
-            final_step(options, last_station, alias, handler, response)
+            final_step(options, last_station, alias, handler, history, response)
         else:
             sys.exit(0)
 
@@ -205,7 +215,7 @@ def main():
                 options["curr_station_name"],
                 options["target_url"],
             ) = handle_user_choice_from_search_result(handler, response)
-            final_step(options, last_station, alias, handler, response)
+            final_step(options, last_station, alias, handler, history, response)
         else:
             sys.exit(0)
 
@@ -222,7 +232,7 @@ def main():
                 options["curr_station_name"],
                 options["target_url"],
             ) = handle_user_choice_from_search_result(handler, response)
-            final_step(options, last_station, alias, handler, response)
+            final_step(options, last_station, alias, handler, history, response)
         else:
             sys.exit(0)
 
@@ -238,7 +248,7 @@ def main():
             options["curr_station_name"],
             options["target_url"],
         ) = handle_station_selection_menu(handler, last_station, alias)
-        final_step(options, last_station, alias, handler)
+        final_step(options, last_station, alias, handler, history)
 
     # --------------------ONLY UUID PROVIDED --------------------- #
 
@@ -246,7 +256,7 @@ def main():
         options["curr_station_name"], options["target_url"] = handle_station_uuid_play(
             handler, options["search_station_uuid"]
         )
-        final_step(options, last_station, alias, handler)
+        final_step(options, last_station, alias, handler, history)
 
     # ------------------- ONLY STATION PROVIDED ------------------ #
 
@@ -270,7 +280,7 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             # options["codec"] = response["codec"]
             # print(response)
-            final_step(options, last_station, alias, handler, response)
+            final_step(options, last_station, alias, handler, history, response)
         else:
             sys.exit(0)
     # ------------------------- direct play ------------------------#
@@ -278,27 +288,27 @@ def main():
         options["curr_station_name"], options["target_url"] = handle_direct_play(
             alias, options["direct_play"]
         )
-        final_step(options, last_station, alias, handler)
+        final_step(options, last_station, alias, handler, history)
 
     if options["play_random"]:
         (
             options["curr_station_name"],
             options["target_url"],
         ) = handle_play_random_station(alias)
-        final_step(options, last_station, alias, handler)
+        final_step(options, last_station, alias, handler, history)
 
     if options["play_last_station"]:
         options["curr_station_name"], options["target_url"] = handle_play_last_station(
             last_station
         )
-        final_step(options, last_station, alias, handler)
+        final_step(options, last_station, alias, handler, history)
 
     # final_step()
     # If response is not defined yet, initialize it
     if "response" not in locals():
         response = []
 
-    final_step(options, last_station, alias, handler, response)
+    final_step(options, last_station, alias, handler, history, response)
 
     if os.name == "nt":
         while True:

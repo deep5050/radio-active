@@ -51,7 +51,9 @@
 - [x] Discovers stations by language
 - [x] VLC, MPV player support
 - [x] Default config file
+- [x] Result limit (default 100)
 - [x] Sleep Timer (pomodoro) ⏲️
+- [x] History/Recently Played stations
 - [ ] I'm feeling lucky! Play Random stations
 
 
@@ -158,6 +160,7 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 | `--list`, `-W`     | Optional | Show fav list                                  | False         |                        |
 | `--remove`         | Optional | Remove entries from favorite list              | False         |                        |
 | `--flush`          | Optional | Remove all the entries from fav list           | False         |                        |
+| `--history`        | Optional | Show recently played stations                  | False         |                        |
 | `--kill` , `-K`    | Optional | Kill background radios.                        | False         |                        |
 | `--loglevel`       | Optional | Log level of the program                       | Info          | `info`,  `warning`, `error`, `debug` |
 | `--player`         | Optional | Media player to use                            |  ffplay       | `vlc`, `mpv`, `ffplay`              |
@@ -265,6 +268,7 @@ volume = 80
 filepath = /home/{user}/radioactive/recordings/
 filetype = mp3
 player = ffplay
+minimal = false
 ```
 
 ### Configuration Paths

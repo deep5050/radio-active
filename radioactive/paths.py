@@ -115,6 +115,15 @@ def get_last_station_path():
     return new_path
 
 
+def get_history_path():
+    """
+    Get the path to the history file: ~/radioactive/history.json
+    """
+    base_dir = get_base_dir()
+    new_path = os.path.join(base_dir, "history.json")
+    return new_path
+
+
 def get_recordings_path():
     """
     Get the path for recordings: ~/radioactive/recordings

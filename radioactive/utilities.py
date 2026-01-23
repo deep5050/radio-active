@@ -40,6 +40,7 @@ from radioactive.ui import (
     handle_current_play_panel,
     set_global_station_info,
     get_global_station_info,
+    handle_history_table,
 )
 
 from radioactive.actions import (
@@ -48,6 +49,7 @@ from radioactive.actions import (
     handle_add_station,
     handle_add_to_favorite,
     handle_save_last_station,
+    handle_save_to_history,
     check_sort_by_parameter,
     handle_search_stations,
     handle_station_uuid_play,

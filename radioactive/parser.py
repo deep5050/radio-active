@@ -51,6 +51,7 @@ def parse_options() -> Dict[str, Any]:
     options["add_station"] = args.new_station
 
     options["show_favorite_list"] = args.show_favorite_list
+    options["show_history_list"] = getattr(args, "show_history_list", False)
     options["add_to_favorite"] = args.add_to_favorite
     options["flush_fav_list"] = args.flush
     options["remove_fav_stations"] = args.remove_fav_stations

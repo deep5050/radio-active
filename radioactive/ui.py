@@ -82,6 +82,32 @@ def handle_favorite_table(alias) -> None:
         log.info("You have no favorite station list")
 
 
+def handle_history_table(history) -> None:
+    """
+    Print the user's history list in a table.
+
+    Args:
+        history: The History instance containing the history list.
+    """
+    table = Table(
+        show_header=True,
+        header_style="bold magenta",
+        min_width=85,
+        safe_box=False,
+        expand=True,
+    )
+    table.add_column("Station", justify="left")
+    table.add_column("URL / UUID", justify="left")
+
+    if len(history.history_list) > 0:
+        for entry in history.history_list:
+            table.add_row(entry["name"], entry["uuid_or_url"])
+        print(table)
+        log.info(f"Your history is saved in {history.history_path}")
+    else:
+        log.info("You have no history")
+
+
 def handle_show_station_info() -> None:
     """Show important information regarding the current station."""
     # pylint: disable=global-statement

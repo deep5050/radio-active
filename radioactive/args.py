@@ -173,6 +173,14 @@ class Parser:
         )
 
         self.parser.add_argument(
+            "--history",
+            action="store_true",
+            dest="show_history_list",
+            default=False,
+            help="Show recently played stations",
+        )
+
+        self.parser.add_argument(
             "--remove",
             action="store_true",
             default=False,
