@@ -153,7 +153,12 @@ def main():
         sys.exit(0)
 
     if options["show_history_list"]:
-        handle_history_table(history)
+        from radioactive.feature_flags import HISTORY_FEATURE
+
+        if HISTORY_FEATURE:
+            handle_history_table(history)
+        else:
+            log.warning("History feature is disabled")
         sys.exit(0)
 
     if options["add_station"]:

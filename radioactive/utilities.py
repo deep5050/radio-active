@@ -22,6 +22,7 @@ try:
         CYCLE_FEATURE,
         INFO_FEATURE,
         TIMER_FEATURE,
+        HISTORY_FEATURE,
     )
 except ImportError:
     RECORDING_FEATURE = True
@@ -30,6 +31,7 @@ except ImportError:
     CYCLE_FEATURE = True
     INFO_FEATURE = True
     TIMER_FEATURE = True
+    HISTORY_FEATURE = True
 
 # Re-export functions for backward compatibility and aggregation
 from radioactive.ui import (

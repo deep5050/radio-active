@@ -195,20 +195,12 @@ def handle_save_last_station(last_station, station_name: str, station_url: str) 
 def handle_save_to_history(history, station_name: str, station_url: str) -> None:
     """Save the current station to history."""
     try:
-        from radioactive.feature_flags import MINIMAL_FEATURE
+        from radioactive.feature_flags import HISTORY_FEATURE
 
-        if MINIMAL_FEATURE:
+        if not HISTORY_FEATURE:
             return
     except ImportError:
         pass
-
-    # Check config for minimal mode if not strictly compiled
-    from radioactive.config import Configs
-
-    configs = Configs()
-    options = configs.load()
-    if options.get("minimal", "false").lower() == "true":
-        return
 
     station_data = {}
     station_data["name"] = station_name

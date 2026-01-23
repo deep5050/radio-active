@@ -271,10 +271,29 @@ player = ffplay
 minimal = false
 ```
 
+### Feature Configuration
+
+You can enable or disable specific features by editing `~/radioactive/features.conf`.
+If the file does not exist, it will be automatically created on the first run.
+
+```bash
+MINIMAL_FEATURE=false
+RECORDING_FEATURE=true
+TRACK_FEATURE=true
+SEARCH_FEATURE=true
+CYCLE_FEATURE=true
+INFO_FEATURE=true
+TIMER_FEATURE=true
+HISTORY_FEATURE=true
+```
+
+> Setting `MINIMAL_FEATURE=true` will override and disable all other optional features.
+
 ### Configuration Paths
 All the data files are stored in a folder called `radioactive` under your user home directory.
 
 - **Configuration**:  `~/radioactive/config.ini`
+- **Features**: `~/radioactive/features.conf`
 - **Favorites**: `~/radioactive/alias_map`
 - **Last Station**: `~/radioactive/last_station`
 - **Recordings**: `~/radioactive/recordings`
