@@ -31,7 +31,6 @@ def write_a_sample_config_file() -> None:
         "filepath": get_recordings_path(),
         "filetype": "mp3",
         "player": "ffplay",
-        "minimal": "false",
     }
 
     try:
@@ -98,7 +97,6 @@ class Configs:
 
             options["filetype"] = get_option("filetype", "mp3")
             options["player"] = get_option("player", "ffplay")
-            options["minimal"] = get_option("minimal", "false")
 
             return options
 

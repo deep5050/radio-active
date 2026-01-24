@@ -63,6 +63,14 @@ class Parser:
         )
 
         self.parser.add_argument(
+            "--url",
+            "-u",
+            action="store",
+            dest="station_url",
+            help="Specify a direct stream URL",
+        )
+
+        self.parser.add_argument(
             "--last",
             action="store_true",
             default=False,
@@ -250,6 +258,22 @@ class Parser:
                 dest="record_file_format",
                 default=self.defaults["filetype"],
                 help="specify the audio format for recording. auto/mp3",
+            )
+
+            self.parser.add_argument(
+                "--record-at",
+                action="store",
+                dest="record_at",
+                default=None,
+                help="Start recording at specific time (HH:MM) 24h",
+            )
+
+            self.parser.add_argument(
+                "--duration",
+                action="store",
+                dest="record_duration",
+                default=None,
+                help="Duration of recording in minutes",
             )
 
         self.parser.add_argument(

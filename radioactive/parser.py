@@ -62,7 +62,12 @@ def parse_options() -> Dict[str, Any]:
     options["record_file"] = getattr(args, "record_file", "")
     options["record_file_format"] = getattr(args, "record_file_format", "mp3")
     options["record_file_path"] = getattr(args, "record_file_path", "")
+    options["record_at"] = getattr(args, "record_at", None)
+    options["record_duration"] = getattr(args, "record_duration", None)
 
+    options["record_duration"] = getattr(args, "record_duration", None)
+
+    options["station_url"] = getattr(args, "station_url", "")
     options["target_url"] = ""
     options["volume"] = args.volume
     options["audio_player"] = args.audio_player

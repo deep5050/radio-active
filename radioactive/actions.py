@@ -65,13 +65,14 @@ def handle_record(
     record_file: str,
     record_file_format: str,  # auto/mp3
     loglevel: str,
+    duration: Optional[int] = None,
 ) -> None:
     """
     Handle audio recording logic.
     """
     if not RECORDING_FEATURE:
         log.error("Recording feature is not compiled/enabled in this build.")
-        sys.exit(1)
+        return
 
     log.info("Press 'q' to stop recording")
     force_mp3 = False
@@ -140,7 +141,9 @@ def handle_record(
 
     log.info(f"Recording will be saved as: \n{outfile_path}")
 
-    record_audio_from_url(target_url, outfile_path, force_mp3, loglevel)
+    log.info(f"Recording will be saved as: \n{outfile_path}")
+
+    record_audio_from_url(target_url, outfile_path, force_mp3, loglevel, duration)
 
 
 def handle_add_station(alias) -> None:

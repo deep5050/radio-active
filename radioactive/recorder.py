@@ -31,7 +31,7 @@ def record_audio_auto_codec(input_stream_url):
         return None
 
 
-def record_audio_from_url(input_url, output_file, force_mp3, loglevel):
+def record_audio_from_url(input_url, output_file, force_mp3, loglevel, duration=None):
     try:
         # Construct the FFmpeg command
         ffmpeg_command = [
@@ -58,6 +58,12 @@ def record_audio_from_url(input_url, output_file, force_mp3, loglevel):
         else:
             ffmpeg_command.append("error"),
             ffmpeg_command.append("-hide_banner")
+
+        if duration:
+            # duration is in minutes
+            seconds = int(duration) * 60
+            ffmpeg_command.append("-t")
+            ffmpeg_command.append(str(seconds))
 
         # output file
         ffmpeg_command.append(output_file)
