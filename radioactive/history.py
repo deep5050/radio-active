@@ -1,6 +1,8 @@
 import json
 import os
+
 from zenlog import log
+
 from radioactive.paths import get_history_path
 
 

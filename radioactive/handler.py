@@ -5,7 +5,7 @@
 import datetime
 import json
 import sys
-from typing import List, Optional, Union, Dict, Any
+from typing import Any, Dict, List, Optional, Union
 
 import requests_cache
 from pyradios import RadioBrowser

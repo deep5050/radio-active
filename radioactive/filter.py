@@ -3,7 +3,7 @@ Module for filtering radio station results based on various criteria.
 """
 
 import sys
-from typing import List, Dict, Any, Union
+from typing import Any, Dict, List, Union
 
 from zenlog import log
 

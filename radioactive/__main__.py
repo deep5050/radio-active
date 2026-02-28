@@ -11,8 +11,8 @@ from radioactive.app import App
 from radioactive.ffplay import Ffplay, kill_background_ffplays
 from radioactive.handler import Handler
 from radioactive.help import show_help
-from radioactive.last_station import Last_station
 from radioactive.history import History
+from radioactive.last_station import Last_station
 from radioactive.parser import parse_options
 from radioactive.utilities import (
     check_sort_by_parameter,

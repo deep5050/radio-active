@@ -1,5 +1,5 @@
 """
-    Version of the current program, (in development mode 
+    Version of the current program, (in development mode
     it needs to be updated in every release)
     and to check if an updated version available for the app or not
 """
@@ -9,7 +9,7 @@ import json
 
 class App:
     def __init__(self):
-        self.__VERSION__ = "3.0.0"  # change this on every update #
+        self.__VERSION__ = "3.0.1"  # change this on every update #
         self.pypi_api = "https://pypi.org/pypi/radio-active/json"
         self.remote_version = ""
 
