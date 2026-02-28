@@ -3,25 +3,25 @@ Handler functions for __main__.py.
 Acts as a controller/orchestrator, delegating to UI and Actions modules.
 """
 
+import os
 import sys
 import threading
 import time
-import os
 from random import randint
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from pick import pick
 from pick import pick
 from zenlog import log
 
 try:
     from radioactive.feature_flags import (
-        RECORDING_FEATURE,
-        TRACK_FEATURE,
-        SEARCH_FEATURE,
         CYCLE_FEATURE,
+        HISTORY_FEATURE,
         INFO_FEATURE,
+        RECORDING_FEATURE,
+        SEARCH_FEATURE,
         TIMER_FEATURE,
+        TRACK_FEATURE,
     )
 except ImportError:
     RECORDING_FEATURE = True
@@ -30,35 +30,37 @@ except ImportError:
     CYCLE_FEATURE = True
     INFO_FEATURE = True
     TIMER_FEATURE = True
-
-# Re-export functions for backward compatibility and aggregation
-from radioactive.ui import (
-    handle_welcome_screen,
-    handle_update_screen,
-    handle_favorite_table,
-    handle_show_station_info,
-    handle_current_play_panel,
-    set_global_station_info,
-    get_global_station_info,
-)
+    HISTORY_FEATURE = True
 
 from radioactive.actions import (
-    handle_fetch_song_title,
-    handle_record,
+    check_sort_by_parameter,
     handle_add_station,
     handle_add_to_favorite,
-    handle_save_last_station,
-    check_sort_by_parameter,
-    handle_search_stations,
-    handle_station_uuid_play,
     handle_direct_play,
-    handle_play_last_station,
+    handle_fetch_song_title,
     handle_get_station_name_from_metadata,
-    handle_station_name_from_headers,
+    handle_play_last_station,
     handle_play_random_station,
+    handle_record,
+    handle_save_last_station,
+    handle_save_to_history,
+    handle_search_stations,
+    handle_station_name_from_headers,
+    handle_station_uuid_play,
 )
 from radioactive.ffplay import kill_background_ffplays
 
+# Re-export functions for backward compatibility and aggregation
+from radioactive.ui import (
+    get_global_station_info,
+    handle_current_play_panel,
+    handle_favorite_table,
+    handle_history_table,
+    handle_show_station_info,
+    handle_update_screen,
+    handle_welcome_screen,
+    set_global_station_info,
+)
 
 RED_COLOR = "\033[91m"
 END_COLOR = "\033[0m"

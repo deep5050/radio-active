@@ -65,13 +65,14 @@ def handle_record(
     record_file: str,
     record_file_format: str,  # auto/mp3
     loglevel: str,
+    duration: Optional[int] = None,
 ) -> None:
     """
     Handle audio recording logic.
     """
     if not RECORDING_FEATURE:
         log.error("Recording feature is not compiled/enabled in this build.")
-        sys.exit(1)
+        return
 
     log.info("Press 'q' to stop recording")
     force_mp3 = False
@@ -140,7 +141,9 @@ def handle_record(
 
     log.info(f"Recording will be saved as: \n{outfile_path}")
 
-    record_audio_from_url(target_url, outfile_path, force_mp3, loglevel)
+    log.info(f"Recording will be saved as: \n{outfile_path}")
+
+    record_audio_from_url(target_url, outfile_path, force_mp3, loglevel, duration)
 
 
 def handle_add_station(alias) -> None:
@@ -190,6 +193,36 @@ def handle_save_last_station(last_station, station_name: str, station_url: str) 
 
     log.debug(f"Saving the current station: {last_played_station}")
     last_station.save_info(last_played_station)
+
+
+def handle_save_to_history(history, station_name: str, station_url: str) -> None:
+    """Save the current station to history."""
+    try:
+        from radioactive.feature_flags import HISTORY_FEATURE
+
+        if not HISTORY_FEATURE:
+            return
+    except ImportError:
+        pass
+
+    station_data = {}
+    station_data["name"] = station_name
+    station_data["uuid_or_url"] = station_url
+
+    # try to get richer info
+    from radioactive.ui import get_global_station_info
+
+    global_info = get_global_station_info()
+    if global_info and global_info.get("name") == station_name:
+        # use global info but ensure required keys
+        station_data.update(global_info)
+
+    # re-ensure required keys
+    station_data["name"] = station_name
+    station_data["uuid_or_url"] = station_url
+
+    log.debug(f"Adding to history: {station_name}")
+    history.append(station_data)
 
 
 def check_sort_by_parameter(sort_by: str) -> str:

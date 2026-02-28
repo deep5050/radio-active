@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radioactive | Terminal Radio Player</title>
+    <meta name="description" content="Play more than 40K radio stations right from your terminal. Search, play, record, and repeat.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="logo-icon">☢</span>
+                <span class="logo-text">RADIOACTIVE</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#install">Install</a>
+                <a href="https://github.com/deep5050/radio-active" target="_blank" class="github-link">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    GitHub
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <div class="badge">v3.0.0 Available Now</div>
+                    <h1 class="hero-title">SEARCH &bull; PLAY &bull; RECORD &bull; REPEAT</h1>
+                    <p class="hero-subtitle">Play more than 40K radio stations from your terminal. No complex setups, just simple, fast, and minimal CLI radio player.</p>
+                    
+                    <div class="cta-group">
+                        <a href="#install" class="btn btn-primary">Get Started</a>
+                        <a href="https://deepwiki.com/deep5050/radio-active" target="_blank" class="btn btn-secondary">Read Documentation</a>
+                    </div>
+                </div>
+                
+                <div class="terminal-mockup">
+                    <div class="terminal-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="terminal-title">~/radioactive</span>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="line"><span class="prompt">deep@neon:~$</span> radio</div>
+                        <div class="line output" style="color: var(--text-muted); font-size: 0.85rem;">
+╭─────────────────────────────────── RADIOACTIVE ───────────────────────────────────╮
+│                                                                                   │
+│         📻 Play any radios around the globe right from this Terminal ⚡!          │
+│         😄 Author: Dipankar Pal                                                   │
+│         ❓ Type '--help' for more details on available commands                   │
+│         🐛 Visit: https://github.com/deep5050/radio-active to submit issues       │
+│         ⭐ Show some love by starring the project on GitHub ❤                     │
+│         💵 You can donate me at https://deep5050.github.io/payme/                 │
+│         ❌ Press Ctrl+C to quit                                                   │
+│                                                                                   │
+╰───────────────────────────────────────────────────────────────────────────────────╯
+<span style="color: var(--accent);">╭─────────────────────────────────────── 📻 ────────────────────────────────────────╮
+│                                   MY CLUB REMIX                                   │
+╰───────────────────────────────────────────────────────────────────────────────────╯</span>
+      i     | Press '?' to see available commands
+Enter a command to perform an action: <span class="cursor">_</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Powerful Features</h2>
+                    <p>Everything you need for a seamless terminal radio experience.</p>
+                </div>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🌍</div>
+                        <h3>40K+ Stations</h3>
+                        <p>Access a massive repository of over 40,000 global radio stations. Search by country, state, language, or tags.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎙️</div>
+                        <h3>Live Recording</h3>
+                        <p>Record audio from live radio on demand. Even schedule a recording at a specific time with built-in timers.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎵</div>
+                        <h3>Song Information</h3>
+                        <p>Get real-time song information seamlessly while your favorite track is being streamed.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⭐</div>
+                        <h3>Favorites & Custom</h3>
+                        <p>Save favorite stations for quick access. Not in our DB? Easily add your own custom station URLs.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⏲️</div>
+                        <h3>Sleep Timer</h3>
+                        <p>Falling asleep? Set a sleep timer or use the Pomodoro technique for focused work sessions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎛️</div>
+                        <h3>Flexible Setup</h3>
+                        <p>Configurable defaults, minimal CLI option, and supports multiple players like VLC, MPV, and FFplay.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="install" class="installation">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Quick Setup</h2>
+                    <p>Get up and running with Radioactive in seconds.</p>
+                </div>
+                
+                <div class="setup-grid">
+                    <div class="setup-step">
+                        <div class="step-icon">1</div>
+                        <h3>Prerequisites</h3>
+                        <p>Radioactive requires FFmpeg for audio playback and recording.</p>
+                        <div class="code-block small">
+                            <code>sudo apt install ffmpeg</code>
+                        </div>
+                        <p class="note" style="margin-bottom: 0 !important;">See details for <a href="https://ffmpeg.org/download.html" target="_blank">Windows & macOS</a>.</p>
+                    </div>
+                    
+                    <div class="setup-step">
+                        <div class="step-icon">2</div>
+                        <h3>Installation</h3>
+                        <p>Install the package effortlessly using Python's package manager.</p>
+                        <div class="code-block small">
+                            <code>pipx install radio-active</code>
+                        </div>
+                    </div>
+
+                    <div class="setup-step">
+                        <div class="step-icon">3</div>
+                        <h3>First Run</h3>
+                        <p>Start the app menu or search for your favorite station directly.</p>
+                        <div class="code-block small">
+                            <code>radio --search "jazz"</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-info">
+                <div class="logo">
+                    <span class="logo-icon">☢</span>
+                    <span class="logo-text">RADIOACTIVE</span>
+                </div>
+                <p>Minimalist CLI radio player for every platform.</p>
+            </div>
+            <div class="footer-links">
+                <a href="https://pypi.org/project/radio-active/" target="_blank">PyPI</a>
+                <a href="https://github.com/deep5050/radio-active" target="_blank">Source Code</a>
+                <a href="https://discord.gg/53rfebFyqK" target="_blank">Discord Community</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; Radioactive Project. Built with 💚 for terminal lovers.</p>
+        </div>
+    </footer>
+</body>
+</html>

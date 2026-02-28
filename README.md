@@ -51,7 +51,10 @@
 - [x] Discovers stations by language
 - [x] VLC, MPV player support
 - [x] Default config file
+- [x] Result limit (default 100)
 - [x] Sleep Timer (pomodoro) ⏲️
+- [x] History/Recently Played stations
+- [x] Scheduled Recording
 - [ ] I'm feeling lucky! Play Random stations
 
 
@@ -125,6 +128,13 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 
 ### Demo
 
+#### Scheduled Recording
+To schedule a recording:
+`radio --record-at "18:30" --uuid "96444e20-0601-11e8-ae97-52543be04c81" --filename "evening_jazz" --duration 30`
+This will countdown until 18:30, then record the station for 30 minutes, and exit.
+
+### Demo
+
 <!-- <a align=center href="https://www.youtube.com/watch?v=X-NfK5XbM90" target="_blank"> <img align=center src=https://user-images.githubusercontent.com/27947066/267328820-f7264e02-edc1-46f3-9548-5dfb50a6627d.jpg /> </a>
 <hr> -->
 <a align=center href="https://asciinema.org/a/611668" target="_blank"><img src="https://asciinema.org/a/617580.svg" /></a>
@@ -144,6 +154,8 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 | `--tag`            | Optional | Discover stations by tags/genre                | False         |                        |
 | `--uuid`, `-U`     | Optional | ID of the station                              | None          |                        |
 | `--record` , `-R`  | Optional | Record a station and save to file              | False         |                        |
+| `--record-at`      | Optional | Start recording at a specific time (HH:MM)     | None          | HH:MM (24h)            |
+| `--duration`       | Optional | Duration of recording in minutes               | None          | Minutes                |
 | `--filename`, `-N` | Optional | Filename to used to save the recorded audio    | None          |                        |
 | `--filepath`       | Optional | Path to save the recordings                    | `~/radioactive/recordings` |                        |
 | `--filetype`, `-T` | Optional | Format of the recording                        | mp3           | `mp3`,`auto`           |
@@ -158,6 +170,7 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 | `--list`, `-W`     | Optional | Show fav list                                  | False         |                        |
 | `--remove`         | Optional | Remove entries from favorite list              | False         |                        |
 | `--flush`          | Optional | Remove all the entries from fav list           | False         |                        |
+| `--history`        | Optional | Show recently played stations                  | False         |                        |
 | `--kill` , `-K`    | Optional | Kill background radios.                        | False         |                        |
 | `--loglevel`       | Optional | Log level of the program                       | Info          | `info`,  `warning`, `error`, `debug` |
 | `--player`         | Optional | Media player to use                            |  ffplay       | `vlc`, `mpv`, `ffplay`              |
@@ -185,6 +198,10 @@ Search a station with `radio --search [STATION_NAME]` or simply `radio` :zap: to
 > `--limit`: Specify how many search results should be displayed.
 
 > `--filetype`: Specify the extension of the final recording file. default is `mp3`. you can provide `-T auto` to autodetect the codec and set file extension accordingly (in original form).
+
+> `--record-at`: Schedule a recording to start at a specific local time (HH:MM 24-hour format). Requires `--uuid`, `--filename`, and `--duration` to be specified.
+
+> `--duration`: Specify the recording duration in minutes. Required for scheduled recording.
 
 
 
@@ -267,10 +284,29 @@ filetype = mp3
 player = ffplay
 ```
 
+### Feature Configuration
+
+You can enable or disable specific features by editing `~/radioactive/features.conf`.
+If the file does not exist, it will be automatically created on the first run.
+
+```bash
+MINIMAL_FEATURE=false
+RECORDING_FEATURE=true
+TRACK_FEATURE=true
+SEARCH_FEATURE=true
+CYCLE_FEATURE=true
+INFO_FEATURE=true
+TIMER_FEATURE=true
+HISTORY_FEATURE=true
+```
+
+> Setting `MINIMAL_FEATURE=true` will override and disable all other optional features.
+
 ### Configuration Paths
 All the data files are stored in a folder called `radioactive` under your user home directory.
 
 - **Configuration**:  `~/radioactive/config.ini`
+- **Features**: `~/radioactive/features.conf`
 - **Favorites**: `~/radioactive/alias_map`
 - **Last Station**: `~/radioactive/last_station`
 - **Recordings**: `~/radioactive/recordings`

@@ -9,7 +9,7 @@ import sys
 import threading
 from shutil import which
 from time import sleep
-from typing import Optional, List, Any
+from typing import Any, List, Optional
 
 import psutil
 from zenlog import log

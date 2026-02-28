@@ -6,7 +6,7 @@ Handles loading, saving, and managing user configurations.
 import configparser
 import getpass
 import sys
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 from zenlog import log
 

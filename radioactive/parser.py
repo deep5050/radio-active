@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 from zenlog import log
 
@@ -51,6 +51,7 @@ def parse_options() -> Dict[str, Any]:
     options["add_station"] = args.new_station
 
     options["show_favorite_list"] = args.show_favorite_list
+    options["show_history_list"] = getattr(args, "show_history_list", False)
     options["add_to_favorite"] = args.add_to_favorite
     options["flush_fav_list"] = args.flush
     options["remove_fav_stations"] = args.remove_fav_stations
@@ -61,7 +62,12 @@ def parse_options() -> Dict[str, Any]:
     options["record_file"] = getattr(args, "record_file", "")
     options["record_file_format"] = getattr(args, "record_file_format", "mp3")
     options["record_file_path"] = getattr(args, "record_file_path", "")
+    options["record_at"] = getattr(args, "record_at", None)
+    options["record_duration"] = getattr(args, "record_duration", None)
 
+    options["record_duration"] = getattr(args, "record_duration", None)
+
+    options["station_url"] = getattr(args, "station_url", "")
     options["target_url"] = ""
     options["volume"] = args.volume
     options["audio_player"] = args.audio_player

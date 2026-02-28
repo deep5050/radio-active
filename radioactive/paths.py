@@ -1,6 +1,7 @@
 import os
 import shutil
 import sys
+
 from zenlog import log
 
 
@@ -112,6 +113,15 @@ def get_last_station_path():
     xdg_data_old = os.path.join(home, ".local", "share", "radio-active", "last_station")
     _migrate_file(xdg_data_old, new_path, "last station file (xdg-old)")
 
+    return new_path
+
+
+def get_history_path():
+    """
+    Get the path to the history file: ~/radioactive/history.json
+    """
+    base_dir = get_base_dir()
+    new_path = os.path.join(base_dir, "history.json")
     return new_path
 
 
