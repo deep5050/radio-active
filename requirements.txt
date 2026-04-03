@@ -1,4 +1,4 @@
-setuptools
+setuptools==80.0.0
 requests
 urllib3
 psutil
