@@ -219,6 +219,8 @@ l/L/list: Open favorite station selection menu
 s/S/search: Search for a new station
 n/N/next: Play next station from search results or favorite list
 timer/sleep: Set a sleep timer (duration in minutes)
+v <0-100>: Set volume
+v+/v-: Increase/Decrease volume
 rf/RF/recordfile: Specify a filename for the recording.
 h/H/help/?: Show this help message
 q/Q/quit: Quit radioactive

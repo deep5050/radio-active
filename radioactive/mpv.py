@@ -6,9 +6,10 @@ from zenlog import log
 
 
 class MPV:
-    def __init__(self):
+    def __init__(self, volume: int = 80):
         self.program_name = "mpv"
         self.exe_path = which(self.program_name)
+        self.volume = volume
         log.debug(f"{self.program_name}: {self.exe_path}")
 
         if self.exe_path is None:
@@ -20,7 +21,7 @@ class MPV:
         self.url = None
 
     def _construct_mpv_commands(self, url):
-        return [self.exe_path, url]
+        return [self.exe_path, f"--volume={self.volume}", url]
 
     def start(self, url):
         self.url = url
@@ -55,4 +56,12 @@ class MPV:
 
     def play(self):
         if not self.is_running and self.url:
+            self.start(self.url)
+
+    def set_volume(self, volume: int):
+        self.volume = volume
+        log.info(f"Volume set to {self.volume}")
+        if self.is_running:
+            log.debug("Restarting mpv with new volume")
+            self.stop()
             self.start(self.url)

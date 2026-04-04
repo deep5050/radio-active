@@ -497,6 +497,25 @@ def handle_listen_keypress(
                     "Cycle/Next unavailable (no search results or favorites to cycle through)"
                 )
 
+        elif user_input == "v+":
+            new_vol = min(player.volume + 10, 100)
+            player.set_volume(new_vol)
+
+        elif user_input == "v-":
+            new_vol = max(player.volume - 10, 0)
+            player.set_volume(new_vol)
+
+        elif user_input.startswith("v "):
+            try:
+                vol_str = user_input.split(" ")[1].strip()
+                new_vol = int(vol_str)
+                if 0 <= new_vol <= 100:
+                    player.set_volume(new_vol)
+                else:
+                    log.error("Volume must be between 0 and 100")
+            except Exception:
+                log.error("Invalid volume format. Use 'v 50'")
+
         elif user_input in ["h", "H", "?", "help"]:
             log.info("p: Play/Pause current station")
             if TRACK_FEATURE:
@@ -509,6 +528,8 @@ def handle_listen_keypress(
             log.info("f/fav: Add station to favorite list")
             log.info("l/list: Open favorite station selection menu")
             # log.info("w: Show favorite station table")
+            log.info("v <0-100>: Set volume")
+            log.info("v+/v-: Increase/Decrease volume")
             if SEARCH_FEATURE:
                 log.info("s/search: Search for a new station")
             if CYCLE_FEATURE:

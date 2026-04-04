@@ -54,14 +54,14 @@ def final_step(options, last_station, alias, handler, history, station_list=None
     if options["audio_player"] == "vlc":
         from radioactive.vlc import VLC
 
-        vlc = VLC()
+        vlc = VLC(options["volume"])
         vlc.start(options["target_url"])
         player = vlc
 
     elif options["audio_player"] == "mpv":
         from radioactive.mpv import MPV
 
-        mpv = MPV()
+        mpv = MPV(options["volume"])
         mpv.start(options["target_url"])
         player = mpv
 
