@@ -34,6 +34,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "robinhood2014",
+      "name": "Brandon Taylor",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6971466?v=4",
+      "profile": "https://twitter.com/YuGiOhFan2023",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
