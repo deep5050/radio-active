@@ -1,5 +1,5 @@
 """
-    This handler solely depends on pyradios module to communicate with our remote API
+This handler solely depends on pyradios module to communicate with our remote API
 """
 
 import datetime

@@ -1,4 +1,6 @@
 flake8>=4.0.1
-twine
+twine==6.2.0
 black
-
+pytest
+isort
+wheel

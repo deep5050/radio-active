@@ -1,7 +1,7 @@
 """
-    Version of the current program, (in development mode
-    it needs to be updated in every release)
-    and to check if an updated version available for the app or not
+Version of the current program, (in development mode
+it needs to be updated in every release)
+and to check if an updated version available for the app or not
 """
 
 import json

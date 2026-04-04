@@ -479,8 +479,6 @@ def main():
 
 
 def signal_handler(sig, frame):
-    global ffplay
-    global player
     log.debug("You pressed Ctrl+C!")
     log.debug("Stopping the radio")
     if ffplay and ffplay.is_playing:

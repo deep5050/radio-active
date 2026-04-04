@@ -1,8 +1,7 @@
-""" This module saves the current playing station information to a hidden file,
-and loads the data when no arguments are provide """
+"""This module saves the current playing station information to a hidden file,
+and loads the data when no arguments are provide"""
 
 import json
-import os.path
 
 from zenlog import log
 
