@@ -53,27 +53,49 @@ class App:
         except Exception:
             print("Could not fetch remote version number")
 
-    def get_release_notes(self, version):
-        """Fetch the release notes from GitHub corresponding to the given version."""
+    def get_release_notes(self, local_version, remote_version):
+        """Fetch and parse release notes for all versions greater than local_version."""
         try:
             import requests
 
-            url = f"https://raw.githubusercontent.com/deep5050/radio-active/main/RELEASE_NOTES.md"
+            url = "https://raw.githubusercontent.com/deep5050/radio-active/main/CHANGELOG.md"
             response = requests.get(url)
-            if response.status_code == 200:
-                content = response.text
-                # Find the start of the version block
-                version_header = f"[{version}]"
-                if version_header in content:
-                    start_idx = content.find(version_header) + len(version_header)
-                    # Find the start of the next version block (next '[') or the end
-                    end_idx = content.find("[", start_idx)
-                    if end_idx == -1:
-                        notes_section = content[start_idx:].strip()
-                    else:
-                        notes_section = content[start_idx:end_idx].strip()
+            if response.status_code != 200:
+                return None
 
-                    return notes_section
+            content = response.text
+            lines = content.split("\n")
+
+            collected_notes = []
+            capturing = False
+            current_version = None
+
+            def version_tuple(v):
+                return tuple(map(int, (v.split("."))))
+
+            tup_local = version_tuple(local_version)
+            # tup_remote = version_tuple(remote_version)
+
+            for line in lines:
+                if line.startswith("## "):
+                    try:
+                        v_str = line.replace("## ", "").strip()
+                        tup_v = version_tuple(v_str)
+
+                        if tup_v > tup_local:
+                            capturing = True
+                            current_version = v_str
+                            collected_notes.append(f"\n[bold cyan]v{v_str}[/bold cyan]")
+                        else:
+                            capturing = False
+                    except:
+                        capturing = False
+                elif capturing and line.strip():
+                    collected_notes.append(line.strip())
+
+            if collected_notes:
+                return "\n".join(collected_notes)
             return None
+
         except Exception:
             return None
