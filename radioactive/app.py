@@ -52,3 +52,28 @@ class App:
 
         except Exception:
             print("Could not fetch remote version number")
+
+    def get_release_notes(self, version):
+        """Fetch the release notes from GitHub corresponding to the given version."""
+        try:
+            import requests
+
+            url = f"https://raw.githubusercontent.com/deep5050/radio-active/main/RELEASE_NOTES.md"
+            response = requests.get(url)
+            if response.status_code == 200:
+                content = response.text
+                # Find the start of the version block
+                version_header = f"[{version}]"
+                if version_header in content:
+                    start_idx = content.find(version_header) + len(version_header)
+                    # Find the start of the next version block (next '[') or the end
+                    end_idx = content.find("[", start_idx)
+                    if end_idx == -1:
+                        notes_section = content[start_idx:].strip()
+                    else:
+                        notes_section = content[start_idx:end_idx].strip()
+
+                    return notes_section
+            return None
+        except Exception:
+            return None
