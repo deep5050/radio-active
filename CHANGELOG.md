@@ -1,3 +1,7 @@
+## 3.0.4
+
+1. Release notes are now shown to the end users for future versions
+
 ## 3.0.3
 
 1. Minor improvements and bug fixes
