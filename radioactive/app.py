@@ -1,15 +1,24 @@
 """
-    Version of the current program, (in development mode
-    it needs to be updated in every release)
-    and to check if an updated version available for the app or not
+Version of the current program, (in development mode
+it needs to be updated in every release)
+and to check if an updated version available for the app or not
 """
 
 import json
+import sys
+
+if sys.version_info >= (3, 8):
+    from importlib import metadata
+else:
+    import importlib_metadata as metadata
 
 
 class App:
     def __init__(self):
-        self.__VERSION__ = "3.0.2"  # change this on every update #
+        try:
+            self.__VERSION__ = metadata.version("radio-active")
+        except metadata.PackageNotFoundError:
+            self.__VERSION__ = "3.0.3"  # change this on every update #
         self.pypi_api = "https://pypi.org/pypi/radio-active/json"
         self.remote_version = ""
 

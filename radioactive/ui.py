@@ -111,7 +111,6 @@ def handle_history_table(history) -> None:
 def handle_show_station_info() -> None:
     """Show important information regarding the current station."""
     # pylint: disable=global-statement
-    global global_current_station_info
     custom_info = {}
     try:
         custom_info["name"] = global_current_station_info.get("name")
@@ -150,5 +149,4 @@ def set_global_station_info(info: dict) -> None:
 
 def get_global_station_info() -> dict:
     """Helper to get global station info."""
-    global global_current_station_info
     return global_current_station_info

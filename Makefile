@@ -33,7 +33,7 @@ dist: clean
 	${PYTHON} setup.py sdist bdist_wheel
 
 deploy: dist
-	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+	twine upload --repository-url https://upload.pypi.org/legacy/ dist/* --verbose
 
 test-deploy: dist
 	@echo "Sending to testpypi server......."
