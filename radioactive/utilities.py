@@ -5,8 +5,10 @@ Acts as a controller/orchestrator, delegating to UI and Actions modules.
 
 import os
 import sys
+import termios
 import threading
 import time
+import tty
 from random import randint
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -122,6 +124,96 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
         # UUID
         station_uuid = station_option_url
         return handle_station_uuid_play(handler, station_uuid)
+
+
+def handle_vim_style_prompt():
+    """
+    Shows a Vim-style command prompt (:) at the bottom with descriptive Tab completion.
+    """
+    from rich.console import Console
+    from rich.live import Live
+    from rich.text import Text
+
+    # Mapping of shortcut/command to descriptive full text
+    command_map = {
+        "p": "play/pause",
+        "t": "track info",
+        "i": "station info",
+        "r": "record",
+        "rf": "record file",
+        "f": "add favorite",
+        "l": "list favorites",
+        "v+": "volume +",
+        "v-": "volume -",
+        "v": "set volume",
+        "s": "search",
+        "n": "next station",
+        "timer": "timer",
+        "sleep": "sleep",
+        "q": "quit",
+        "help": "help",
+        "?": "help",
+    }
+
+    # Combined list for matching
+    completions = list(command_map.keys())
+
+    buffer = ""
+
+    # Helper to capture single key on Linux
+    def get_key():
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+            if ch == "\x1b":  # Escape sequence
+                seq = sys.stdin.read(2)
+                ch += seq
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+    def get_display(text, matches=[]):
+        # The prompt part
+        prompt_text = Text("command : ", style="magenta")
+        prompt_text.append(text, style="bold cyan")
+
+        if matches and text:
+            # Show a descriptive hint for the first match
+            first_match = matches[0]
+            description = command_map.get(first_match, first_match)
+
+            hint_text = Text(f"  ({description})", style="dim green")
+            prompt_text.append(hint_text)
+
+        return prompt_text
+
+    with Live(get_display(""), transient=True, refresh_per_second=10) as live:
+        while True:
+            char = get_key()
+
+            if char in ["\r", "\n"]:  # Enter
+                return buffer.strip()
+
+            elif char in ["\x7f", "\x08"]:  # Backspace
+                buffer = buffer[:-1]
+
+            elif char == "\t":  # Tab
+                # Cycle through matches or just pick first
+                matches = [m for m in completions if m.startswith(buffer)]
+                if matches:
+                    buffer = matches[0]
+
+            elif char in ["\x03", "\x1b"]:  # Ctrl+C or ESC
+                return "q" if char == "\x1b" else ""
+
+            elif len(char) == 1:  # printable
+                buffer += char
+
+            # Find matches to show hints
+            matches = [m for m in completions if buffer and m.startswith(buffer)]
+            live.update(get_display(buffer, matches))
 
 
 def handle_runtime_help_menu():
@@ -282,7 +374,8 @@ def handle_listen_keypress(
     log.info("Press '?' to see available commands\n")
     while True:
         try:
-            user_input = input("Enter a command to perform an action: ")
+            user_input = handle_vim_style_prompt()
+            # print for logging/debugging consistency? No, user wants it clean.
         except EOFError:
             print()
             log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
