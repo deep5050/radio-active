@@ -1,9 +1,10 @@
-setuptools==80.0.0
-requests
-urllib3
-psutil
-pyradios==1.0.2
-requests_cache
-rich
-pick
-zenlog
+setuptools<70.0.0
+importlib-metadata; python_version < "3.8"
+requests==2.31.0
+urllib3==2.5.0
+psutil==5.9.8
+pyradios==2.1.1
+requests-cache==1.2.0
+rich==13.7.1
+pick==2.3.2
+zenlog==1.1
