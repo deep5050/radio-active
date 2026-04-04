@@ -124,6 +124,47 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
         return handle_station_uuid_play(handler, station_uuid)
 
 
+def handle_runtime_help_menu():
+    """
+    Show a popup-style help menu using 'pick'.
+    """
+    title = "Available Runtime Commands (Press Enter to return):"
+    options = []
+    options.append("p: Play/Pause current station")
+
+    if TRACK_FEATURE:
+        options.append("t/track: Current track info")
+    if INFO_FEATURE:
+        options.append("i/info: Station information")
+    if RECORDING_FEATURE:
+        options.append("r/record: Record a station")
+        options.append("rf/recordfile: Specify a filename for the recording")
+
+    options.append("f/fav: Add station to favorite list")
+    options.append("l/list: Open favorite station selection menu")
+    options.append("v <0-100>: Set volume")
+    options.append("v+/v-: Increase/Decrease volume")
+
+    if SEARCH_FEATURE:
+        options.append("s/search: Search for a new station")
+    if CYCLE_FEATURE:
+        options.append(
+            "n/next: Play result from next station searching or favorite list"
+        )
+    if TIMER_FEATURE:
+        options.append("timer/sleep: Set a sleep timer")
+
+    options.append("q/quit: Quit radioactive")
+
+    try:
+        pick(options, title, indicator="")
+    except Exception as e:
+        log.debug(f"Error showing help menu: {e}")
+        # fallback to simple message if pick fails
+        log.info("Press Enter to return")
+        input()
+
+
 def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
     """
     Handle user selection from search results.
@@ -517,26 +558,8 @@ def handle_listen_keypress(
                 log.error("Invalid volume format. Use 'v 50'")
 
         elif user_input in ["h", "H", "?", "help"]:
-            log.info("p: Play/Pause current station")
-            if TRACK_FEATURE:
-                log.info("t/track: Current track info")
-            if INFO_FEATURE:
-                log.info("i/info: Station information")
-            if RECORDING_FEATURE:
-                log.info("r/record: Record a station")
-                log.info("rf/recordfile: Specify a filename for the recording")
-            log.info("f/fav: Add station to favorite list")
-            log.info("l/list: Open favorite station selection menu")
-            # log.info("w: Show favorite station table")
-            log.info("v <0-100>: Set volume")
-            log.info("v+/v-: Increase/Decrease volume")
-            if SEARCH_FEATURE:
-                log.info("s/search: Search for a new station")
-            if CYCLE_FEATURE:
-                log.info(
-                    "n/next: Play result from next station searching or favorite list"
-                )
-            if TIMER_FEATURE:
-                log.info("timer/sleep: Set a sleep timer")
-            log.info("h/help/?: Show this help message")
-            log.info("q/quit: Quit radioactive")
+            handle_runtime_help_menu()
+
+        elif user_input in ["q", "Q", "quit"]:
+            player.stop()
+            sys.exit(0)
