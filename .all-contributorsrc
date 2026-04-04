@@ -43,6 +43,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "S0AndS0",
+      "name": "S0AndS0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4116150?v=4",
+      "profile": "https://s0ands0.github.io",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
