@@ -126,43 +126,64 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
 
 def handle_runtime_help_menu():
     """
-    Show a popup-style help menu using 'pick'.
+    Show a colorful popup-style help menu using 'rich'.
+    Uses the alternate screen buffer to avoid cluttering the console history.
     """
-    title = "Available Runtime Commands (Press Enter to return):"
-    options = []
-    options.append("p: Play/Pause current station")
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.table import Table
 
-    if TRACK_FEATURE:
-        options.append("t/track: Current track info")
-    if INFO_FEATURE:
-        options.append("i/info: Station information")
-    if RECORDING_FEATURE:
-        options.append("r/record: Record a station")
-        options.append("rf/recordfile: Specify a filename for the recording")
+    console = Console()
+    with console.screen():
+        table = Table(box=None, expand=False, border_style="dim")
+        table.add_column("Command", style="bold cyan", justify="left")
+        table.add_column("Description", style="green", justify="left")
 
-    options.append("f/fav: Add station to favorite list")
-    options.append("l/list: Open favorite station selection menu")
-    options.append("v <0-100>: Set volume")
-    options.append("v+/v-: Increase/Decrease volume")
+        # Helper to simplify adding rows
+        def add(cmd, desc):
+            table.add_row(cmd, desc)
 
-    if SEARCH_FEATURE:
-        options.append("s/search: Search for a new station")
-    if CYCLE_FEATURE:
-        options.append(
-            "n/next: Play result from next station searching or favorite list"
+        add("p", "Play/Pause current station")
+        if TRACK_FEATURE:
+            add("t / track", "Current track info")
+        if INFO_FEATURE:
+            add("i / info", "Station information")
+        if RECORDING_FEATURE:
+            add("r / record", "Record a station")
+            add("rf / recordfile", "Specify a filename for the recording")
+
+        add("f / fav", "Add station to favorite list")
+        add("l / list", "Open favorite station selection menu")
+        add("v <0-100>", "Set volume level")
+        add("v+ / v-", "Increase / Decrease volume level")
+
+        if SEARCH_FEATURE:
+            add("s / search", "Search for a new station")
+        if CYCLE_FEATURE:
+            add("n / next", "Play next result from search or favorites")
+        if TIMER_FEATURE:
+            add("timer / sleep", "Set a sleep timer")
+
+        add("q / quit", "Quit radioactive")
+
+        # Center the table within a panel
+        help_panel = Panel(
+            table,
+            title="[bold magenta]:radio: Available Runtime Commands[/bold magenta]",
+            subtitle="[blink]Press Enter to return[/blink]",
+            border_style="magenta",
+            expand=False,
+            padding=(1, 4),
         )
-    if TIMER_FEATURE:
-        options.append("timer/sleep: Set a sleep timer")
 
-    options.append("q/quit: Quit radioactive")
+        # Print the panel centered on the alternate screen
+        console.print(help_panel, justify="center")
 
-    try:
-        pick(options, title, indicator="")
-    except Exception as e:
-        log.debug(f"Error showing help menu: {e}")
-        # fallback to simple message if pick fails
-        log.info("Press Enter to return")
-        input()
+        # Use console.input() to wait for Enter and avoid prompt capture
+        try:
+            console.input()
+        except (EOFError, KeyboardInterrupt):
+            pass
 
 
 def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
