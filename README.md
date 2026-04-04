@@ -215,6 +215,7 @@ Enter a command to perform an action: ?
 t/T/track: Current song name (track info)
 r/R/record: Record a station
 f/F/fav: Add station to favorite list
+l/L/list: Open favorite station selection menu
 s/S/search: Search for a new station
 n/N/next: Play next station from search results or favorite list
 timer/sleep: Set a sleep timer (duration in minutes)

@@ -204,6 +204,7 @@ def handle_listen_keypress(
     record_file_format,
     loglevel,
     handler=None,
+    last_station=None,
     station_list=None,
 ) -> None:
     """
@@ -309,9 +310,29 @@ def handle_listen_keypress(
             player.stop()
             sys.exit(0)
 
-        elif user_input in ["w", "W", "list"]:
-            alias.generate_map()
-            handle_favorite_table(alias)
+        # elif user_input in ["w", "W"]:
+        #     alias.generate_map()
+        #     handle_favorite_table(alias)
+
+        elif user_input in ["l", "L", "list"]:
+            if handler and last_station:
+                try:
+                    new_station_name, new_target_url = handle_station_selection_menu(
+                        handler, last_station, alias
+                    )
+                    if new_target_url:
+                        player.stop()
+                        player.url = new_target_url
+                        player.play()
+                        handle_current_play_panel(new_station_name)
+                        # Update loop variables
+                        station_name = new_station_name
+                        station_url = new_target_url
+                        target_url = new_target_url
+                except Exception as e:
+                    log.error(f"Error selecting station: {e}")
+            else:
+                log.warning("Station selection menu unavailable")
 
         elif TRACK_FEATURE and user_input in ["t", "T", "track"]:
             handle_fetch_song_title(target_url)
@@ -477,6 +498,8 @@ def handle_listen_keypress(
                 log.info("r/record: Record a station")
                 log.info("rf/recordfile: Specify a filename for the recording")
             log.info("f/fav: Add station to favorite list")
+            log.info("l/list: Open favorite station selection menu")
+            # log.info("w: Show favorite station table")
             if SEARCH_FEATURE:
                 log.info("s/search: Search for a new station")
             if CYCLE_FEATURE:

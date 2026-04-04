@@ -111,6 +111,7 @@ def final_step(options, last_station, alias, handler, history, station_list=None
         record_file_format=options["record_file_format"],
         loglevel=options["loglevel"],
         handler=handler,
+        last_station=last_station,
         station_list=station_list,
     )
 
