@@ -42,11 +42,22 @@ def handle_update_screen(app) -> None:
         app: The App instance to check for updates.
     """
     if app.is_update_available():
+        local_version = app.get_version()
+        remote_version = app.get_remote_version()
+
         update_msg = (
-            "\t[blink]An update available, run [green][italic]pip install radio-active=="
-            + app.get_remote_version()
-            + "[/italic][/green][/blink]\nSee the changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md"
+            f"\t[blink]An update available, run [green][italic]pip install radio-active=="
+            + remote_version
+            + f"[/italic][/green][/blink]\n"
         )
+
+        # Add release notes for all missing versions if available
+        release_notes = app.get_release_notes(local_version, remote_version)
+        if release_notes:
+            update_msg += f"\n[bold yellow]What's new since v{local_version}:[/bold yellow]\n{release_notes}"
+        else:
+            update_msg += f"\nSee all changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md"
+
         update_panel = Panel(
             update_msg,
             width=85,

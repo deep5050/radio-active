@@ -18,7 +18,7 @@ class App:
         try:
             self.__VERSION__ = metadata.version("radio-active")
         except metadata.PackageNotFoundError:
-            self.__VERSION__ = "3.0.3"  # change this on every update #
+            self.__VERSION__ = "3.0.4"  # change this on every update #
         self.pypi_api = "https://pypi.org/pypi/radio-active/json"
         self.remote_version = ""
 
@@ -52,3 +52,50 @@ class App:
 
         except Exception:
             print("Could not fetch remote version number")
+
+    def get_release_notes(self, local_version, remote_version):
+        """Fetch and parse release notes for all versions greater than local_version."""
+        try:
+            import requests
+
+            url = "https://raw.githubusercontent.com/deep5050/radio-active/main/CHANGELOG.md"
+            response = requests.get(url)
+            if response.status_code != 200:
+                return None
+
+            content = response.text
+            lines = content.split("\n")
+
+            collected_notes = []
+            capturing = False
+            current_version = None
+
+            def version_tuple(v):
+                return tuple(map(int, (v.split("."))))
+
+            tup_local = version_tuple(local_version)
+            # tup_remote = version_tuple(remote_version)
+
+            for line in lines:
+                if line.startswith("## "):
+                    try:
+                        v_str = line.replace("## ", "").strip()
+                        tup_v = version_tuple(v_str)
+
+                        if tup_v > tup_local:
+                            capturing = True
+                            current_version = v_str
+                            collected_notes.append(f"\n[bold cyan]v{v_str}[/bold cyan]")
+                        else:
+                            capturing = False
+                    except:
+                        capturing = False
+                elif capturing and line.strip():
+                    collected_notes.append(line.strip())
+
+            if collected_notes:
+                return "\n".join(collected_notes)
+            return None
+
+        except Exception:
+            return None

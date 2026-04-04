@@ -1,3 +1,28 @@
+## 3.0.4
+
+1. Release notes are now shown to the end users for future versions
+
+## 3.0.3
+
+1. Minor improvements and bug fixes
+
+## 3.0.2
+
+1. Fix pkg_resources package error on latest python versions
+
+## 3.0.1
+
+1. Minor stability improvements
+
+## 3.0.0
+
+1. Sleep Timer and configuration updates
+2. Minimal Mode and Info Runtime Command
+3. Implement compile-time feature configuration system
+4. Add runtime search and cycle commands
+5. Implement alias management, configuration handling, last station persistence, and XDG-compliant path management.
+6. Other improvements
+
 ## 2.9.1
 
 1. Play a random station from favorite list `--random`
