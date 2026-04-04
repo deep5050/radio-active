@@ -113,6 +113,7 @@ def final_step(options, last_station, alias, handler, history, station_list=None
         handler=handler,
         last_station=last_station,
         station_list=station_list,
+        history=history,
     )
 
 

@@ -126,9 +126,10 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
         return handle_station_uuid_play(handler, station_uuid)
 
 
-def handle_vim_style_prompt():
+def handle_vim_style_prompt(alias=None, history=None):
     """
-    Shows a Vim-style command prompt (:) at the bottom with descriptive Tab completion.
+    Shows a Vim-style command prompt (:) at the bottom with descriptive Tab completion
+    and fuzzy search for favorites/history stations.
     """
     from rich.console import Console
     from rich.live import Live
@@ -158,6 +159,16 @@ def handle_vim_style_prompt():
     # Combined list for matching
     completions = list(command_map.keys())
 
+    # Build a list of station names for fuzzy search
+    station_names = []
+    if alias and hasattr(alias, "alias_map"):
+        station_names += [s.get("name", "").strip() for s in alias.alias_map]
+    if history and hasattr(history, "get_list"):
+        station_names += [s.get("name", "").strip() for s in history.get_list()]
+
+    # Clean and deduplicate station names
+    station_names = sorted(list(set([n for n in station_names if n])))
+
     buffer = ""
 
     # Helper to capture single key on Linux
@@ -179,13 +190,26 @@ def handle_vim_style_prompt():
         prompt_text = Text("command : ", style="magenta")
         prompt_text.append(text, style="bold cyan")
 
-        if matches and text:
-            # Show a descriptive hint for the first match
-            first_match = matches[0]
-            description = command_map.get(first_match, first_match)
+        if buffer:
+            # Check commands first
+            cmd_matches = [m for m in completions if m.startswith(buffer)]
+            if cmd_matches:
+                first_match = cmd_matches[0]
+                description = command_map.get(first_match, first_match)
+                hint_text = Text(f"  ({description})", style="dim green")
+                prompt_text.append(hint_text)
+            else:
+                # No command match, trigger fuzzy search for stations
+                station_matches = [
+                    n for n in station_names if buffer.lower() in n.lower()
+                ]
+                # simple sort by position of query in the name
+                station_matches.sort(key=lambda n: n.lower().find(buffer.lower()))
 
-            hint_text = Text(f"  ({description})", style="dim green")
-            prompt_text.append(hint_text)
+                if station_matches:
+                    first_match = station_matches[0]
+                    hint_text = Text(f"  (~ {first_match})", style="italic dim yellow")
+                    prompt_text.append(hint_text)
 
         return prompt_text
 
@@ -193,27 +217,43 @@ def handle_vim_style_prompt():
         while True:
             char = get_key()
 
+            # Find current matches for logic below
+            cmd_matches = [m for m in completions if buffer and m.startswith(buffer)]
+            station_matches = []
+            if not cmd_matches and buffer:
+                station_matches = [
+                    n for n in station_names if buffer.lower() in n.lower()
+                ]
+                station_matches.sort(key=lambda n: n.lower().find(buffer.lower()))
+
             if char in ["\r", "\n"]:  # Enter
+                # If there's a fuzzy station match, use it. Otherwise use the buffer.
+                if not cmd_matches and station_matches:
+                    return station_matches[0]
                 return buffer.strip()
 
             elif char in ["\x7f", "\x08"]:  # Backspace
                 buffer = buffer[:-1]
 
-            elif char == "\t":  # Tab
-                # Cycle through matches or just pick first
-                matches = [m for m in completions if m.startswith(buffer)]
-                if matches:
-                    buffer = matches[0]
+            elif char == "\t" or char == "\x1b[C":  # Tab or Right Arrow
+                # Auto-complete to the first match
+                if cmd_matches:
+                    buffer = cmd_matches[0]
+                elif station_matches:
+                    buffer = station_matches[0]
 
             elif char in ["\x03", "\x1b"]:  # Ctrl+C or ESC
-                return "q" if char == "\x1b" else ""
+                # ESC can produce \x1b followed by nothing if caught fast,
+                # but arrows also start with \x1b. get_key handles sequences.
+                if char == "\x1b":
+                    return "q"
+                return ""
 
             elif len(char) == 1:  # printable
                 buffer += char
 
-            # Find matches to show hints
-            matches = [m for m in completions if buffer and m.startswith(buffer)]
-            live.update(get_display(buffer, matches))
+            # Update display with new buffer state
+            live.update(get_display(buffer, cmd_matches or station_matches))
 
 
 def handle_runtime_help_menu():
@@ -257,6 +297,7 @@ def handle_runtime_help_menu():
             add("timer / sleep", "Set a sleep timer")
 
         add("q / quit", "Quit radioactive")
+        add("Any Text", "Fuzzy search & play from favorites/history")
 
         # Center the table within a panel
         help_panel = Panel(
@@ -366,6 +407,7 @@ def handle_listen_keypress(
     handler=None,
     last_station=None,
     station_list=None,
+    history=None,
 ) -> None:
     """
     Listen for user input during playback to perform actions.
@@ -374,7 +416,7 @@ def handle_listen_keypress(
     log.info("Press '?' to see available commands\n")
     while True:
         try:
-            user_input = handle_vim_style_prompt()
+            user_input = handle_vim_style_prompt(alias, history)
             # print for logging/debugging consistency? No, user wants it clean.
         except EOFError:
             print()
@@ -671,9 +713,30 @@ def handle_listen_keypress(
             except Exception:
                 log.error("Invalid volume format. Use 'v 50'")
 
-        elif user_input in ["h", "H", "?", "help"]:
+        elif user_input == "?":
             handle_runtime_help_menu()
 
         elif user_input in ["q", "Q", "quit"]:
             player.stop()
             sys.exit(0)
+
+        elif user_input.strip() != "":
+            # Fuzzy match station from aliases or history if not a direct command
+            # Try to see if it's a station name the user typed
+            log.info(f"Checking for station: {user_input}")
+            try:
+                name, url = handle_direct_play(alias, user_input)
+                if url:
+                    player.stop()
+                    player.url = url
+                    player.play()
+                    handle_current_play_panel(name)
+                    station_url = url
+                    station_name = name
+                    target_url = url
+            except SystemExit:
+                # Direct play sys.exit(1) on failure, we want to stay in loop
+                pass
+            except Exception as e:
+                log.debug(f"Error in fuzzy station search: {e}")
+                log.warning(f"Unknown command or station: {user_input}")
