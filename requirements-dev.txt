@@ -1,5 +1,5 @@
 flake8>=4.0.1
-twine==6.2.0
+twine
 black
 pytest
 isort

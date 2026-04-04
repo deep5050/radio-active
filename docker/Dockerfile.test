@@ -1,0 +1,26 @@
+# Multi-Python CI image: build with --build-arg PYTHON_VERSION=3.11
+ARG PYTHON_VERSION=3.11
+FROM python:${PYTHON_VERSION}-slim-bookworm
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Some dependencies may need a compiler when wheels are missing
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gcc make \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt requirements-dev.txt setup.py README.md Makefile configure.py features.conf ./
+COPY radioactive ./radioactive
+
+RUN pip install --upgrade pip setuptools wheel \
+    && pip install -r requirements.txt -r requirements-dev.txt \
+    && pip install -e .
+
+COPY pytest.ini ./
+COPY tests ./tests
+
+CMD ["pytest", "-v", "tests/"]
