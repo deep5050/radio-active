@@ -227,6 +227,72 @@ def handle_zen_mode() -> None:
         log.error(f"Error in zen mode: {e}")
 
 
+def handle_recording_popup(process, outfile_path) -> None:
+    """Show a static recording info panel in an alternate screen (Popup)."""
+    if not process:
+        return
+
+    try:
+        import os
+
+        from rich.align import Align
+        from rich.console import Console
+        from rich.panel import Panel
+        from rich.table import Table
+
+        console = Console()
+        filename = os.path.basename(outfile_path)
+        directory = os.path.dirname(outfile_path)
+
+        with console.screen():
+            table = Table(box=None, padding=(0, 2), show_header=False)
+            table.add_column("Prop", style="cyan", justify="right")
+            table.add_column("Val", style="white")
+
+            table.add_row("File Name:", filename)
+            table.add_row("Directory:", directory)
+            table.add_row(
+                "Status:", "[blink][bold red]● Recording ... [/bold red][/blink]"
+            )
+
+            info_panel = Panel(
+                table,
+                title="[bold white]RADIOACTIVE[/bold white]",
+                subtitle="Press Enter to STOP recording",
+                border_style="white",
+                padding=(1, 4),
+                width=100,
+                expand=False,
+            )
+
+            # Center the panel visually
+            console.print("\n" * 8)
+            console.print(Align.center(info_panel))
+
+            while process.poll() is None:
+                try:
+                    # Wait for Enter to stop
+                    input()
+                    try:
+                        # send 'q' to ffmpeg to save and quit nicely
+                        process.stdin.write(b"q")
+                        process.stdin.flush()
+                    except:
+                        process.terminate()
+                    process.wait()
+                    break
+                except (EOFError, KeyboardInterrupt):
+                    process.terminate()
+                    process.wait()
+                    break
+
+        # finalize UI after stop or process ends
+        # log.info(f"Recording saved at: {outfile_path}")
+
+    except Exception as e:
+        log.error(f"Error in recording popup: {e}")
+
+
 def handle_current_play_panel(curr_station_name: str = "") -> None:
     """
     Print the currently playing station panel and sync station name state.

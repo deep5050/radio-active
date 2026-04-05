@@ -58,6 +58,7 @@ from radioactive.ui import (
     handle_current_play_panel,
     handle_favorite_table,
     handle_history_table,
+    handle_recording_popup,
     handle_show_station_info,
     handle_update_screen,
     handle_welcome_screen,
@@ -172,19 +173,66 @@ def handle_vim_style_prompt(alias=None, history=None):
 
     buffer = ""
 
-    # Helper to capture single key on Linux
-    def get_key():
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-            if ch == "\x1b":  # Escape sequence
-                seq = sys.stdin.read(2)
-                ch += seq
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
+
+def get_key():
+    """Helper to capture single key on Linux."""
+    import sys
+    import termios
+    import tty
+
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+        if ch == "\x1b":  # Escape sequence
+            seq = sys.stdin.read(2)
+            ch += seq
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
+
+
+def handle_vim_style_prompt(alias, history) -> str:
+    """Captured VIM style command prompt with fuzzy search and completions."""
+    from rich.live import Live
+    from rich.text import Text
+
+    # Mapping of shortcut/command to descriptive full text
+    command_map = {
+        "p": "play/pause",
+        "t": "track info",
+        "i": "station info",
+        "r": "record",
+        "rf": "record file",
+        "f": "add favorite",
+        "l": "list favorites",
+        "v+": "volume +",
+        "v-": "volume -",
+        "v": "set volume",
+        "s": "search",
+        "n": "next station",
+        "timer": "timer",
+        "sleep": "sleep",
+        "q": "quit",
+        "help": "help",
+        "?": "help",
+    }
+
+    # Combined list for matching
+    completions = list(command_map.keys())
+
+    # Build a list of station names for fuzzy search
+    station_names = []
+    if alias and hasattr(alias, "alias_map"):
+        station_names += [s.get("name", "").strip() for s in alias.alias_map]
+    if history and hasattr(history, "get_list"):
+        station_names += [s.get("name", "").strip() for s in history.get_list()]
+
+    # Clean and deduplicate station names
+    station_names = sorted(list(set([n for n in station_names if n])))
+
+    buffer = ""
 
     def get_display(text, matches=[]):
         # The prompt part
@@ -425,60 +473,66 @@ def handle_listen_keypress(
             kill_background_ffplays()
             sys.exit(0)
 
-        if RECORDING_FEATURE:
-            if user_input in ["r", "R", "record"]:
-                handle_record(
+        if RECORDING_FEATURE and user_input in ["r", "R", "record"]:
+            process, outfile_path = handle_record(
+                target_url,
+                station_name,
+                record_file_path,
+                record_file,
+                record_file_format,
+                loglevel,
+            )
+            handle_recording_popup(process, outfile_path)
+            continue
+
+        elif RECORDING_FEATURE and user_input in ["rf", "RF", "recordfile"]:
+            try:
+                user_input = input("Enter output filename: ")
+            except EOFError:
+                print()
+                log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
+                kill_background_ffplays()
+                sys.exit(0)
+
+            # try to get extension from filename
+            try:
+                file_name_parts = user_input.split(".")
+                if len(file_name_parts) > 1 and file_name_parts[-1] == "mp3":
+                    log.debug("codec: force mp3")
+                    # overwrite original codec with "mp3"
+                    record_file_format = "mp3"
+                    file_name = user_input.rsplit(".", 1)[
+                        0
+                    ]  # Handle filename with dots
+                else:
+                    if len(file_name_parts) > 1 and file_name_parts[-1] != "mp3":
+                        log.warning("You can only specify mp3 as file extension.\n")
+                        log.warning(
+                            "Do not provide any extension to autodetect the codec.\n"
+                        )
+                    file_name = user_input
+            except Exception:
+                file_name = user_input
+
+            if user_input.strip() != "":
+                process, outfile_path = handle_record(
                     target_url,
                     station_name,
                     record_file_path,
-                    record_file,
+                    file_name,
                     record_file_format,
                     loglevel,
                 )
-            elif user_input in ["rf", "RF", "recordfile"]:
-                try:
-                    user_input = input("Enter output filename: ")
-                except EOFError:
-                    print()
-                    log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
-                    kill_background_ffplays()
-                    sys.exit(0)
-
-                # try to get extension from filename
-                try:
-                    file_name_parts = user_input.split(".")
-                    if len(file_name_parts) > 1 and file_name_parts[-1] == "mp3":
-                        log.debug("codec: force mp3")
-                        # overwrite original codec with "mp3"
-                        record_file_format = "mp3"
-                        file_name = user_input.rsplit(".", 1)[
-                            0
-                        ]  # Handle filename with dots
-                    else:
-                        if len(file_name_parts) > 1 and file_name_parts[-1] != "mp3":
-                            log.warning("You can only specify mp3 as file extension.\n")
-                            log.warning(
-                                "Do not provide any extension to autodetect the codec.\n"
-                            )
-                        file_name = user_input
-                except Exception:
-                    file_name = user_input
-
-                if user_input.strip() != "":
-                    handle_record(
-                        target_url,
-                        station_name,
-                        record_file_path,
-                        file_name,
-                        record_file_format,
-                        loglevel,
-                    )
+                handle_recording_popup(process, outfile_path)
+            continue
 
         if INFO_FEATURE and user_input in ["i", "I", "info"]:
             handle_show_station_info()
+            continue
 
         elif user_input in ["z", "Z", "zenmode"]:
             handle_zen_mode()
+            continue
 
         elif TIMER_FEATURE and user_input in ["timer", "sleep"]:
             try:
@@ -627,7 +681,7 @@ def handle_listen_keypress(
 
                 while attempts < max_attempts:
                     target_station = target_list[next_index]
-                    log.info(f"Switching to: {target_station.get('name')}")
+                    log.debug(f"Switching to: {target_station.get('name')}")
 
                     # Determine how to play based on available info
                     # We need to simulate the "Selection" logic
