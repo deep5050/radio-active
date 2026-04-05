@@ -61,6 +61,7 @@ from radioactive.ui import (
     handle_show_station_info,
     handle_update_screen,
     handle_welcome_screen,
+    handle_zen_mode,
     set_global_station_info,
 )
 
@@ -187,7 +188,7 @@ def handle_vim_style_prompt(alias=None, history=None):
 
     def get_display(text, matches=[]):
         # The prompt part
-        prompt_text = Text("command : ", style="magenta")
+        prompt_text = Text("command : ", style="green")
         prompt_text.append(text, style="bold cyan")
 
         if buffer:
@@ -280,6 +281,7 @@ def handle_runtime_help_menu():
             add("t / track", "Current track info")
         if INFO_FEATURE:
             add("i / info", "Station information")
+        add("z / zenmode", "Minimalist station display")
         if RECORDING_FEATURE:
             add("r / record", "Record a station")
             add("rf / recordfile", "Specify a filename for the recording")
@@ -412,7 +414,7 @@ def handle_listen_keypress(
     Listen for user input during playback to perform actions.
     Now with handler and station_list for runtime commands.
     """
-    log.info("Press '?' to see available commands\n")
+    # log.info("Press '?' to see available commands\n")
     while True:
         try:
             user_input = handle_vim_style_prompt(alias, history)
@@ -474,6 +476,9 @@ def handle_listen_keypress(
 
         if INFO_FEATURE and user_input in ["i", "I", "info"]:
             handle_show_station_info()
+
+        elif user_input in ["z", "Z", "zenmode"]:
+            handle_zen_mode()
 
         elif TIMER_FEATURE and user_input in ["timer", "sleep"]:
             try:
