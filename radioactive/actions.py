@@ -22,7 +22,6 @@ except ImportError:
 if RECORDING_FEATURE:
     from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
 from radioactive.last_station import Last_station
-from radioactive.ui import handle_input
 
 
 def handle_fetch_song_title(url: str) -> None:
@@ -150,8 +149,8 @@ def handle_record(
 def handle_add_station(alias) -> None:
     """Add a new station to favorites via user input."""
     try:
-        left = handle_input("Enter station name:")
-        right = handle_input("Enter station stream-url or radio-browser uuid:")
+        left = input("Enter station name:")
+        right = input("Enter station stream-url or radio-browser uuid:")
     except EOFError:
         print()
         log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
@@ -171,7 +170,7 @@ def handle_add_to_favorite(alias, station_name: str, station_uuid_url: str) -> N
         response = alias.add_entry(station_name, station_uuid_url)
         if not response:
             try:
-                user_input = handle_input("Enter a different name: ")
+                user_input = input("Enter a different name: ")
             except EOFError:
                 print()
                 log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
@@ -211,7 +210,7 @@ def handle_save_to_history(history, station_name: str, station_url: str) -> None
     station_data["uuid_or_url"] = station_url
 
     # try to get richer info
-    from radioactive.ui import get_global_station_info, handle_input
+    from radioactive.ui import get_global_station_info
 
     global_info = get_global_station_info()
     if global_info and global_info.get("name") == station_name:

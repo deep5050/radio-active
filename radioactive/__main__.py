@@ -22,7 +22,6 @@ from radioactive.utilities import (
     handle_direct_play,
     handle_favorite_table,
     handle_history_table,
-    handle_input,
     handle_listen_keypress,
     handle_play_last_station,
     handle_play_random_station,
@@ -35,7 +34,6 @@ from radioactive.utilities import (
     handle_update_screen,
     handle_user_choice_from_search_result,
     handle_welcome_screen,
-    stop_live_display,
 )
 
 # globally needed as signal handler needs it
@@ -211,13 +209,11 @@ def main():
         if os.path.exists(full_path):
             log.warning(f"File '{full_path}' already exists.")
             while True:
-                user_choice = handle_input(
-                    "File already exists. Overwrite? (y/n): "
-                ).lower()
+                user_choice = input("File already exists. Overwrite? (y/n): ").lower()
                 if user_choice == "y":
                     break
                 elif user_choice == "n":
-                    new_name = handle_input("Enter new filename (without extension): ")
+                    new_name = input("Enter new filename (without extension): ")
                     options["record_file"] = new_name
                     # re-calculate
                     final_filename = new_name
@@ -487,8 +483,6 @@ def main():
 def signal_handler(sig, frame):
     log.debug("You pressed Ctrl+C!")
     log.debug("Stopping the radio")
-    # always needed
-    stop_live_display()
     if ffplay and ffplay.is_playing:
         ffplay.stop()
         #  kill the player
