@@ -352,9 +352,9 @@ def handle_runtime_help_menu():
         # Center the table within a panel
         help_panel = Panel(
             table,
-            title="[bold magenta]:radio: Available Runtime Commands[/bold magenta]",
-            subtitle="[blink]Press Enter to return[/blink]",
-            border_style="magenta",
+            title="[bold white]:radio: Available Runtime Commands[/bold white]",
+            subtitle="Press Enter to return",
+            border_style="white",
             expand=False,
             padding=(1, 4),
         )

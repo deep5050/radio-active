@@ -152,9 +152,9 @@ def handle_show_station_info() -> None:
 
             info_panel = Panel(
                 table,
-                title="[bold magenta]:radio: Station Information[/bold magenta]",
-                subtitle="[blink]Press Enter to return[/blink]",
-                border_style="magenta",
+                title="[bold white]:radio: Station Information[/bold white]",
+                subtitle="Press Enter to return",
+                border_style="white",
                 padding=(1, 4),
                 expand=False,
             )
@@ -206,9 +206,9 @@ def handle_zen_mode() -> None:
 
             zen_panel = Panel(
                 zen_text,
-                title="[bold magenta]RADIOACTIVE[/bold magenta]",
-                subtitle="[dim]Press Enter to return[/dim]",
-                border_style="bold blue",
+                title="[bold white]RADIOACTIVE[/bold white]",
+                subtitle="Press Enter to return",
+                border_style="bold white",
                 padding=(2, 4),
                 width=100,
                 expand=False,
