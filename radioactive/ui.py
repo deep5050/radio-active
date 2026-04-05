@@ -182,6 +182,8 @@ def handle_zen_mode() -> None:
         emojis = ["✨", "🧘", "🌊", "🍃", "🌙", "☁️", "🎵", "🎧"]
         import random
 
+        from rich.align import Align
+
         icon = random.choice(emojis)
 
         console = Console()
@@ -194,15 +196,32 @@ def handle_zen_mode() -> None:
             else:
                 display_name = str(name).strip()
 
-            # Truncate to 30 chars
-            if len(display_name) > 30:
-                display_name = display_name[:27] + "..."
-
             # Create a stylized station name
-            zen_text = Text()
-            zen_text.append(f"\n{icon} ", style="bold yellow")
+            zen_text = Text(justify="center")
+
+            # Beautiful Wave Decoration
+            wave = " ▂ ▃ ▅ ▆ █ █ ▆ ▅ ▃ ▂ "
+            # zen_text.append(f"\n{wave}\n\n", style="bold white")
+
+            zen_text.append(f"{icon} ", style="bold yellow")
             zen_text.append(display_name.upper(), style="bold white")
             zen_text.append(f" {icon}\n", style="bold yellow")
+
+            # Add more data if available
+            tags = global_current_station_info.get("tags")
+            if tags and str(tags).strip() != "":
+                clean_tags = str(tags).replace(",", " • ").strip()
+                if len(clean_tags) > 70:
+                    clean_tags = clean_tags[:67] + "..."
+                zen_text.append(f"\n{clean_tags}\n", style="dim white")
+
+            codec = global_current_station_info.get("codec")
+            bitrate = global_current_station_info.get("bitrate")
+            if codec or bitrate:
+                info_line = f"\n{codec or ''} • {bitrate or ''} kbps".strip(" • ")
+                zen_text.append(info_line, style="italic dim white")
+
+            # zen_text.append(f"\n\n{wave}\n", style="bold white")
 
             zen_panel = Panel(
                 zen_text,
@@ -216,10 +235,10 @@ def handle_zen_mode() -> None:
 
             # Center vertically with some newlines
             console.print("\n" * 8)
-            console.print(zen_panel, justify="center")
+            console.print(Align.center(zen_panel))
 
             try:
-                console.input()
+                input()
             except (EOFError, KeyboardInterrupt):
                 pass
 
