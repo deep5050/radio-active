@@ -182,7 +182,6 @@ class Handler:
         """
         if self.response and len(self.response) >= 1:
             # We take the first one if multiple (unlikely for UUID but possible in theory)
-            log.debug(json.dumps(self.response[0], indent=3))
             self.target_station = self.response[0]
 
             # register a valid click to increase its popularity

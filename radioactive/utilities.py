@@ -51,17 +51,21 @@ from radioactive.actions import (
     handle_station_uuid_play,
 )
 from radioactive.ffplay import kill_background_ffplays
-
-# Re-export functions for backward compatibility and aggregation
 from radioactive.ui import (
+    get_current_banner,
     get_global_station_info,
+    get_live_display,
     handle_current_play_panel,
     handle_favorite_table,
     handle_history_table,
+    handle_input,
     handle_show_station_info,
     handle_update_screen,
     handle_welcome_screen,
     set_global_station_info,
+    set_live_display,
+    stop_live_display,
+    update_prompt_renderable,
 )
 
 RED_COLOR = "\033[91m"
@@ -109,6 +113,10 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
         )
         sys.exit(0)
 
+    # pick() uses curses; Rich Live must not be active or the terminal state breaks
+    # and panels redraw on top of each other.
+    stop_live_display()
+
     _, index = pick(options, title, indicator="-->")
 
     # check if there is direct URL or just UUID
@@ -128,10 +136,9 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
 
 def handle_vim_style_prompt(alias=None, history=None):
     """
-    Shows a Vim-style command prompt (:) at the bottom with descriptive Tab completion
+    Shows a Vim-style command prompt at the bottom with descriptive Tab completion
     and fuzzy search for favorites/history stations.
     """
-    from rich.console import Console
     from rich.live import Live
     from rich.text import Text
 
@@ -185,13 +192,16 @@ def handle_vim_style_prompt(alias=None, history=None):
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
 
-    def get_display(text, matches=[]):
-        # The prompt part
-        prompt_text = Text("command : ", style="magenta")
-        prompt_text.append(text, style="bold cyan")
+    def build_prompt_renderable():
+        """
+        Only the command line. App and station banners are drawn by the global Live
+        composite (_get_composite_renderable); nesting them here duplicated the UI.
+        """
+        prompt_text = Text("command:", style="bold magenta")
+        prompt_text.append(" ", style="default")
+        prompt_text.append(buffer, style="bold cyan")
 
         if buffer:
-            # Check commands first
             cmd_matches = [m for m in completions if m.startswith(buffer)]
             if cmd_matches:
                 first_match = cmd_matches[0]
@@ -199,11 +209,9 @@ def handle_vim_style_prompt(alias=None, history=None):
                 hint_text = Text(f"  ({description})", style="dim green")
                 prompt_text.append(hint_text)
             else:
-                # No command match, trigger fuzzy search for stations
                 station_matches = [
                     n for n in station_names if buffer.lower() in n.lower()
                 ]
-                # simple sort by position of query in the name
                 station_matches.sort(key=lambda n: n.lower().find(buffer.lower()))
 
                 if station_matches:
@@ -213,7 +221,20 @@ def handle_vim_style_prompt(alias=None, history=None):
 
         return prompt_text
 
-    with Live(get_display(""), transient=True, refresh_per_second=10) as live:
+    def full_fallback_renderable():
+        """When no global Live exists, stack banners + prompt in one transient Live."""
+        from rich.console import Group
+
+        prompt_r = build_prompt_renderable()
+        banner = get_current_banner()
+        if banner is not None:
+            return Group(banner, prompt_r)
+        return prompt_r
+
+    live = get_live_display()
+    if live:
+        # Show prompt before blocking on first key; banners come from global composite only.
+        update_prompt_renderable(build_prompt_renderable())
         while True:
             char = get_key()
 
@@ -227,7 +248,8 @@ def handle_vim_style_prompt(alias=None, history=None):
                 station_matches.sort(key=lambda n: n.lower().find(buffer.lower()))
 
             if char in ["\r", "\n"]:  # Enter
-                # If there's a fuzzy station match, use it. Otherwise use the buffer.
+                # reset display to just banner (remove prompt)
+                update_prompt_renderable(None)
                 if not cmd_matches and station_matches:
                     return station_matches[0]
                 return buffer.strip()
@@ -243,8 +265,7 @@ def handle_vim_style_prompt(alias=None, history=None):
                     buffer = station_matches[0]
 
             elif char in ["\x03", "\x1b"]:  # Ctrl+C or ESC
-                # ESC can produce \x1b followed by nothing if caught fast,
-                # but arrows also start with \x1b. get_key handles sequences.
+                update_prompt_renderable(None)
                 if char == "\x1b":
                     return "q"
                 return ""
@@ -252,8 +273,43 @@ def handle_vim_style_prompt(alias=None, history=None):
             elif len(char) == 1:  # printable
                 buffer += char
 
-            # Update display with new buffer state
-            live.update(get_display(buffer, cmd_matches or station_matches))
+            update_prompt_renderable(build_prompt_renderable())
+    else:
+        # Fallback to local transient live display if no persistent one exists
+        with Live(
+            full_fallback_renderable(), transient=True, auto_refresh=False
+        ) as live:
+            while True:
+                char = get_key()
+                # Find current matches
+                cmd_matches = [
+                    m for m in completions if buffer and m.startswith(buffer)
+                ]
+                station_matches = []
+                if not cmd_matches and buffer:
+                    station_matches = [
+                        n for n in station_names if buffer.lower() in n.lower()
+                    ]
+                    station_matches.sort(key=lambda n: n.lower().find(buffer.lower()))
+
+                if char in ["\r", "\n"]:  # Enter
+                    if not cmd_matches and station_matches:
+                        return station_matches[0]
+                    return buffer.strip()
+                elif char in ["\x7f", "\x08"]:  # Backspace
+                    buffer = buffer[:-1]
+                elif char == "\t" or char == "\x1b[C":  # Tab or Right Arrow
+                    if cmd_matches:
+                        buffer = cmd_matches[0]
+                    elif station_matches:
+                        buffer = station_matches[0]
+                elif char in ["\x03", "\x1b"]:  # Ctrl+C or ESC
+                    if char == "\x1b":
+                        return "q"
+                    return ""
+                elif len(char) == 1:  # printable
+                    buffer += char
+                live.update(full_fallback_renderable())
 
 
 def handle_runtime_help_menu():
@@ -310,6 +366,7 @@ def handle_runtime_help_menu():
         )
 
         # Print the panel centered on the alternate screen
+        stop_live_display()
         console.print(help_panel, justify="center")
 
         # Use console.input() to wait for Enter and avoid prompt capture
@@ -317,6 +374,11 @@ def handle_runtime_help_menu():
             console.input()
         except (EOFError, KeyboardInterrupt):
             pass
+
+    # Restore the live banner if a station was playing
+    global_info = get_global_station_info()
+    if global_info:
+        handle_current_play_panel(global_info.get("name", "Unknown Station"))
 
 
 def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
@@ -332,7 +394,7 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
         log.debug("Exactly one result found")
 
         try:
-            user_input = input("Want to play this station? Y/N: ")
+            user_input = handle_input("Want to play this station? Y/N: ")
         except EOFError:
             print()
             sys.exit(0)
@@ -352,7 +414,7 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
 
         try:
             log.info("Type 'r' for a random station, 'n' to cycle through the list")
-            user_input = input("Type the result ID to play: ")
+            user_input = handle_input("Type the result ID to play: ")
         except EOFError:
             print()
             log.info("Exiting")
@@ -436,7 +498,7 @@ def handle_listen_keypress(
                 )
             elif user_input in ["rf", "RF", "recordfile"]:
                 try:
-                    user_input = input("Enter output filename: ")
+                    user_input = handle_input("Enter output filename: ")
                 except EOFError:
                     print()
                     log.debug("Ctrl+D (EOF) detected. Exiting gracefully.")
@@ -478,7 +540,7 @@ def handle_listen_keypress(
 
         elif TIMER_FEATURE and user_input in ["timer", "sleep"]:
             try:
-                duration_str = input("Enter sleep timer duration in minutes: ")
+                duration_str = handle_input("Enter sleep timer duration in minutes: ")
                 duration = float(duration_str)
                 if duration <= 0:
                     log.error("Duration must be positive")
@@ -546,7 +608,7 @@ def handle_listen_keypress(
         elif SEARCH_FEATURE and user_input in ["s", "S", "search"]:
             if handler:
                 try:
-                    query = input("Enter station name to search: ")
+                    query = handle_input("Enter station name to search: ")
                 except EOFError:
                     continue
 
