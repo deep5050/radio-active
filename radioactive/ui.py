@@ -120,20 +120,54 @@ def handle_history_table(history) -> None:
 
 
 def handle_show_station_info() -> None:
-    """Show important information regarding the current station."""
-    # pylint: disable=global-statement
-    custom_info = {}
+    """Show important information regarding the current station in an alternate screen (Modal)."""
     try:
-        custom_info["name"] = global_current_station_info.get("name")
-        custom_info["uuid"] = global_current_station_info.get("stationuuid")
-        custom_info["url"] = global_current_station_info.get("url")
-        custom_info["website"] = global_current_station_info.get("homepage")
-        custom_info["country"] = global_current_station_info.get("country")
-        custom_info["language"] = global_current_station_info.get("language")
-        custom_info["tags"] = global_current_station_info.get("tags")
-        custom_info["codec"] = global_current_station_info.get("codec")
-        custom_info["bitrate"] = global_current_station_info.get("bitrate")
-        print(custom_info)
+        from rich.console import Console
+        from rich.panel import Panel
+        from rich.table import Table
+
+        console = Console()
+        with console.screen():
+            table = Table(box=None, padding=(0, 2), show_header=False)
+            table.add_column("Property", style="cyan", justify="left")
+            table.add_column("Value", style="white")
+
+            # Map internal keys to display labels
+            fields = [
+                ("Name", "name"),
+                ("UUID", "stationuuid"),
+                ("Stream URL", "url"),
+                ("Website", "homepage"),
+                ("Country", "country"),
+                ("Language", "language"),
+                ("Tags", "tags"),
+                ("Codec", "codec"),
+                ("Bitrate", "bitrate"),
+            ]
+
+            for label, key in fields:
+                val = str(global_current_station_info.get(key, "N/A"))
+                if val.strip() == "" or val == "None":
+                    val = "N/A"
+                table.add_row(f"{label}:", val)
+
+            info_panel = Panel(
+                table,
+                title="[bold magenta]:radio: Station Information[/bold magenta]",
+                subtitle="[blink]Press Enter to return[/blink]",
+                border_style="magenta",
+                padding=(1, 4),
+                expand=False,
+            )
+
+            console.print("\n" * 3)
+            console.print(info_panel, justify="center")
+
+            try:
+                console.input()
+            except (EOFError, KeyboardInterrupt):
+                pass
+
     except Exception as e:
         log.error(f"No station information available: {e}")
 

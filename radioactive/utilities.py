@@ -380,7 +380,6 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
 
                 # saving global info
                 set_global_station_info(target_response)
-                handle_show_station_info()
 
                 return handle_station_uuid_play(handler, target_response["stationuuid"])
             else:
@@ -635,7 +634,6 @@ def handle_listen_keypress(
                         if source_type == "search":
                             # It's a full station object
                             set_global_station_info(target_station)
-                            handle_show_station_info()
                             new_station_name, new_target_url = handle_station_uuid_play(
                                 handler, target_station["stationuuid"]
                             )
@@ -655,7 +653,6 @@ def handle_listen_keypress(
                                 # Direct URL
                                 temp_info["url"] = uuid_or_url
                                 set_global_station_info(temp_info)
-                                handle_show_station_info()
                                 new_station_name = target_station["name"]
                                 new_target_url = uuid_or_url
                                 # Allow direct play without UUID handler
@@ -663,7 +660,6 @@ def handle_listen_keypress(
                                 # UUID
                                 temp_info["stationuuid"] = uuid_or_url
                                 set_global_station_info(temp_info)
-                                handle_show_station_info()
                                 new_station_name, new_target_url = (
                                     handle_station_uuid_play(handler, uuid_or_url)
                                 )
