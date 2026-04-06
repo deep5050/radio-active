@@ -582,10 +582,20 @@ def handle_listen_keypress(
                         handler, last_station, alias
                     )
                     if new_target_url:
+                        if new_target_url == target_url:
+                            log.info("Station is already playing!")
+                            continue
                         player.stop()
                         player.url = new_target_url
                         player.play()
                         handle_current_play_panel(new_station_name)
+                        # Save the new station as last played and add to history
+                        handle_save_last_station(
+                            last_station, new_station_name, new_target_url
+                        )
+                        handle_save_to_history(
+                            history, new_station_name, new_target_url
+                        )
                         # Update loop variables
                         station_name = new_station_name
                         station_url = new_target_url
@@ -616,18 +626,31 @@ def handle_listen_keypress(
                         station_list = temp_station_list
                         # Find valid station choice
                         try:
-                            station_name, target_url = (
+                            new_station_name, new_target_url = (
                                 handle_user_choice_from_search_result(
                                     handler, station_list
                                 )
                             )
-                            # Stop current, switch
-                            player.stop()
-                            player.url = target_url
-                            player.play()
-                            handle_current_play_panel(station_name)
-                            # Update loop variables
-                            station_url = target_url
+                            if new_target_url:
+                                if new_target_url == target_url:
+                                    log.info("Station is already playing!")
+                                    continue
+                                # Stop current, switch
+                                player.stop()
+                                player.url = new_target_url
+                                player.play()
+                                handle_current_play_panel(new_station_name)
+                                # Save the new station as last played and add to history
+                                handle_save_last_station(
+                                    last_station, new_station_name, new_target_url
+                                )
+                                handle_save_to_history(
+                                    history, new_station_name, new_target_url
+                                )
+                                # Update loop variables
+                                station_name = new_station_name
+                                station_url = new_target_url
+                                target_url = new_target_url
                         except SystemExit:
                             # handle_user_choice might try to exit on cancel
                             pass
@@ -725,10 +748,23 @@ def handle_listen_keypress(
 
                         # Check if we have a URL to play
                         if new_target_url:
+                            if new_target_url == target_url:
+                                # log.debug("Station already playing, but cycling next...")
+                                # Actually, for 'next', if there's only 1 station, we should just stay
+                                if len(target_list) == 1:
+                                    log.info("Station is already playing!")
+                                    break
                             player.stop()
                             player.url = new_target_url
                             player.play()
                             handle_current_play_panel(new_station_name)
+                            # Save the new station as last played and add to history
+                            handle_save_last_station(
+                                last_station, new_station_name, new_target_url
+                            )
+                            handle_save_to_history(
+                                history, new_station_name, new_target_url
+                            )
                             station_url = new_target_url
                             station_name = new_station_name
                             target_url = new_target_url
@@ -782,10 +818,16 @@ def handle_listen_keypress(
             try:
                 name, url = handle_direct_play(alias, user_input)
                 if url:
+                    if url == target_url:
+                        log.info("Station is already playing!")
+                        continue
                     player.stop()
                     player.url = url
                     player.play()
                     handle_current_play_panel(name)
+                    # Save the new station as last played and add to history
+                    handle_save_last_station(last_station, name, url)
+                    handle_save_to_history(history, name, url)
                     station_url = url
                     station_name = name
                     target_url = url

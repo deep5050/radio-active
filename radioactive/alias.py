@@ -86,6 +86,8 @@ class Alias:
             with open(self.alias_path, "a+") as f:
                 f.write("{}=={}\n".format(left.strip(), right.strip()))
                 log.info("Current station added to your favorite list")
+            # Refresh map after writing
+            self.generate_map()
             return True
 
     def flush(self):
