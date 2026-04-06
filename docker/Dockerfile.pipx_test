@@ -1,0 +1,27 @@
+# Dockerfile.pipx_test
+# Used to test the installation of radio-active using pipx across multiple python versions
+ARG PYTHON_VERSION=3.9
+FROM python:${PYTHON_VERSION}-slim
+
+# Upgrade pip and install common dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install pipx
+RUN pipx ensurepath
+
+# Install radio-active from PyPI using pipx
+# Add /root/.local/bin to PATH where pipx installs binaries
+ENV PATH="/root/.local/bin:${PATH}"
+RUN pipx install radio-active
+
+# test if radioactive/radio commands are working and show version
+RUN radioactive --version
+RUN radio --version
+
+# Smoke test: check help output
+RUN radioactive --help
