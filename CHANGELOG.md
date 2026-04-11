@@ -1,10 +1,14 @@
 ## 4.0.0
 
-1. Vim-style command prompt with advanced tab completion 🚀
-2. Real-time fuzzy station search across favorites and history
-3. Integrated volume control for MPV, VLC, and FFplay players
-4. Interactive station selection menu via `l/list` command
-5. Improved help menu using a Rich-based interactive interface
+1. Major UI changes
+2. Command prompt with advanced tab completion 🚀
+3. Real-time fuzzy station search across favorites and history
+4. Integrated volume control for MPV, VLC, and FFplay players
+5. Interactive station selection menu via `l/list` command
+6. Improved help menu using a Rich-based interactive interface
+7. Zen mode
+8. New recording window
+9. Stability improvements
 
 ## 3.0.4
 
