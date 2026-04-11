@@ -153,6 +153,7 @@ def handle_vim_style_prompt(alias=None, history=None):
         "n": "next station",
         "timer": "timer",
         "sleep": "sleep",
+        "b": "background",
         "q": "quit",
         "help": "help",
         "?": "help",
@@ -214,6 +215,7 @@ def handle_vim_style_prompt(alias, history) -> str:
         "n": "next station",
         "timer": "timer",
         "sleep": "sleep",
+        "b": "background",
         "q": "quit",
         "help": "help",
         "?": "help",
@@ -347,6 +349,7 @@ def handle_runtime_help_menu():
             add("timer / sleep", "Set a sleep timer")
 
         add("q / quit", "Quit radioactive")
+        add("b / background", "Run radioactive in the background")
         add("Any Text", "Fuzzy search & play from favorites/history")
 
         # Center the table within a panel
@@ -570,6 +573,47 @@ def handle_listen_keypress(
         elif user_input in ["q", "Q", "quit"]:
             player.stop()
             sys.exit(0)
+
+        elif user_input in ["b", "B", "background"]:
+            log.info("Moving to background...")
+            try:
+                pid = os.fork()
+                if pid > 0:
+                    # parent
+                    log.info(
+                        f"Radio-active is now running in the background. (PID: {pid})"
+                    )
+                    # No need to stop the player, the child inherits it?
+                    # Actually ffplay is a separate process.
+                    # We want the parent to exit and child to keep running.
+                    # We should probably write the child PID to the PID file if we are using one.
+                    from radioactive.paths import get_pid_path
+
+                    with open(get_pid_path(), "w") as f:
+                        f.write(str(pid))
+
+                    sys.exit(0)
+                else:
+                    # child
+                    os.setsid()
+                    # Redirect standard file descriptors
+                    sys.stdin.close()
+                    sys.stdout = open(os.devnull, "w")
+                    sys.stderr = open(os.devnull, "w")
+                    # child should not listen to keypresses anymore
+                    import signal
+
+                    try:
+                        signal.pause()
+                    except:
+                        while True:
+                            time.sleep(100)
+                    sys.exit(0)
+            except AttributeError:
+                log.error("Background mode is only supported on Unix-like systems")
+            except Exception as e:
+                log.error(f"Error while backgrounding: {e}")
+            continue
 
         # elif user_input in ["w", "W"]:
         #     alias.generate_map()

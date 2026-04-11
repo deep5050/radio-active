@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+import atexit
 import os
 import signal
 import sys
 from time import sleep
 
+import psutil
 from zenlog import log
 
 from radioactive.alias import Alias
@@ -14,6 +16,7 @@ from radioactive.help import show_help
 from radioactive.history import History
 from radioactive.last_station import Last_station
 from radioactive.parser import parse_options
+from radioactive.paths import get_pid_path
 from radioactive.utilities import (
     check_sort_by_parameter,
     handle_add_station,
@@ -126,19 +129,15 @@ def main():
 
     VERSION = app.get_version()
 
+    if options["version"]:
+        log.info("RADIO-ACTIVE : version {}".format(VERSION))
+        sys.exit(0)
+
     handler = Handler()
     alias = Alias()
     alias.generate_map()
     last_station = Last_station()
     history = History()
-
-    # --------------- app logic starts here ------------------- #
-
-    if options["version"]:
-        log.info("RADIO-ACTIVE : version {}".format(VERSION))
-        sys.exit(0)
-
-    handle_welcome_screen()
 
     if options["show_help_table"]:
         show_help()
@@ -149,7 +148,81 @@ def main():
 
     if options["kill_ffplays"]:
         kill_background_ffplays()
+        pid_file = get_pid_path()
+        if os.path.exists(pid_file):
+            with open(pid_file, "r") as f:
+                try:
+                    pid = int(f.read().strip())
+                    if psutil.pid_exists(pid):
+                        os.kill(pid, signal.SIGTERM)
+                        log.info(
+                            f"Terminated background radioactive process (PID: {pid})"
+                        )
+                except:
+                    pass
+            try:
+                os.remove(pid_file)
+            except:
+                pass
         sys.exit(0)
+
+    # --------------- PID check ------------------- #
+    pid_file = get_pid_path()
+    if os.path.exists(pid_file):
+        with open(pid_file, "r") as f:
+            try:
+                content = f.read().strip()
+                if content:
+                    old_pid = int(content)
+                    if psutil.pid_exists(old_pid):
+                        proc = psutil.Process(old_pid)
+                        # Check if it's likely our app
+                        if (
+                            "python" in proc.name().lower()
+                            or "radioactive" in proc.name().lower()
+                        ):
+                            log.warning(
+                                f"Another instance of radioactive is already running (PID: {old_pid})"
+                            )
+                            try:
+                                choice = input(
+                                    "Open the existing one or open a new instance? (e/n): "
+                                ).lower()
+                                if choice == "e":
+                                    log.info(
+                                        "Continuing with existing instance. Exiting."
+                                    )
+                                    sys.exit(0)
+                                elif choice == "n":
+                                    log.info("Starting a new instance.")
+                                else:
+                                    log.info("Invalid choice. Exiting.")
+                                    sys.exit(1)
+                            except EOFError:
+                                sys.exit(0)
+            except (ValueError, psutil.NoSuchProcess, Exception) as e:
+                log.debug(f"Error checking PID: {e}")
+                pass
+
+    # Save current PID
+    with open(pid_file, "w") as f:
+        f.write(str(os.getpid()))
+
+    def cleanup():
+        if os.path.exists(pid_file):
+            try:
+                with open(pid_file, "r") as f:
+                    content = f.read().strip()
+                    if content:
+                        pid = int(content)
+                        if pid == os.getpid():
+                            os.remove(pid_file)
+            except:
+                pass
+
+    atexit.register(cleanup)
+
+    handle_welcome_screen()
 
     # ------------------ SCHEDULED RECORDING MODE ------------------ #
     from radioactive.feature_flags import RECORDING_FEATURE

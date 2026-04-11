@@ -139,3 +139,11 @@ def get_recordings_path():
         # Not exiting here, hoping the caller handles it or it works next time
 
     return recordings_path
+
+
+def get_pid_path():
+    """
+    Get the path to the PID file: ~/radioactive/radioactive.pid
+    """
+    base_dir = get_base_dir()
+    return os.path.join(base_dir, "radioactive.pid")
