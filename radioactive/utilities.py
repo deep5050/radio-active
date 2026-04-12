@@ -36,6 +36,7 @@ except ImportError:
 
 from radioactive.actions import (
     check_sort_by_parameter,
+    get_current_track_name,
     handle_add_station,
     handle_add_to_favorite,
     handle_direct_play,
@@ -128,53 +129,6 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
         return handle_station_uuid_play(handler, station_uuid)
 
 
-def handle_vim_style_prompt(alias=None, history=None):
-    """
-    Shows a Vim-style command prompt (:) at the bottom with descriptive Tab completion
-    and fuzzy search for favorites/history stations.
-    """
-    from rich.console import Console
-    from rich.live import Live
-    from rich.text import Text
-
-    # Mapping of shortcut/command to descriptive full text
-    command_map = {
-        "p": "play/pause",
-        "t": "track info",
-        "i": "station info",
-        "r": "record",
-        "rf": "record file",
-        "f": "add favorite",
-        "l": "list favorites",
-        "v+": "volume +",
-        "v-": "volume -",
-        "v": "set volume",
-        "s": "search",
-        "n": "next station",
-        "timer": "timer",
-        "sleep": "sleep",
-        "b": "background",
-        "q": "quit",
-        "help": "help",
-        "?": "help",
-    }
-
-    # Combined list for matching
-    completions = list(command_map.keys())
-
-    # Build a list of station names for fuzzy search
-    station_names = []
-    if alias and hasattr(alias, "alias_map"):
-        station_names += [s.get("name", "").strip() for s in alias.alias_map]
-    if history and hasattr(history, "get_list"):
-        station_names += [s.get("name", "").strip() for s in history.get_list()]
-
-    # Clean and deduplicate station names
-    station_names = sorted(list(set([n for n in station_names if n])))
-
-    buffer = ""
-
-
 def get_key():
     """Helper to capture single key on Linux."""
     import sys
@@ -213,6 +167,7 @@ def handle_vim_style_prompt(alias, history) -> str:
         "v": "set volume",
         "s": "search",
         "n": "next station",
+        "a": "auto track info",
         "timer": "timer",
         "sleep": "sleep",
         "b": "background",
@@ -345,6 +300,8 @@ def handle_runtime_help_menu():
             add("s / search", "Search for a new station")
         if CYCLE_FEATURE:
             add("n / next", "Play next result from search or favorites")
+        if TRACK_FEATURE:
+            add("a / auto", "Fetch track info every 10s")
         if TIMER_FEATURE:
             add("timer / sleep", "Set a sleep timer")
 
@@ -370,6 +327,49 @@ def handle_runtime_help_menu():
             console.input()
         except (EOFError, KeyboardInterrupt):
             pass
+
+
+class AutoFetcher:
+    def __init__(self):
+        self.enabled = False
+        self.thread = None
+        self.last_song = ""
+        self.target_url = ""
+
+    def start(self, url):
+        if self.enabled:
+            return
+        self.enabled = True
+        self.target_url = url
+        self.thread = threading.Thread(target=self._run, daemon=True)
+        self.thread.start()
+        log.info("Auto track info fetcher started (10s interval)")
+
+    def stop(self):
+        self.enabled = False
+        if self.thread:
+            # self.thread.join()
+            self.thread = None
+        log.info("Auto track info fetcher stopped")
+
+    def toggle(self, url):
+        if self.enabled:
+            self.stop()
+        else:
+            self.start(url)
+
+    def update_url(self, url):
+        self.target_url = url
+        self.last_song = ""
+
+    def _run(self):
+        while self.enabled:
+            if self.target_url:
+                current_song = get_current_track_name(self.target_url)
+                if current_song and current_song != self.last_song:
+                    log.info(f"🎶: {current_song}")
+                    self.last_song = current_song
+            time.sleep(10)
 
 
 def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
@@ -466,6 +466,7 @@ def handle_listen_keypress(
     Now with handler and station_list for runtime commands.
     """
     # log.info("Press '?' to see available commands\n")
+    auto_fetcher = AutoFetcher()
     while True:
         try:
             user_input = handle_vim_style_prompt(alias, history)
@@ -644,6 +645,7 @@ def handle_listen_keypress(
                         station_name = new_station_name
                         station_url = new_target_url
                         target_url = new_target_url
+                        auto_fetcher.update_url(target_url)
                 except Exception as e:
                     log.error(f"Error selecting station: {e}")
             else:
@@ -651,6 +653,9 @@ def handle_listen_keypress(
 
         elif TRACK_FEATURE and user_input in ["t", "T", "track"]:
             handle_fetch_song_title(target_url)
+
+        elif TRACK_FEATURE and user_input in ["a", "A", "auto"]:
+            auto_fetcher.toggle(target_url)
 
         elif user_input in ["p", "P"]:
             player.toggle()
@@ -695,6 +700,7 @@ def handle_listen_keypress(
                                 station_name = new_station_name
                                 station_url = new_target_url
                                 target_url = new_target_url
+                                auto_fetcher.update_url(target_url)
                         except SystemExit:
                             # handle_user_choice might try to exit on cancel
                             pass
@@ -858,9 +864,9 @@ def handle_listen_keypress(
         elif user_input.strip() != "":
             # Fuzzy match station from aliases or history if not a direct command
             # Try to see if it's a station name the user typed
-            log.info(f"Checking for station: {user_input}")
+            # log.info(f"Checking for station: {user_input}")
             try:
-                name, url = handle_direct_play(alias, user_input)
+                name, url = handle_direct_play(alias, history, user_input)
                 if url:
                     if url == target_url:
                         log.info("Station is already playing!")

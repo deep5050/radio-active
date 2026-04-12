@@ -518,7 +518,7 @@ def main():
     # ------------------------- direct play ------------------------#
     if options["direct_play"] is not None:
         options["curr_station_name"], options["target_url"] = handle_direct_play(
-            alias, options["direct_play"]
+            alias, history, options["direct_play"]
         )
         final_step(options, last_station, alias, handler, history)
 

@@ -24,10 +24,8 @@ if RECORDING_FEATURE:
 from radioactive.last_station import Last_station
 
 
-def handle_fetch_song_title(url: str) -> None:
-    """Fetch currently playing track information"""
-    log.info("Fetching the current track info")
-    log.debug(f"Attempting to retrieve track info from: {url}")
+def get_current_track_name(url: str) -> str:
+    """Fetch currently playing track information and return it"""
     # Run ffprobe command and capture the metadata
     cmd = [
         "ffprobe",
@@ -50,7 +48,17 @@ def handle_fetch_song_title(url: str) -> None:
         # Extract the station name (icy-name) if available
         track_name = data.get("format", {}).get("tags", {}).get("StreamTitle", "")
     except Exception:
-        log.error("Error while fetching the track name")
+        log.debug("Error while fetching the track name")
+
+    return track_name
+
+
+def handle_fetch_song_title(url: str) -> None:
+    """Fetch currently playing track information"""
+    log.info("Fetching the current track info")
+    log.debug(f"Attempting to retrieve track info from: {url}")
+
+    track_name = get_current_track_name(url)
 
     if track_name != "":
         log.info(f"🎶: {track_name}")
@@ -187,8 +195,8 @@ def handle_save_last_station(last_station, station_name: str, station_url: str) 
     # last_station = Last_station() # Provided as arg now
 
     last_played_station = {}
-    last_played_station["name"] = station_name
-    last_played_station["uuid_or_url"] = station_url
+    last_played_station["name"] = station_name.strip()
+    last_played_station["uuid_or_url"] = station_url.strip()
 
     log.debug(f"Saving the current station: {last_played_station}")
     last_station.save_info(last_played_station)
@@ -217,8 +225,8 @@ def handle_save_to_history(history, station_name: str, station_url: str) -> None
         station_data.update(global_info)
 
     # re-ensure required keys
-    station_data["name"] = station_name
-    station_data["uuid_or_url"] = station_url
+    station_data["name"] = station_name.strip()
+    station_data["uuid_or_url"] = station_url.strip()
 
     log.debug(f"Adding to history: {station_name}")
     history.append(station_data)
@@ -276,7 +284,9 @@ def handle_station_uuid_play(handler, station_uuid: str) -> Tuple[str, str]:
     return station_name, station_url
 
 
-def handle_direct_play(alias, station_name_or_url: str = "") -> Tuple[str, str]:
+def handle_direct_play(
+    alias, history=None, station_name_or_url: str = ""
+) -> Tuple[str, str]:
     """Play a station directly with UUID or direct stream URL."""
     if "://" in station_name_or_url.strip():
         log.debug("Direct play: URL provided")
@@ -291,12 +301,45 @@ def handle_direct_play(alias, station_name_or_url: str = "") -> Tuple[str, str]:
         # search for the station in fav list and return name and url
 
         response = alias.search(station_name_or_url)
+        if not response and history:
+            log.debug("Not found in favorites, checking history")
+            # history object should have a search method or we iterate
+            # looking at history.py might be good
+            if hasattr(history, "search"):
+                response = history.search(station_name_or_url)
+            else:
+                # fallback iteration
+                for entry in history.get_list():
+                    name = entry.get("name", "").strip()
+                    val = entry.get("uuid_or_url", "").strip()
+                    # also check stationuuid if it exists (older history)
+                    sid = entry.get("stationuuid", "").strip()
+
+                    token = station_name_or_url.strip().lower()
+                    log.debug(
+                        f"Comparing history entry: '{name.lower()}' with token: '{token}'"
+                    )
+
+                    if (
+                        name.lower() == token
+                        or val == station_name_or_url.strip()
+                        or sid == station_name_or_url.strip()
+                    ):
+                        log.debug(f"History match found: {name}")
+                        response = entry
+                        break
+
         if not response:
-            log.error("No station found on your favorite list with the name")
+            log.debug(f"Search failed for: {station_name_or_url}")
+            log.error(
+                "No station found on your favorite list or history with that name"
+            )
             sys.exit(1)
         else:
             log.debug(f"Direct play: {response}")
-            return response["name"], response["uuid_or_url"]
+            return response["name"], response.get("uuid_or_url") or response.get(
+                "stationuuid"
+            )
 
 
 def handle_play_last_station(last_station) -> Tuple[str, str]:
