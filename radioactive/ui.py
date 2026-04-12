@@ -12,6 +12,7 @@ from zenlog import log
 # Global variable to store current station info for display
 # This is shared state, ideally should be managed better, but keeping for compatibility
 global_current_station_info = {}
+console = Console()
 
 
 def handle_welcome_screen() -> None:
