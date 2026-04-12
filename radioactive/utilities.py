@@ -42,6 +42,7 @@ from radioactive.actions import (
     handle_direct_play,
     handle_fetch_song_title,
     handle_get_station_name_from_metadata,
+    handle_notification,
     handle_play_last_station,
     handle_play_random_station,
     handle_record,
@@ -367,7 +368,7 @@ class AutoFetcher:
             if self.target_url:
                 current_song = get_current_track_name(self.target_url)
                 if current_song and current_song != self.last_song:
-                    log.info(f"🎶: {current_song}")
+                    handle_notification("New song: ", current_song)
                     self.last_song = current_song
             time.sleep(10)
 

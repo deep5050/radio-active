@@ -24,6 +24,25 @@ if RECORDING_FEATURE:
 from radioactive.last_station import Last_station
 
 
+def handle_notification(title: str, message: str) -> None:
+    """Send a desktop notification on Linux."""
+    from shutil import which
+
+    if which("notify-send"):
+        try:
+            subprocess.Popen(
+                ["notify-send", "-a radioactive", "-u normal", title, message],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except Exception as e:
+            log.debug(f"Error sending notification: {e}")
+    else:
+        log.error(
+            "notify-send is not installed. please install it to use notifications"
+        )
+
+
 def get_current_track_name(url: str) -> str:
     """Fetch currently playing track information and return it"""
     # Run ffprobe command and capture the metadata
