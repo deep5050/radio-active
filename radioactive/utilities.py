@@ -13,8 +13,6 @@ from random import randint
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pick import pick
-from rich.live import Live
-from rich.text import Text
 from zenlog import log
 
 try:
@@ -57,7 +55,6 @@ from radioactive.ffplay import kill_background_ffplays
 
 # Re-export functions for backward compatibility and aggregation
 from radioactive.ui import (
-    console,
     get_global_station_info,
     handle_current_play_panel,
     handle_favorite_table,
@@ -153,6 +150,8 @@ def get_key():
 
 def handle_vim_style_prompt(alias, history) -> str:
     """Captured VIM style command prompt with fuzzy search and completions."""
+    from rich.live import Live
+    from rich.text import Text
 
     # Mapping of shortcut/command to descriptive full text
     command_map = {
@@ -220,9 +219,7 @@ def handle_vim_style_prompt(alias, history) -> str:
 
         return prompt_text
 
-    with Live(
-        get_display(""), console=console, transient=True, refresh_per_second=10
-    ) as live:
+    with Live(get_display(""), transient=True, refresh_per_second=10) as live:
         while True:
             char = get_key()
 
@@ -370,9 +367,7 @@ class AutoFetcher:
             if self.target_url:
                 current_song = get_current_track_name(self.target_url)
                 if current_song and current_song != self.last_song:
-                    console.print(
-                        f"\n      [green]i[/green]     |🎶: [cyan]{current_song}[cyan]"
-                    )
+                    log.info(f"🎶: {current_song}")
                     self.last_song = current_song
             time.sleep(10)
 
