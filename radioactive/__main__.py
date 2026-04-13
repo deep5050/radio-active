@@ -49,12 +49,12 @@ def final_step(options, last_station, alias, handler, history, station_list=None
     global ffplay  # always needed
     global player
 
-    # check target URL for the last time
-    if options["target_url"].strip() == "":
-        log.error("something is wrong with the url")
-        sys.exit(1)
-
-    if options["audio_player"] == "vlc":
+    # check target URL
+    target_url = (options.get("target_url") or "").strip()
+    if target_url == "":
+        log.info("Type 's' to search for a station or '?' for help")
+        player = None
+    elif options["audio_player"] == "vlc":
         from radioactive.vlc import VLC
 
         vlc = VLC(options["volume"])
@@ -76,32 +76,32 @@ def final_step(options, last_station, alias, handler, history, station_list=None
         log.error("Unsupported media player selected")
         sys.exit(1)
 
-    if options["curr_station_name"].strip() == "":
+    if (options.get("curr_station_name") or "").strip() == "":
         options["curr_station_name"] = "N/A"
 
-    handle_save_last_station(
-        last_station, options["curr_station_name"], options["target_url"]
-    )
+    if target_url != "":
+        handle_save_last_station(last_station, options["curr_station_name"], target_url)
 
-    handle_save_to_history(history, options["curr_station_name"], options["target_url"])
+        handle_save_to_history(history, options["curr_station_name"], target_url)
 
-    if options["add_to_favorite"]:
-        handle_add_to_favorite(
-            alias, options["curr_station_name"], options["target_url"]
-        )
+        if options["add_to_favorite"]:
+            handle_add_to_favorite(alias, options["curr_station_name"], target_url)
 
-    handle_current_play_panel(options["curr_station_name"])
+        handle_current_play_panel(options["curr_station_name"])
 
     if options["record_stream"]:
-        handle_record(
-            options["target_url"],
-            options["curr_station_name"],
-            options["record_file_path"],
-            options["record_file"],
-            options["record_file_format"],
-            options["loglevel"],
-            options.get("record_duration"),
-        )
+        if target_url == "":
+            log.error("Cannot record in idle mode. Please select a station first.")
+        else:
+            handle_record(
+                target_url,
+                options["curr_station_name"],
+                options["record_file_path"],
+                options["record_file"],
+                options["record_file_format"],
+                options["loglevel"],
+                options.get("record_duration"),
+            )
 
     handle_listen_keypress(
         alias,
@@ -117,6 +117,8 @@ def final_step(options, last_station, alias, handler, history, station_list=None
         last_station=last_station,
         station_list=station_list,
         history=history,
+        audio_player=options["audio_player"],
+        volume=options["volume"],
     )
 
 
@@ -415,7 +417,8 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            log.info("No stations found for this country.")
+            final_step(options, last_station, alias, handler, history)
 
     # -------------- state ------------- #
     if options["discover_state"]:
@@ -432,7 +435,8 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            log.info("No stations found for this state.")
+            final_step(options, last_station, alias, handler, history)
 
     # ----------- language ------------ #
     if options["discover_language"]:
@@ -449,7 +453,8 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            log.info("No stations found for this language.")
+            final_step(options, last_station, alias, handler, history)
 
     # -------------- tag ------------- #
     if options["discover_tag"]:
@@ -466,7 +471,8 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            log.info("No stations found for this tag.")
+            final_step(options, last_station, alias, handler, history)
 
     # -------------------- NOTHING PROVIDED --------------------- #
     if (
@@ -514,7 +520,7 @@ def main():
             # print(response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            final_step(options, last_station, alias, handler, history)
     # ------------------------- direct play ------------------------#
     if options["direct_play"] is not None:
         options["curr_station_name"], options["target_url"] = handle_direct_play(

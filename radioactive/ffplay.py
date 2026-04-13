@@ -139,6 +139,7 @@ class Ffplay:
             if len(parts) > 1:
                 log.error(parts[1].strip())
             else:
+                print()
                 log.error(stderr_result.strip())
         except Exception as e:
             log.debug(f"Error parsing stderr: {e}")

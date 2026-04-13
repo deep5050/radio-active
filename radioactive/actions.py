@@ -298,7 +298,7 @@ def handle_station_uuid_play(handler, station_uuid: str) -> Tuple[str, str]:
     except Exception as e:
         log.debug(f"{e}")
         log.error("Something went wrong")
-        sys.exit(1)
+        return None, None
 
     return station_name, station_url
 
@@ -353,7 +353,7 @@ def handle_direct_play(
             log.error(
                 "No station found on your favorite list or history with that name"
             )
-            sys.exit(1)
+            return None, None
         else:
             log.debug(f"Direct play: {response}")
             return response["name"], response.get("uuid_or_url") or response.get(
@@ -429,7 +429,7 @@ def handle_play_random_station(alias) -> Tuple[str, str]:
     alias_map = alias.alias_map
     if not alias_map:
         log.error("No favorite stations found")
-        sys.exit(1)
+        return None, None
 
     index = randint(0, len(alias_map) - 1)
     station = alias_map[index]

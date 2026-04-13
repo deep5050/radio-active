@@ -109,9 +109,9 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
     options = station_selection_names
     if len(options) == 0:
         log.info(
-            f"{RED_COLOR}No stations to play. please search for a station first!{END_COLOR}"
+            f"{RED_COLOR}No stations found in favorites or history. Entering idle mode.{END_COLOR}"
         )
-        sys.exit(0)
+        return None, None
 
     _, index = pick(options, title, indicator="-->")
 
@@ -379,7 +379,7 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
     """
     if not response:
         log.debug("No result found!")
-        sys.exit(0)
+        return None, None
 
     if len(response) == 1:
         # single station found
@@ -389,7 +389,7 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
             user_input = input("Want to play this station? Y/N: ")
         except EOFError:
             print()
-            sys.exit(0)
+            return None, None
 
         if user_input in ["y", "Y"]:
             log.debug("Playing UUID from single response")
@@ -398,8 +398,8 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
 
             return handle_station_uuid_play(handler, response[0]["stationuuid"])
         else:
-            log.debug("Quitting")
-            sys.exit(0)
+            log.debug("User chose not to play")
+            return None, None
     else:
         # multiple station
         log.debug("Asking for user input")
@@ -409,9 +409,8 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
             user_input = input("Type the result ID to play: ")
         except EOFError:
             print()
-            log.info("Exiting")
-            log.debug("EOF reached, quitting")
-            sys.exit(0)
+            log.info("Returning to command prompt")
+            return None, None
 
         try:
             if user_input in ["n", "N", "next"]:
@@ -461,6 +460,8 @@ def handle_listen_keypress(
     last_station=None,
     station_list=None,
     history=None,
+    audio_player="ffplay",
+    volume=80,
 ) -> None:
     """
     Listen for user input during playback to perform actions.
@@ -479,15 +480,18 @@ def handle_listen_keypress(
             sys.exit(0)
 
         if RECORDING_FEATURE and user_input in ["r", "R", "record"]:
-            process, outfile_path = handle_record(
-                target_url,
-                station_name,
-                record_file_path,
-                record_file,
-                record_file_format,
-                loglevel,
-            )
-            handle_recording_popup(process, outfile_path)
+            if not target_url:
+                log.error("Please select a station to record first.")
+            else:
+                process, outfile_path = handle_record(
+                    target_url,
+                    station_name,
+                    record_file_path,
+                    record_file,
+                    record_file_format,
+                    loglevel,
+                )
+                handle_recording_popup(process, outfile_path)
             continue
 
         elif RECORDING_FEATURE and user_input in ["rf", "RF", "recordfile"]:
@@ -520,15 +524,18 @@ def handle_listen_keypress(
                 file_name = user_input
 
             if user_input.strip() != "":
-                process, outfile_path = handle_record(
-                    target_url,
-                    station_name,
-                    record_file_path,
-                    file_name,
-                    record_file_format,
-                    loglevel,
-                )
-                handle_recording_popup(process, outfile_path)
+                if not target_url:
+                    log.error("Please select a station to record first.")
+                else:
+                    process, outfile_path = handle_record(
+                        target_url,
+                        station_name,
+                        record_file_path,
+                        file_name,
+                        record_file_format,
+                        loglevel,
+                    )
+                    handle_recording_popup(process, outfile_path)
             continue
 
         if INFO_FEATURE and user_input in ["i", "I", "info"]:
@@ -573,7 +580,8 @@ def handle_listen_keypress(
             handle_add_to_favorite(alias, station_name, station_url)
 
         elif user_input in ["q", "Q", "quit"]:
-            player.stop()
+            if player:
+                player.stop()
             sys.exit(0)
 
         elif user_input in ["b", "B", "background"]:
@@ -624,16 +632,32 @@ def handle_listen_keypress(
         elif user_input in ["l", "L", "list"]:
             if handler and last_station:
                 try:
-                    new_station_name, new_target_url = handle_station_selection_menu(
-                        handler, last_station, alias
-                    )
+                    res = handle_station_selection_menu(handler, last_station, alias)
+                    new_station_name, new_target_url = res
                     if new_target_url:
-                        if new_target_url == target_url:
-                            log.info("Station is already playing!")
-                            continue
-                        player.stop()
-                        player.url = new_target_url
-                        player.play()
+                        if player:
+                            if new_target_url == target_url:
+                                log.info("Station is already playing!")
+                                continue
+                            player.stop()
+                            player.url = new_target_url
+                            player.play()
+                        else:
+                            # Initialize player
+                            if audio_player == "vlc":
+                                from radioactive.vlc import VLC
+
+                                player = VLC(volume)
+                                player.start(new_target_url)
+                            elif audio_player == "mpv":
+                                from radioactive.mpv import MPV
+
+                                player = MPV(volume)
+                                player.start(new_target_url)
+                            else:
+                                from radioactive.ffplay import Ffplay
+
+                                player = Ffplay(new_target_url, volume, loglevel)
                         handle_current_play_panel(new_station_name)
                         # Save the new station as last played and add to history
                         handle_save_last_station(
@@ -659,7 +683,10 @@ def handle_listen_keypress(
             auto_fetcher.toggle(target_url)
 
         elif user_input in ["p", "P"]:
-            player.toggle()
+            if player:
+                player.toggle()
+            else:
+                log.info("Nothing to play")
 
         elif SEARCH_FEATURE and user_input in ["s", "S", "search"]:
             if handler:
@@ -682,13 +709,32 @@ def handle_listen_keypress(
                                 )
                             )
                             if new_target_url:
-                                if new_target_url == target_url:
-                                    log.info("Station is already playing!")
-                                    continue
-                                # Stop current, switch
-                                player.stop()
-                                player.url = new_target_url
-                                player.play()
+                                if player:
+                                    if new_target_url == target_url:
+                                        log.info("Station is already playing!")
+                                        continue
+                                    # Stop current, switch
+                                    player.stop()
+                                    player.url = new_target_url
+                                    player.play()
+                                else:
+                                    # Initialize player
+                                    if audio_player == "vlc":
+                                        from radioactive.vlc import VLC
+
+                                        player = VLC(volume)
+                                        player.start(new_target_url)
+                                    elif audio_player == "mpv":
+                                        from radioactive.mpv import MPV
+
+                                        player = MPV(volume)
+                                        player.start(new_target_url)
+                                    else:
+                                        from radioactive.ffplay import Ffplay
+
+                                        player = Ffplay(
+                                            new_target_url, volume, loglevel
+                                        )
                                 handle_current_play_panel(new_station_name)
                                 # Save the new station as last played and add to history
                                 handle_save_last_station(
