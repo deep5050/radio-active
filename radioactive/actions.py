@@ -24,14 +24,25 @@ if RECORDING_FEATURE:
 from radioactive.last_station import Last_station
 
 
-def handle_notification(title: str, message: str) -> None:
+def handle_notification(title: str, message: str, icon: str = None) -> None:
     """Send a desktop notification on Linux."""
     from shutil import which
 
+    from radioactive.paths import get_logo_path
+
     if which("notify-send"):
+        if not icon:
+            icon = get_logo_path()
+
+        cmd = ["notify-send", "-a", "radioactive", "-u", "normal"]
+        if icon:
+            cmd.extend(["-i", icon])
+
+        cmd.extend([title, message])
+
         try:
             subprocess.Popen(
-                ["notify-send", "-a radioactive", "-u normal", title, message],
+                cmd,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )

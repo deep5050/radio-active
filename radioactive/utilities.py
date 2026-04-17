@@ -368,7 +368,19 @@ class AutoFetcher:
             if self.target_url:
                 current_song = get_current_track_name(self.target_url)
                 if current_song and current_song != self.last_song:
-                    handle_notification("New song: ", current_song)
+                    station_info = get_global_station_info()
+                    station_name = station_info.get("name", "Unknown Station")
+
+                    notification_title = f"Now Playing on {station_name}"
+                    notification_message = f"🎶 {current_song}"
+
+                    # Add extra info if available
+                    codec = station_info.get("codec")
+                    bitrate = station_info.get("bitrate")
+                    if codec and bitrate:
+                        notification_message += f"\n({codec} • {bitrate} kbps)"
+
+                    handle_notification(notification_title, notification_message)
                     self.last_song = current_song
             time.sleep(10)
 
