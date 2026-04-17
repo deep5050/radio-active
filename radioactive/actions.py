@@ -2,6 +2,7 @@
 Core logical actions for radio-active.
 """
 
+import asyncio
 import datetime
 import json
 import os
@@ -21,36 +22,83 @@ except ImportError:
 
 if RECORDING_FEATURE:
     from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
+
 from radioactive.last_station import Last_station
+
+
+def handle_notification(title: str, message: str, icon: str = None) -> None:
+    """Send a desktop notification on Linux."""
+    from shutil import which
+
+    from radioactive.paths import get_logo_path
+
+    if which("notify-send"):
+        if not icon:
+            icon = get_logo_path()
+
+        cmd = ["notify-send", "-a", "radioactive", "-u", "normal"]
+        if icon:
+            cmd.extend(["-i", icon])
+
+        cmd.extend([title, message])
+
+        try:
+            subprocess.Popen(
+                cmd,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except Exception as e:
+            log.debug(f"Error sending notification: {e}")
+    else:
+        log.error(
+            "notify-send is not installed. please install it to use notifications"
+        )
+
+
+def get_current_track_name(url: str) -> str:
+    """Fetch currently playing track information and return it"""
+    # Run ffprobe command and capture the metadata
+    # -i is implicit if it's the last arg, but let's be explicit
+    cmd = [
+        "ffprobe",
+        "-v",
+        "quiet",
+        "-select_streams",
+        "a:0",
+        "-show_entries",
+        "format_tags=StreamTitle",
+        "-print_format",
+        "json",
+        url,
+    ]
+    track_name = ""
+
+    try:
+        # 10 second timeout for the ffprobe command itself
+        output = subprocess.check_output(cmd, timeout=10).decode("utf-8")
+        data = json.loads(output)
+        log.debug(f"station info: {data}")
+
+        # Extract the song title (StreamTitle) if available
+        # It's usually in format -> tags -> StreamTitle
+        track_name = (
+            data.get("format", {}).get("tags", {}).get("StreamTitle", "").strip()
+        )
+    except subprocess.TimeoutExpired:
+        log.debug("Track info fetch timed out")
+    except Exception as e:
+        log.debug(f"Error while fetching the track name: {e}")
+
+    return track_name
 
 
 def handle_fetch_song_title(url: str) -> None:
     """Fetch currently playing track information"""
     log.info("Fetching the current track info")
     log.debug(f"Attempting to retrieve track info from: {url}")
-    # Run ffprobe command and capture the metadata
-    cmd = [
-        "ffprobe",
-        "-v",
-        "quiet",
-        "-print_format",
-        "json",
-        "-show_format",
-        "-show_entries",
-        "format=icy",
-        url,
-    ]
-    track_name = ""
 
-    try:
-        output = subprocess.check_output(cmd).decode("utf-8")
-        data = json.loads(output)
-        log.debug(f"station info: {data}")
-
-        # Extract the station name (icy-name) if available
-        track_name = data.get("format", {}).get("tags", {}).get("StreamTitle", "")
-    except Exception:
-        log.error("Error while fetching the track name")
+    track_name = get_current_track_name(url)
 
     if track_name != "":
         log.info(f"🎶: {track_name}")
@@ -74,7 +122,7 @@ def handle_record(
         log.error("Recording feature is not compiled/enabled in this build.")
         return
 
-    log.info("Press 'q' to stop recording")
+    # log.info("Press 'q' to stop recording")
     force_mp3 = False
 
     if record_file_format != "mp3" and record_file_format != "auto":
@@ -139,11 +187,10 @@ def handle_record(
     tmp_filename = f"{record_file}.{record_file_format}"
     outfile_path = os.path.join(record_file_path, tmp_filename)
 
-    log.info(f"Recording will be saved as: \n{outfile_path}")
-
-    log.info(f"Recording will be saved as: \n{outfile_path}")
-
-    record_audio_from_url(target_url, outfile_path, force_mp3, loglevel, duration)
+    process = record_audio_from_url(
+        target_url, outfile_path, force_mp3, loglevel, duration
+    )
+    return process, outfile_path
 
 
 def handle_add_station(alias) -> None:
@@ -188,8 +235,8 @@ def handle_save_last_station(last_station, station_name: str, station_url: str) 
     # last_station = Last_station() # Provided as arg now
 
     last_played_station = {}
-    last_played_station["name"] = station_name
-    last_played_station["uuid_or_url"] = station_url
+    last_played_station["name"] = station_name.strip()
+    last_played_station["uuid_or_url"] = station_url.strip()
 
     log.debug(f"Saving the current station: {last_played_station}")
     last_station.save_info(last_played_station)
@@ -218,8 +265,8 @@ def handle_save_to_history(history, station_name: str, station_url: str) -> None
         station_data.update(global_info)
 
     # re-ensure required keys
-    station_data["name"] = station_name
-    station_data["uuid_or_url"] = station_url
+    station_data["name"] = station_name.strip()
+    station_data["uuid_or_url"] = station_url.strip()
 
     log.debug(f"Adding to history: {station_name}")
     history.append(station_data)
@@ -272,12 +319,14 @@ def handle_station_uuid_play(handler, station_uuid: str) -> Tuple[str, str]:
     except Exception as e:
         log.debug(f"{e}")
         log.error("Something went wrong")
-        sys.exit(1)
+        return None, None
 
     return station_name, station_url
 
 
-def handle_direct_play(alias, station_name_or_url: str = "") -> Tuple[str, str]:
+def handle_direct_play(
+    alias, history=None, station_name_or_url: str = ""
+) -> Tuple[str, str]:
     """Play a station directly with UUID or direct stream URL."""
     if "://" in station_name_or_url.strip():
         log.debug("Direct play: URL provided")
@@ -292,12 +341,45 @@ def handle_direct_play(alias, station_name_or_url: str = "") -> Tuple[str, str]:
         # search for the station in fav list and return name and url
 
         response = alias.search(station_name_or_url)
+        if not response and history:
+            log.debug("Not found in favorites, checking history")
+            # history object should have a search method or we iterate
+            # looking at history.py might be good
+            if hasattr(history, "search"):
+                response = history.search(station_name_or_url)
+            else:
+                # fallback iteration
+                for entry in history.get_list():
+                    name = entry.get("name", "").strip()
+                    val = entry.get("uuid_or_url", "").strip()
+                    # also check stationuuid if it exists (older history)
+                    sid = entry.get("stationuuid", "").strip()
+
+                    token = station_name_or_url.strip().lower()
+                    log.debug(
+                        f"Comparing history entry: '{name.lower()}' with token: '{token}'"
+                    )
+
+                    if (
+                        name.lower() == token
+                        or val == station_name_or_url.strip()
+                        or sid == station_name_or_url.strip()
+                    ):
+                        log.debug(f"History match found: {name}")
+                        response = entry
+                        break
+
         if not response:
-            log.error("No station found on your favorite list with the name")
-            sys.exit(1)
+            log.debug(f"Search failed for: {station_name_or_url}")
+            log.error(
+                "No station found on your favorite list or history with that name"
+            )
+            return None, None
         else:
             log.debug(f"Direct play: {response}")
-            return response["name"], response["uuid_or_url"]
+            return response["name"], response.get("uuid_or_url") or response.get(
+                "stationuuid"
+            )
 
 
 def handle_play_last_station(last_station) -> Tuple[str, str]:
@@ -368,8 +450,86 @@ def handle_play_random_station(alias) -> Tuple[str, str]:
     alias_map = alias.alias_map
     if not alias_map:
         log.error("No favorite stations found")
-        sys.exit(1)
+        return None, None
 
     index = randint(0, len(alias_map) - 1)
     station = alias_map[index]
     return station["name"], station["uuid_or_url"]
+
+
+async def _identify_music(audio_path):
+    """Internal async helper for Shazam identification."""
+    try:
+        from shazamio import Shazam
+
+        shazam = Shazam()
+        out = await shazam.recognize(audio_path)
+        return out
+    except Exception as e:
+        log.debug(f"Shazam identification failed: {e}")
+        return None
+
+
+def handle_shazam(target_url: str):
+    """
+    Record 7 seconds of audio and identify using Shazam.
+    """
+    import tempfile
+
+    if not target_url:
+        log.error("No station is playing, cannot identify.")
+        return
+
+    log.info("Identifying current song (7 seconds) ...")
+
+    # Create temp file
+    temp_dir = tempfile.gettempdir()
+    temp_file = os.path.join(temp_dir, "radioactive_shazam.mp3")
+
+    # ffmpeg command to record 7 seconds
+    # we use libmp3lame to ensure it's a valid mp3 for shazam
+    cmd = [
+        "ffmpeg",
+        "-y",  # overwrite
+        "-i",
+        target_url,
+        "-t",
+        "7",
+        "-c:a",
+        "libmp3lame",
+        "-loglevel",
+        "error",
+        temp_file,
+    ]
+
+    try:
+        # Run ffmpeg synchronously (blocking for 7s)
+        subprocess.run(cmd, check=True)
+
+        if os.path.exists(temp_file) and os.path.getsize(temp_file) > 0:
+            # shazamio is async, we need a runner
+            result = asyncio.run(_identify_music(temp_file))
+
+            if result and result.get("track"):
+                track = result.get("track")
+                title = track.get("title")
+                artist = track.get("subtitle")
+                log.info(f"🎶 Match found: {title} -- {artist}")
+
+                # Also send a notification if possible
+                handle_notification("Song Identified", f"{title} - {artist}")
+            else:
+                log.warning("No match found for this song.")
+        else:
+            log.error("Could not record audio for identification.")
+
+    except subprocess.CalledProcessError:
+        log.error("FFmpeg error while recording for identification.")
+    except Exception as e:
+        log.error(f"Error during identification: {e}")
+    finally:
+        if os.path.exists(temp_file):
+            try:
+                os.remove(temp_file)
+            except:
+                pass

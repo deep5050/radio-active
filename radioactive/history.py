@@ -32,22 +32,19 @@ class History:
         # and bring it to top
         new_list = []
         for s in self.history_list:
+            prev_name = s.get("name", "").strip().lower()
+            curr_name = station.get("name", "").strip().lower()
+
+            prev_uuid = (s.get("stationuuid") or s.get("uuid_or_url") or "").strip()
+            curr_uuid = (
+                station.get("stationuuid") or station.get("uuid_or_url") or ""
+            ).strip()
+
             # check name
-            if s.get("name") == station.get("name"):
+            if prev_name == curr_name:
                 continue
             # check uuid if available
-            if (
-                s.get("stationuuid")
-                and station.get("stationuuid")
-                and s.get("stationuuid") == station.get("stationuuid")
-            ):
-                continue
-            # check url if available (for direct play)
-            if (
-                s.get("url")
-                and station.get("url")
-                and s.get("url") == station.get("url")
-            ):
+            if prev_uuid and curr_uuid and prev_uuid == curr_uuid:
                 continue
 
             new_list.append(s)

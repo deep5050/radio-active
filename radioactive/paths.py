@@ -139,3 +139,38 @@ def get_recordings_path():
         # Not exiting here, hoping the caller handles it or it works next time
 
     return recordings_path
+
+
+def get_pid_path():
+    """
+    Get the path to the PID file: ~/radioactive/radioactive.pid
+    """
+    base_dir = get_base_dir()
+    return os.path.join(base_dir, "radioactive.pid")
+
+
+def get_logo_path():
+    """
+    Get the path to the application logo (logo.png) within the package.
+    """
+    try:
+        # Try to find logo in the package directory
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # assuming the package structure is radioactive/paths.py and the logo is at radioactive/../images/logo.png or radioactive/logo.png
+        # but from the list_dir earlier, it is in /home/deep/code/radio-active/images/logo.png
+        # if installed, it might be in a different place.
+        # Let's try to locate it relative to the radioactive directory.
+        parent_dir = os.path.dirname(current_dir)
+        logo_path = os.path.join(parent_dir, "images", "logo.png")
+
+        if os.path.exists(logo_path):
+            return logo_path
+
+        # Fallback if images dir is inside radioactive (though not seen in list_dir)
+        logo_path_internal = os.path.join(current_dir, "images", "logo.png")
+        if os.path.exists(logo_path_internal):
+            return logo_path_internal
+
+        return None
+    except Exception:
+        return None

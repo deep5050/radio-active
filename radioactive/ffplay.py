@@ -139,6 +139,7 @@ class Ffplay:
             if len(parts) > 1:
                 log.error(parts[1].strip())
             else:
+                print()
                 log.error(stderr_result.strip())
         except Exception as e:
             log.debug(f"Error parsing stderr: {e}")
@@ -208,4 +209,14 @@ class Ffplay:
             self.stop()
         else:
             log.debug("Starting the ffplay process")
+            self.start_process()
+
+    def set_volume(self, volume: int) -> None:
+        """Update the volume level and restart playback if active."""
+        self.volume = volume
+        log.info(f"Volume set to {self.volume}")
+        if self.is_playing:
+            log.debug("Restarting ffplay with new volume")
+            # We don't want to kill the parent process if stop() fails
+            self.stop()
             self.start_process()

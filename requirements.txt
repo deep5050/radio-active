@@ -8,3 +8,4 @@ requests-cache
 rich
 pick
 zenlog
+shazamio

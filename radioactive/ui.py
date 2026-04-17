@@ -18,17 +18,15 @@ def handle_welcome_screen() -> None:
     """Print the welcome screen panel."""
     welcome = Panel(
         """
-        :radio: Play any radios around the globe right from this Terminal [yellow]:zap:[/yellow]!
+        :radio: Play any radios around the globe right from this Terminal
         :smile: Author: Dipankar Pal
         :question: Type '--help' for more details on available commands
-        :bug: Visit: https://github.com/deep5050/radio-active to submit issues
-        :star: Show some love by starring the project on GitHub [red]:heart:[/red]
-        :dollar: You can donate me at https://deep5050.github.io/payme/
-        :x: Press Ctrl+C to quit
+        :bug: Visit: https://github.com/deep5050/radio-active
+        :question: Press ? for help
         """,
         title="[b]RADIOACTIVE[/b]",
-        width=85,
-        expand=True,
+        width=100,
+        expand=False,
         safe_box=True,
     )
     print(welcome)
@@ -60,7 +58,8 @@ def handle_update_screen(app) -> None:
 
         update_panel = Panel(
             update_msg,
-            width=85,
+            width=100,
+            expand=False,
         )
         print(update_panel)
     else:
@@ -77,9 +76,9 @@ def handle_favorite_table(alias) -> None:
     table = Table(
         show_header=True,
         header_style="bold magenta",
-        min_width=85,
+        width=100,
         safe_box=False,
-        expand=True,
+        expand=False,
     )
     table.add_column("Station", justify="left")
     table.add_column("URL / UUID", justify="left")
@@ -103,9 +102,9 @@ def handle_history_table(history) -> None:
     table = Table(
         show_header=True,
         header_style="bold magenta",
-        min_width=85,
+        width=100,
         safe_box=False,
-        expand=True,
+        expand=False,
     )
     table.add_column("Station", justify="left")
     table.add_column("URL / UUID", justify="left")
@@ -120,34 +119,219 @@ def handle_history_table(history) -> None:
 
 
 def handle_show_station_info() -> None:
-    """Show important information regarding the current station."""
-    # pylint: disable=global-statement
-    custom_info = {}
+    """Show important information regarding the current station in an alternate screen (Modal)."""
     try:
-        custom_info["name"] = global_current_station_info.get("name")
-        custom_info["uuid"] = global_current_station_info.get("stationuuid")
-        custom_info["url"] = global_current_station_info.get("url")
-        custom_info["website"] = global_current_station_info.get("homepage")
-        custom_info["country"] = global_current_station_info.get("country")
-        custom_info["language"] = global_current_station_info.get("language")
-        custom_info["tags"] = global_current_station_info.get("tags")
-        custom_info["codec"] = global_current_station_info.get("codec")
-        custom_info["bitrate"] = global_current_station_info.get("bitrate")
-        print(custom_info)
+        from rich.console import Console
+        from rich.panel import Panel
+        from rich.table import Table
+
+        console = Console()
+        with console.screen():
+            table = Table(box=None, padding=(0, 2), show_header=False)
+            table.add_column("Property", style="cyan", justify="left")
+            table.add_column("Value", style="white")
+
+            # Map internal keys to display labels
+            fields = [
+                ("Name", "name"),
+                ("UUID", "stationuuid"),
+                ("Stream URL", "url"),
+                ("Website", "homepage"),
+                ("Country", "country"),
+                ("Language", "language"),
+                ("Tags", "tags"),
+                ("Codec", "codec"),
+                ("Bitrate", "bitrate"),
+            ]
+
+            for label, key in fields:
+                val = str(global_current_station_info.get(key, "N/A"))
+                if val.strip() == "" or val == "None":
+                    val = "N/A"
+                table.add_row(f"{label}:", val)
+
+            info_panel = Panel(
+                table,
+                title="[bold white]:radio: Station Information[/bold white]",
+                subtitle="Press Enter to return",
+                border_style="white",
+                padding=(1, 4),
+                expand=False,
+            )
+
+            console.print("\n" * 3)
+            console.print(info_panel, justify="center")
+
+            try:
+                console.input()
+            except (EOFError, KeyboardInterrupt):
+                pass
+
     except Exception as e:
         log.error(f"No station information available: {e}")
 
 
+def handle_zen_mode() -> None:
+    """Show a minimalist 'Zen' display of the current station."""
+    try:
+        from rich.console import Console
+        from rich.panel import Panel
+        from rich.text import Text
+
+        # Beautiful Zen emojis
+        emojis = ["✨", "🧘", "🌊", "🍃", "🌙", "☁️", "🎵", "🎧"]
+        import random
+
+        from rich.align import Align
+
+        icon = random.choice(emojis)
+
+        console = Console()
+        with console.screen():
+            # defensive retrieval of the name
+            name = global_current_station_info.get("name")
+            if not name or str(name).strip().upper() in ["N/A", "NONE", "UNKNOWN"]:
+                # fallback, check if we have it anywhere else?
+                display_name = "Unknown Station"
+            else:
+                display_name = str(name).strip()
+
+            # Create a stylized station name
+            zen_text = Text(justify="center")
+
+            # Beautiful Wave Decoration
+            wave = " ▂ ▃ ▅ ▆ █ █ ▆ ▅ ▃ ▂ "
+            # zen_text.append(f"\n{wave}\n\n", style="bold white")
+
+            zen_text.append(f"{icon} ", style="bold yellow")
+            zen_text.append(display_name.upper(), style="bold white")
+            zen_text.append(f" {icon}\n", style="bold yellow")
+
+            # Add more data if available
+            tags = global_current_station_info.get("tags")
+            if tags and str(tags).strip() != "":
+                clean_tags = str(tags).replace(",", " • ").strip()
+                if len(clean_tags) > 70:
+                    clean_tags = clean_tags[:67] + "..."
+                zen_text.append(f"\n{clean_tags}\n", style="dim white")
+
+            codec = global_current_station_info.get("codec")
+            bitrate = global_current_station_info.get("bitrate")
+            if codec or bitrate:
+                info_line = f"\n{codec or ''} • {bitrate or ''} kbps".strip(" • ")
+                zen_text.append(info_line, style="italic dim white")
+
+            # zen_text.append(f"\n\n{wave}\n", style="bold white")
+
+            zen_panel = Panel(
+                zen_text,
+                title="[bold white]RADIOACTIVE[/bold white]",
+                subtitle="Press Enter to return",
+                border_style="bold white",
+                padding=(2, 4),
+                width=100,
+                expand=False,
+            )
+
+            # Center vertically with some newlines
+            console.print("\n" * 8)
+            console.print(Align.center(zen_panel))
+
+            try:
+                input()
+            except (EOFError, KeyboardInterrupt):
+                pass
+
+    except Exception as e:
+        log.error(f"Error in zen mode: {e}")
+
+
+def handle_recording_popup(process, outfile_path) -> None:
+    """Show a static recording info panel in an alternate screen (Popup)."""
+    if not process:
+        return
+
+    try:
+        import os
+
+        from rich.align import Align
+        from rich.console import Console
+        from rich.panel import Panel
+        from rich.table import Table
+
+        console = Console()
+        filename = os.path.basename(outfile_path)
+        directory = os.path.dirname(outfile_path)
+
+        with console.screen():
+            table = Table(box=None, padding=(0, 2), show_header=False)
+            table.add_column("Prop", style="cyan", justify="right")
+            table.add_column("Val", style="white")
+
+            table.add_row("File Name:", filename)
+            table.add_row("Directory:", directory)
+            table.add_row(
+                "Status:", "[blink][bold red]● Recording ... [/bold red][/blink]"
+            )
+
+            info_panel = Panel(
+                table,
+                title="[bold white]RADIOACTIVE[/bold white]",
+                subtitle="Press Enter to STOP recording",
+                border_style="white",
+                padding=(1, 4),
+                width=100,
+                expand=False,
+            )
+
+            # Center the panel visually
+            console.print("\n" * 8)
+            console.print(Align.center(info_panel))
+
+            while process.poll() is None:
+                try:
+                    # Wait for Enter to stop
+                    input()
+                    try:
+                        # send 'q' to ffmpeg to save and quit nicely
+                        process.stdin.write(b"q")
+                        process.stdin.flush()
+                    except:
+                        process.terminate()
+                    process.wait()
+                    break
+                except (EOFError, KeyboardInterrupt):
+                    process.terminate()
+                    process.wait()
+                    break
+
+        # finalize UI after stop or process ends
+        # log.info(f"Recording saved at: {outfile_path}")
+
+    except Exception as e:
+        log.error(f"Error in recording popup: {e}")
+
+
 def handle_current_play_panel(curr_station_name: str = "") -> None:
     """
-    Print the currently playing station panel.
+    Print the currently playing station panel and sync station name state.
 
     Args:
         curr_station_name (str): Name of the station.
     """
-    panel_station_name = Text(curr_station_name, justify="center")
+    # Ensure the global state is always updated with the active station name
+    if curr_station_name and curr_station_name.strip() != "":
+        # Update the name to ensure sync even if previous station name existed
+        global_current_station_info["name"] = curr_station_name
 
-    station_panel = Panel(panel_station_name, title="[blink]:radio:[/blink]", width=85)
+    # Truncate to 30 chars
+    display_name = curr_station_name
+    if len(display_name) > 30:
+        display_name = display_name[:27] + "..."
+
+    panel_station_name = Text(display_name, justify="center")
+
+    station_panel = Panel(panel_station_name, title="[blink]:radio:[/blink]", width=72)
     console = Console()
     console.print(station_panel)
 

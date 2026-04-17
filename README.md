@@ -42,6 +42,7 @@
 - [x] Supports more than 40K stations !! :radio:
 - [x] Record audio from live radio on demand :zap:
 - [x] Get song information on run-time 🎶
+- [x] Shazam identification of tracks
 - [x] Saves last station information
 - [x] Favorite stations :heart:
 - [x] Selection menu for favorite stations
@@ -57,7 +58,7 @@
 - [x] Sleep Timer (pomodoro) ⏲️
 - [x] History/Recently Played stations
 - [x] Scheduled Recording
-- [ ] I'm feeling lucky! Play Random stations
+- [x] I'm feeling lucky! Play Random stations
 
 
 > See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)
@@ -209,21 +210,30 @@ This will countdown until 18:30, then record the station for 30 minutes, and exi
 
 ### Runtime Commands
 
-Input a command during the radio playback to perform an action. Available commands are:
+Radioactive features a modern, **Vim-style command bar** at the bottom of the screen. Instead of the old prompt, you now see a subtle `:` where you can type commands and search for stations.
 
-```
-Enter a command to perform an action: ?
+#### Available Commands:
+| Shortcut | Full Command | Description |
+| :--- | :--- | :--- |
+| `p` | `play/pause` | Toggle current station playback |
+| `t` | `track` | Show current track info |
+| `i` | `info` | Show station details |
+| `r` | `record` | Start/Stop recording |
+| `rf` | `recordfile` | Record with a specific filename |
+| `f` | `fav` | Add current station to favorites |
+| `l` | `list` | Open favorite station selection menu |
+| `s` | `search` | Search for a new station online |
+| `n` | `next` | Play next station (from search/favs) |
+| `timer` | `sleep` | Set a sleep timer |
+| `v` | `volume` | Set volume (e.g., `v 50`) |
+| `sz` | `shazam` | Identify current song using Shazam |
+| `b` | `background` | Run radioactive in the background |
+| `q` | `quit` | Exit Radioactive |
 
-t/T/track: Current song name (track info)
-r/R/record: Record a station
-f/F/fav: Add station to favorite list
-s/S/search: Search for a new station
-n/N/next: Play next station from search results or favorite list
-timer/sleep: Set a sleep timer (duration in minutes)
-rf/RF/recordfile: Specify a filename for the recording.
-h/H/help/?: Show this help message
-q/Q/quit: Quit radioactive
-```
+#### Power Features:
+*   **Tab Completion**: Type a few letters and press `Tab` or `Right Arrow` to auto-complete commands and station names.
+*   **Instant Suggestions**: As you type, the bar shows descriptive hints (e.g., typing `p` shows `(play/pause)`).
+*   **Universal Fuzzy Search**: If your input doesn't match a command, Radioactive instantly searches your **Favorites** and **History**. Just type the name of a station and press `Enter` to play it immediately!
 
 ### Sort Parameters
 

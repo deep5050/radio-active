@@ -62,7 +62,7 @@ class Alias:
         if len(self.alias_map) > 0:
             log.debug("looking under alias file")
             for alias in self.alias_map:
-                if alias["name"].strip() == entry.strip():
+                if alias["name"].strip().lower() == entry.strip().lower():
                     log.debug(
                         "Alias found: {} == {}".format(
                             alias["name"], alias["uuid_or_url"]
@@ -86,6 +86,8 @@ class Alias:
             with open(self.alias_path, "a+") as f:
                 f.write("{}=={}\n".format(left.strip(), right.strip()))
                 log.info("Current station added to your favorite list")
+            # Refresh map after writing
+            self.generate_map()
             return True
 
     def flush(self):

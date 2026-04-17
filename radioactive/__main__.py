@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+import atexit
 import os
 import signal
 import sys
 from time import sleep
 
+import psutil
 from zenlog import log
 
 from radioactive.alias import Alias
@@ -14,6 +16,7 @@ from radioactive.help import show_help
 from radioactive.history import History
 from radioactive.last_station import Last_station
 from radioactive.parser import parse_options
+from radioactive.paths import get_pid_path
 from radioactive.utilities import (
     check_sort_by_parameter,
     handle_add_station,
@@ -46,22 +49,22 @@ def final_step(options, last_station, alias, handler, history, station_list=None
     global ffplay  # always needed
     global player
 
-    # check target URL for the last time
-    if options["target_url"].strip() == "":
-        log.error("something is wrong with the url")
-        sys.exit(1)
-
-    if options["audio_player"] == "vlc":
+    # check target URL
+    target_url = (options.get("target_url") or "").strip()
+    if target_url == "":
+        log.info("Type 's' to search for a station or '?' for help")
+        player = None
+    elif options["audio_player"] == "vlc":
         from radioactive.vlc import VLC
 
-        vlc = VLC()
+        vlc = VLC(options["volume"])
         vlc.start(options["target_url"])
         player = vlc
 
     elif options["audio_player"] == "mpv":
         from radioactive.mpv import MPV
 
-        mpv = MPV()
+        mpv = MPV(options["volume"])
         mpv.start(options["target_url"])
         player = mpv
 
@@ -73,32 +76,32 @@ def final_step(options, last_station, alias, handler, history, station_list=None
         log.error("Unsupported media player selected")
         sys.exit(1)
 
-    if options["curr_station_name"].strip() == "":
+    if (options.get("curr_station_name") or "").strip() == "":
         options["curr_station_name"] = "N/A"
 
-    handle_save_last_station(
-        last_station, options["curr_station_name"], options["target_url"]
-    )
+    if target_url != "":
+        handle_save_last_station(last_station, options["curr_station_name"], target_url)
 
-    handle_save_to_history(history, options["curr_station_name"], options["target_url"])
+        handle_save_to_history(history, options["curr_station_name"], target_url)
 
-    if options["add_to_favorite"]:
-        handle_add_to_favorite(
-            alias, options["curr_station_name"], options["target_url"]
-        )
+        if options["add_to_favorite"]:
+            handle_add_to_favorite(alias, options["curr_station_name"], target_url)
 
-    handle_current_play_panel(options["curr_station_name"])
+        handle_current_play_panel(options["curr_station_name"])
 
     if options["record_stream"]:
-        handle_record(
-            options["target_url"],
-            options["curr_station_name"],
-            options["record_file_path"],
-            options["record_file"],
-            options["record_file_format"],
-            options["loglevel"],
-            options.get("record_duration"),
-        )
+        if target_url == "":
+            log.error("Cannot record in idle mode. Please select a station first.")
+        else:
+            handle_record(
+                target_url,
+                options["curr_station_name"],
+                options["record_file_path"],
+                options["record_file"],
+                options["record_file_format"],
+                options["loglevel"],
+                options.get("record_duration"),
+            )
 
     handle_listen_keypress(
         alias,
@@ -111,7 +114,11 @@ def final_step(options, last_station, alias, handler, history, station_list=None
         record_file_format=options["record_file_format"],
         loglevel=options["loglevel"],
         handler=handler,
+        last_station=last_station,
         station_list=station_list,
+        history=history,
+        audio_player=options["audio_player"],
+        volume=options["volume"],
     )
 
 
@@ -124,19 +131,15 @@ def main():
 
     VERSION = app.get_version()
 
+    if options["version"]:
+        log.info("RADIO-ACTIVE : version {}".format(VERSION))
+        sys.exit(0)
+
     handler = Handler()
     alias = Alias()
     alias.generate_map()
     last_station = Last_station()
     history = History()
-
-    # --------------- app logic starts here ------------------- #
-
-    if options["version"]:
-        log.info("RADIO-ACTIVE : version {}".format(VERSION))
-        sys.exit(0)
-
-    handle_welcome_screen()
 
     if options["show_help_table"]:
         show_help()
@@ -147,7 +150,81 @@ def main():
 
     if options["kill_ffplays"]:
         kill_background_ffplays()
+        pid_file = get_pid_path()
+        if os.path.exists(pid_file):
+            with open(pid_file, "r") as f:
+                try:
+                    pid = int(f.read().strip())
+                    if psutil.pid_exists(pid):
+                        os.kill(pid, signal.SIGTERM)
+                        log.info(
+                            f"Terminated background radioactive process (PID: {pid})"
+                        )
+                except:
+                    pass
+            try:
+                os.remove(pid_file)
+            except:
+                pass
         sys.exit(0)
+
+    # --------------- PID check ------------------- #
+    pid_file = get_pid_path()
+    if os.path.exists(pid_file):
+        with open(pid_file, "r") as f:
+            try:
+                content = f.read().strip()
+                if content:
+                    old_pid = int(content)
+                    if psutil.pid_exists(old_pid):
+                        proc = psutil.Process(old_pid)
+                        # Check if it's likely our app
+                        if (
+                            "python" in proc.name().lower()
+                            or "radioactive" in proc.name().lower()
+                        ):
+                            log.warning(
+                                f"Another instance of radioactive is already running (PID: {old_pid})"
+                            )
+                            try:
+                                choice = input(
+                                    "Open the existing one or open a new instance? (e/n): "
+                                ).lower()
+                                if choice == "e":
+                                    log.info(
+                                        "Continuing with existing instance. Exiting."
+                                    )
+                                    sys.exit(0)
+                                elif choice == "n":
+                                    log.info("Starting a new instance.")
+                                else:
+                                    log.info("Invalid choice. Exiting.")
+                                    sys.exit(1)
+                            except EOFError:
+                                sys.exit(0)
+            except (ValueError, psutil.NoSuchProcess, Exception) as e:
+                log.debug(f"Error checking PID: {e}")
+                pass
+
+    # Save current PID
+    with open(pid_file, "w") as f:
+        f.write(str(os.getpid()))
+
+    def cleanup():
+        if os.path.exists(pid_file):
+            try:
+                with open(pid_file, "r") as f:
+                    content = f.read().strip()
+                    if content:
+                        pid = int(content)
+                        if pid == os.getpid():
+                            os.remove(pid_file)
+            except:
+                pass
+
+    atexit.register(cleanup)
+
+    handle_welcome_screen()
 
     # ------------------ SCHEDULED RECORDING MODE ------------------ #
     from radioactive.feature_flags import RECORDING_FEATURE
@@ -340,7 +417,8 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            log.info("No stations found for this country.")
+            final_step(options, last_station, alias, handler, history)
 
     # -------------- state ------------- #
     if options["discover_state"]:
@@ -357,7 +435,8 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            log.info("No stations found for this state.")
+            final_step(options, last_station, alias, handler, history)
 
     # ----------- language ------------ #
     if options["discover_language"]:
@@ -374,7 +453,8 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            log.info("No stations found for this language.")
+            final_step(options, last_station, alias, handler, history)
 
     # -------------- tag ------------- #
     if options["discover_tag"]:
@@ -391,7 +471,8 @@ def main():
             ) = handle_user_choice_from_search_result(handler, response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            log.info("No stations found for this tag.")
+            final_step(options, last_station, alias, handler, history)
 
     # -------------------- NOTHING PROVIDED --------------------- #
     if (
@@ -439,11 +520,11 @@ def main():
             # print(response)
             final_step(options, last_station, alias, handler, history, response)
         else:
-            sys.exit(0)
+            final_step(options, last_station, alias, handler, history)
     # ------------------------- direct play ------------------------#
     if options["direct_play"] is not None:
         options["curr_station_name"], options["target_url"] = handle_direct_play(
-            alias, options["direct_play"]
+            alias, history, options["direct_play"]
         )
         final_step(options, last_station, alias, handler, history)
 

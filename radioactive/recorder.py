@@ -32,52 +32,52 @@ def record_audio_auto_codec(input_stream_url):
 
 
 def record_audio_from_url(input_url, output_file, force_mp3, loglevel, duration=None):
+    """
+    Record audio from a URL using FFmpeg.
+    Returns the subprocess.Popen object to allow UI tracking.
+    """
     try:
-        # Construct the FFmpeg command
         ffmpeg_command = [
             "ffmpeg",
             "-i",
-            input_url,  # input URL
-            "-vn",  # disable video recording
-            "-stats",  # show stats
+            input_url,
+            "-vn",
+            "-stats",
         ]
 
-        # codec for audio stream
         ffmpeg_command.append("-c:a")
         if force_mp3:
             ffmpeg_command.append("libmp3lame")
-            log.debug("Record: force libmp3lame")
         else:
-            # file will be saved as as provided. this is more error prone
-            # file extension must match the actual stream codec
             ffmpeg_command.append("copy")
 
         ffmpeg_command.append("-loglevel")
         if loglevel == "debug":
             ffmpeg_command.append("info")
         else:
-            ffmpeg_command.append("error"),
+            ffmpeg_command.append("error")
             ffmpeg_command.append("-hide_banner")
 
         if duration:
-            # duration is in minutes
             seconds = int(duration) * 60
             ffmpeg_command.append("-t")
             ffmpeg_command.append(str(seconds))
 
-        # output file
         ffmpeg_command.append(output_file)
 
-        # Run FFmpeg command on foreground to catch 'q' without
-        # any complex thread for now
-        subprocess.run(ffmpeg_command, check=True)
+        # Run FFmpeg command in background to allow UI tracking
+        # Use DEVNULL to prevent hangs and terminal corruption
+        process = subprocess.Popen(
+            ffmpeg_command,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        return process
 
-        log.debug("Record: {}".format(str(ffmpeg_command)))
-        log.info("Audio recorded successfully.")
-
-    except subprocess.CalledProcessError as e:
-        log.debug("Error: {}".format(e))
-        log.error(f"Error while recording audio: {e}")
+    except Exception as ex:
+        log.error(f"Error while starting recording: {ex}")
+        return None
     except Exception as ex:
         log.debug("Error: {}".format(ex))
         log.error(f"An error occurred: {ex}")
