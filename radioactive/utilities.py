@@ -295,7 +295,7 @@ def handle_runtime_help_menu():
         add("f / fav", "Add station to favorite list")
         add("l / list", "Open favorite station selection menu")
         add("v <0-100>", "Set volume level")
-        add("v+ / v-", "Increase / Decrease volume level")
+        # add("v+ / v-", "Increase / Decrease volume level")
 
         if SEARCH_FEATURE:
             add("s / search", "Search for a new station")
