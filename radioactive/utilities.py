@@ -49,6 +49,7 @@ from radioactive.actions import (
     handle_save_last_station,
     handle_save_to_history,
     handle_search_stations,
+    handle_shazam,
     handle_station_name_from_headers,
     handle_station_uuid_play,
 )
@@ -169,6 +170,8 @@ def handle_vim_style_prompt(alias, history) -> str:
         "s": "search",
         "n": "next station",
         "a": "auto track info",
+        "sz": "shazam identify",
+        "shazam": "shazam identify",
         "timer": "timer",
         "sleep": "sleep",
         "b": "background",
@@ -303,6 +306,7 @@ def handle_runtime_help_menu():
             add("n / next", "Play next result from search or favorites")
         if TRACK_FEATURE:
             add("a / auto", "Fetch track info every 10s")
+        add("sz / shazam", "Identify current song using Shazam")
         if TIMER_FEATURE:
             add("timer / sleep", "Set a sleep timer")
 
@@ -698,6 +702,9 @@ def handle_listen_keypress(
 
         elif TRACK_FEATURE and user_input in ["a", "A", "auto"]:
             auto_fetcher.toggle(target_url)
+
+        elif user_input in ["sz", "SZ", "shazam"]:
+            handle_shazam(target_url)
 
         elif user_input in ["p", "P"]:
             if player:

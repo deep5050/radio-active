@@ -2,6 +2,7 @@
 Core logical actions for radio-active.
 """
 
+import asyncio
 import datetime
 import json
 import os
@@ -21,6 +22,7 @@ except ImportError:
 
 if RECORDING_FEATURE:
     from radioactive.recorder import record_audio_auto_codec, record_audio_from_url
+
 from radioactive.last_station import Last_station
 
 
@@ -453,3 +455,81 @@ def handle_play_random_station(alias) -> Tuple[str, str]:
     index = randint(0, len(alias_map) - 1)
     station = alias_map[index]
     return station["name"], station["uuid_or_url"]
+
+
+async def _identify_music(audio_path):
+    """Internal async helper for Shazam identification."""
+    try:
+        from shazamio import Shazam
+
+        shazam = Shazam()
+        out = await shazam.recognize(audio_path)
+        return out
+    except Exception as e:
+        log.debug(f"Shazam identification failed: {e}")
+        return None
+
+
+def handle_shazam(target_url: str):
+    """
+    Record 7 seconds of audio and identify using Shazam.
+    """
+    import tempfile
+
+    if not target_url:
+        log.error("No station is playing, cannot identify.")
+        return
+
+    log.info("Identifying current song (7 seconds) ...")
+
+    # Create temp file
+    temp_dir = tempfile.gettempdir()
+    temp_file = os.path.join(temp_dir, "radioactive_shazam.mp3")
+
+    # ffmpeg command to record 7 seconds
+    # we use libmp3lame to ensure it's a valid mp3 for shazam
+    cmd = [
+        "ffmpeg",
+        "-y",  # overwrite
+        "-i",
+        target_url,
+        "-t",
+        "7",
+        "-c:a",
+        "libmp3lame",
+        "-loglevel",
+        "error",
+        temp_file,
+    ]
+
+    try:
+        # Run ffmpeg synchronously (blocking for 7s)
+        subprocess.run(cmd, check=True)
+
+        if os.path.exists(temp_file) and os.path.getsize(temp_file) > 0:
+            # shazamio is async, we need a runner
+            result = asyncio.run(_identify_music(temp_file))
+
+            if result and result.get("track"):
+                track = result.get("track")
+                title = track.get("title")
+                artist = track.get("subtitle")
+                log.info(f"🎶 Match found: {title} -- {artist}")
+
+                # Also send a notification if possible
+                handle_notification("Song Identified", f"{title} - {artist}")
+            else:
+                log.warning("No match found for this song.")
+        else:
+            log.error("Could not record audio for identification.")
+
+    except subprocess.CalledProcessError:
+        log.error("FFmpeg error while recording for identification.")
+    except Exception as e:
+        log.error(f"Error during identification: {e}")
+    finally:
+        if os.path.exists(temp_file):
+            try:
+                os.remove(temp_file)
+            except:
+                pass
