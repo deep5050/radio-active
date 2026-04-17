@@ -365,6 +365,7 @@ class AutoFetcher:
 
     def _run(self):
         while self.enabled:
+            start_time = time.time()
             if self.target_url:
                 current_song = get_current_track_name(self.target_url)
                 if current_song and current_song != self.last_song:
@@ -382,7 +383,11 @@ class AutoFetcher:
 
                     handle_notification(notification_title, notification_message)
                     self.last_song = current_song
-            time.sleep(10)
+
+            # Calculate remaining time to sleep to keep a 10s interval
+            elapsed = time.time() - start_time
+            sleep_time = max(0, 10 - elapsed)
+            time.sleep(sleep_time)
 
 
 def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:

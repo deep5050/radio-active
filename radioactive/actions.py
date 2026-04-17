@@ -57,28 +57,36 @@ def handle_notification(title: str, message: str, icon: str = None) -> None:
 def get_current_track_name(url: str) -> str:
     """Fetch currently playing track information and return it"""
     # Run ffprobe command and capture the metadata
+    # -i is implicit if it's the last arg, but let's be explicit
     cmd = [
         "ffprobe",
         "-v",
         "quiet",
+        "-select_streams",
+        "a:0",
+        "-show_entries",
+        "format_tags=StreamTitle",
         "-print_format",
         "json",
-        "-show_format",
-        "-show_entries",
-        "format=icy",
         url,
     ]
     track_name = ""
 
     try:
-        output = subprocess.check_output(cmd).decode("utf-8")
+        # 10 second timeout for the ffprobe command itself
+        output = subprocess.check_output(cmd, timeout=10).decode("utf-8")
         data = json.loads(output)
         log.debug(f"station info: {data}")
 
-        # Extract the station name (icy-name) if available
-        track_name = data.get("format", {}).get("tags", {}).get("StreamTitle", "")
-    except Exception:
-        log.debug("Error while fetching the track name")
+        # Extract the song title (StreamTitle) if available
+        # It's usually in format -> tags -> StreamTitle
+        track_name = (
+            data.get("format", {}).get("tags", {}).get("StreamTitle", "").strip()
+        )
+    except subprocess.TimeoutExpired:
+        log.debug("Track info fetch timed out")
+    except Exception as e:
+        log.debug(f"Error while fetching the track name: {e}")
 
     return track_name
 
