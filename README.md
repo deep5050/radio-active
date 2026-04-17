@@ -1,5 +1,7 @@
 <div align=center>
-<p align=center><img src=https://user-images.githubusercontent.com/27947066/267328833-3e81a98e-2acb-4291-89cb-f3f9bed6c299.png width=250px></p>
+<!-- <p align=center><img src=https://user-images.githubusercontent.com/27947066/267328833-3e81a98e-2acb-4291-89cb-f3f9bed6c299.png width=250px></p> -->
+    <p align=center><img src=https://github.com/user-attachments/assets/515623e7-b977-46e4-86e5-683bf4e606fa ></p>
+
 <h1 align=center> RADIOACTIVE </h1>
 <p> SEARCH - PLAY - RECORD - REPEAT </p>
 
