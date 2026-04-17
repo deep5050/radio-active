@@ -40,6 +40,7 @@
 - [x] Supports more than 40K stations !! :radio:
 - [x] Record audio from live radio on demand :zap:
 - [x] Get song information on run-time 🎶
+- [x] Shazam identification of tracks
 - [x] Saves last station information
 - [x] Favorite stations :heart:
 - [x] Selection menu for favorite stations
@@ -55,7 +56,7 @@
 - [x] Sleep Timer (pomodoro) ⏲️
 - [x] History/Recently Played stations
 - [x] Scheduled Recording
-- [ ] I'm feeling lucky! Play Random stations
+- [x] I'm feeling lucky! Play Random stations
 
 
 > See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)
@@ -218,12 +219,13 @@ Radioactive features a modern, **Vim-style command bar** at the bottom of the sc
 | `r` | `record` | Start/Stop recording |
 | `rf` | `recordfile` | Record with a specific filename |
 | `f` | `fav` | Add current station to favorites |
-| `l` | `list` | Open favorite selection menu |
+| `l` | `list` | Open favorite station selection menu |
 | `s` | `search` | Search for a new station online |
 | `n` | `next` | Play next station (from search/favs) |
 | `timer` | `sleep` | Set a sleep timer |
 | `v` | `volume` | Set volume (e.g., `v 50`) |
-| `v+` / `v-` | | Increase / Decrease volume |
+| `sz` | `shazam` | Identify current song using Shazam |
+| `b` | `background` | Run radioactive in the background |
 | `q` | `quit` | Exit Radioactive |
 
 #### Power Features:
