@@ -1,6 +1,8 @@
 <div align=center>
+    <!-- <img width="2713" height="1332" alt="Gemini_Generated_Image_9sp4ii9sp4ii9sp4 (1)" src="https://github.com/user-attachments/assets/37fa5da7-10e3-4c11-a274-dec830ec724f" /> -->
+
 <!-- <p align=center><img src=https://user-images.githubusercontent.com/27947066/267328833-3e81a98e-2acb-4291-89cb-f3f9bed6c299.png width=250px></p> -->
-    <p align=center><img src=https://github.com/user-attachments/assets/515623e7-b977-46e4-86e5-683bf4e606fa ></p>
+<p align=center><img src=https://github.com/user-attachments/assets/37fa5da7-10e3-4c11-a274-dec830ec724f width=600px></p>
 
 <h1 align=center> RADIOACTIVE </h1>
 <p> SEARCH - PLAY - RECORD - REPEAT </p>
@@ -12,11 +14,11 @@
 
 
 <a href="https://www.producthunt.com/posts/radio-active?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-radio-active" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=305380&theme=dark" alt="radio-active - Play more than 30K radio stations from your terminal | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-
+ <!--
  <p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p>
  <p>
 <img width="500px" alt="UPI" src="https://raw.githubusercontent.com/deep5050/random-shits-happen-here/main/235618869-8c9d9bce-096d-469e-8f61-c29cc01eacc3%20(1).png">
-</p>
+</p>  -->
 
 <p align=center>
 <img align=center src=https://user-images.githubusercontent.com/27947066/271250790-291c02fa-e568-45c8-8097-72167a109b82.png  width=550px>
