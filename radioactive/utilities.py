@@ -5,10 +5,8 @@ Acts as a controller/orchestrator, delegating to UI and Actions modules.
 
 import os
 import sys
-import termios
 import threading
 import time
-import tty
 from random import randint
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -132,22 +130,41 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
 
 
 def get_key():
-    """Helper to capture single key on Linux."""
-    import sys
-    import termios
-    import tty
+    """Helper to capture single key on Linux and Windows."""
+    if sys.platform == "win32":
+        import msvcrt
 
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
-        if ch == "\x1b":  # Escape sequence
-            seq = sys.stdin.read(2)
-            ch += seq
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
+        ch = msvcrt.getch()
+        if ch in [b"\x00", b"\xe0"]:  # Special keys
+            ch2 = msvcrt.getch()
+            if ch2 == b"M":  # Right arrow
+                return "\x1b[C"
+            return ""
+
+        if ch == b"\r":
+            return "\n"
+        if ch == b"\x08":
+            return "\x08"
+
+        try:
+            return ch.decode("utf-8")
+        except:
+            return ""
+    else:
+        import termios
+        import tty
+
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+            if ch == "\x1b":  # Escape sequence
+                seq = sys.stdin.read(2)
+                ch += seq
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
 
 
 def handle_vim_style_prompt(alias, history) -> str:
