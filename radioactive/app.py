@@ -18,7 +18,7 @@ class App:
         try:
             self.__VERSION__ = metadata.version("radio-active")
         except metadata.PackageNotFoundError:
-            self.__VERSION__ = "4.0.0"  # change this on every update #
+            self.__VERSION__ = "4.0.1"  # change this on every update #
         self.pypi_api = "https://pypi.org/pypi/radio-active/json"
         self.remote_version = ""
 

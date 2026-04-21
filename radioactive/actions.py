@@ -485,6 +485,7 @@ def handle_shazam(target_url: str):
     # Create temp file
     temp_dir = tempfile.gettempdir()
     temp_file = os.path.join(temp_dir, "radioactive_shazam.mp3")
+    log.debug(f"temp_file: {temp_file}")
 
     # ffmpeg command to record 7 seconds
     # we use libmp3lame to ensure it's a valid mp3 for shazam

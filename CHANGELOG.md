@@ -1,3 +1,8 @@
+## 4.0.1
+
+1. Fix broken install on windows
+2. Fix recording issues on windows
+
 ## 4.0.0
 
 1. Shazam !! song identification built-in 🚀

@@ -284,7 +284,7 @@ A complex filter example: `--filter "country!=CA&tags!=islamic,classical&votes>5
 
 ### Default Configs
 
-Default configuration file is added into your home directory as `.radio-active-configs.ini`
+Default configuration file is located at ~/radioactive/config.ini
 
 ```bash
 [AppConfig]
@@ -293,7 +293,7 @@ limit = 100
 sort = votes
 filter = none
 volume = 80
-filepath = /home/{user}/radioactive/recordings/
+filepath = {home}/radioactive/recordings/
 filetype = mp3
 player = ffplay
 ```
