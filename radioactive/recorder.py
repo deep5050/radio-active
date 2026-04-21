@@ -36,6 +36,7 @@ def record_audio_from_url(input_url, output_file, force_mp3, loglevel, duration=
     Record audio from a URL using FFmpeg.
     Returns the subprocess.Popen object to allow UI tracking.
     """
+    log.debug(f"Recording audio from {input_url} to {output_file}")
     try:
         ffmpeg_command = [
             "ffmpeg",
@@ -75,6 +76,8 @@ def record_audio_from_url(input_url, output_file, force_mp3, loglevel, duration=
         )
         return process
 
+    except FileNotFoundError:
+        log.error("FFmpeg not found! Please install FFmpeg to use the recording feature.")
     except Exception as ex:
         log.error(f"Error while starting recording: {ex}")
         return None

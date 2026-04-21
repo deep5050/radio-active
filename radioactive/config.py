@@ -5,6 +5,7 @@ Handles loading, saving, and managing user configurations.
 
 import configparser
 import getpass
+import os
 import sys
 from typing import Any, Dict, Optional
 
@@ -16,10 +17,8 @@ def write_a_sample_config_file() -> None:
     Create a sample configuration file with default settings.
     Checks for the XDG config path and writes the file there.
     """
-    # Create a ConfigParser object
     config = configparser.ConfigParser()
-
-    from radioactive.paths import get_recordings_path
+    from radioactive.paths import get_recordings_path, get_user_home
 
     # Add sections and key-value pairs
     config["AppConfig"] = {
@@ -28,7 +27,7 @@ def write_a_sample_config_file() -> None:
         "sort": "votes",
         "filter": "none",
         "volume": "80",
-        "filepath": get_recordings_path(),
+        "filepath": os.path.join("{home}", "radioactive", "recordings"),
         "filetype": "mp3",
         "player": "ffplay",
     }
@@ -85,15 +84,21 @@ class Configs:
             options["sort"] = get_option("sort", "votes")
             options["filter"] = get_option("filter", "none")
             options["limit"] = get_option("limit", "100")
-            from radioactive.paths import get_recordings_path
+            from radioactive.paths import get_recordings_path, get_user_home
 
             options["filepath"] = get_option("filepath", get_recordings_path())
 
-            # if filepath has any placeholder, replace {user} to actual user map
             if "{user}" in options["filepath"]:
                 options["filepath"] = options["filepath"].replace(
                     "{user}", getpass.getuser()
                 )
+
+            if "{home}" in options["filepath"]:
+                options["filepath"] = options["filepath"].replace(
+                    "{home}", get_user_home()
+                )
+
+            options["filepath"] = os.path.expanduser(options["filepath"])
 
             options["filetype"] = get_option("filetype", "mp3")
             options["player"] = get_option("player", "ffplay")
