@@ -77,7 +77,9 @@ def record_audio_from_url(input_url, output_file, force_mp3, loglevel, duration=
         return process
 
     except FileNotFoundError:
-        log.error("FFmpeg not found! Please install FFmpeg to use the recording feature.")
+        log.error(
+            "FFmpeg not found! Please install FFmpeg to use the recording feature."
+        )
     except Exception as ex:
         log.error(f"Error while starting recording: {ex}")
         return None

@@ -312,6 +312,78 @@ def handle_recording_popup(process, outfile_path) -> None:
         log.error(f"Error in recording popup: {e}")
 
 
+def handle_shazam_popup(result: dict) -> None:
+    """Show identified song information in an alternate screen (Modal)."""
+    if not result or not result.get("track"):
+        log.error("No track information available to display.")
+        return
+
+    try:
+        from rich.align import Align
+        from rich.console import Console
+        from rich.panel import Panel
+        from rich.table import Table
+
+        track = result.get("track")
+        title = track.get("title", "N/A")
+        artist = track.get("subtitle", "N/A")
+        genre = track.get("genres", {}).get("primary", "N/A")
+        shazam_url = track.get("url", "N/A")
+
+        # Extract album and release year from sections if available
+        album = "N/A"
+        released = "N/A"
+        label = "N/A"
+
+        sections = track.get("sections", [])
+        for section in sections:
+            if section.get("type") == "SONG":
+                metadata = section.get("metadata", [])
+                for item in metadata:
+                    if item.get("title") == "Album":
+                        album = item.get("text", "N/A")
+                    elif item.get("title") == "Released":
+                        released = item.get("text", "N/A")
+                    elif item.get("title") == "Label":
+                        label = item.get("text", "N/A")
+
+        console = Console()
+        with console.screen():
+            table = Table(box=None, padding=(0, 2), show_header=False)
+            table.add_column("Property", style="cyan", justify="right")
+            table.add_column("Value", style="white")
+
+            table.add_row("Title:", f"[bold]{title}[/bold]")
+            table.add_row("Artist:", artist)
+            table.add_row("Album:", album)
+            table.add_row("Genre:", genre)
+            table.add_row("Released:", released)
+            table.add_row("Label:", label)
+            table.add_row("Shazam URL:", f"[link={shazam_url}]{shazam_url}[/link]")
+
+            info_panel = Panel(
+                table,
+                title="[bold white]🎵 Song Identified[/bold white]",
+                subtitle="Press Enter to return",
+                border_style="white",
+                padding=(1, 4),
+                width=100,
+                expand=False,
+            )
+
+            # Center the panel visually
+            console.print("\n" * 6)
+            console.print(Align.center(info_panel))
+
+            try:
+                console.input()
+            except (EOFError, KeyboardInterrupt):
+                pass
+
+    except Exception as e:
+        log.error(f"Error in shazam popup: {e}")
+
+
 def handle_current_play_panel(curr_station_name: str = "") -> None:
     """
     Print the currently playing station panel and sync station name state.

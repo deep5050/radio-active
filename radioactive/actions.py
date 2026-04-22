@@ -519,6 +519,11 @@ def handle_shazam(target_url: str):
 
                 # Also send a notification if possible
                 handle_notification("Song Identified", f"{title} - {artist}")
+
+                # Show the popup with all details
+                from radioactive.ui import handle_shazam_popup
+
+                handle_shazam_popup(result)
             else:
                 log.warning("No match found for this song.")
         else:
