@@ -288,6 +288,7 @@ def handle_runtime_help_menu():
     Show a colorful popup-style help menu using 'rich'.
     Uses the alternate screen buffer to avoid cluttering the console history.
     """
+    from rich.align import Align
     from rich.console import Console
     from rich.panel import Panel
     from rich.table import Table
@@ -342,7 +343,8 @@ def handle_runtime_help_menu():
         )
 
         # Print the panel centered on the alternate screen
-        console.print(help_panel, justify="center")
+        console.print("\n" * 4)
+        console.print(Align.center(help_panel))
 
         # Use console.input() to wait for Enter and avoid prompt capture
         try:
