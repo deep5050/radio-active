@@ -1,3 +1,8 @@
+## 4.0.2
+
+1. More information on the shazam identified track
+2. Minor UI improvements
+
 ## 4.0.1
 
 1. Fix broken install on windows
