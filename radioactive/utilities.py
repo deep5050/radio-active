@@ -212,7 +212,9 @@ def handle_vim_style_prompt(alias, history) -> str:
 
     buffer = ""
 
-    def get_display(text, matches=[]):
+    def get_display(text, matches=None):
+        if matches is None:
+            matches = []
         # The prompt part
         prompt_text = Text("command : ", style="green")
         prompt_text.append(text, style="bold cyan")
