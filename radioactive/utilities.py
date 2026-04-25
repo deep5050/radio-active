@@ -94,11 +94,10 @@ def handle_station_selection_menu(handler, last_station, alias) -> Tuple[str, st
         station_selection_names.append(
             f"{last_station_info['name'].strip()} (last played station)"
         )
-        try:
-            station_selection_urls.append(last_station_info["stationuuid"])
-        except Exception as e:
-            log.debug(f"Error: {e}")
-            station_selection_urls.append(last_station_info["uuid_or_url"])
+        uuid = last_station_info.get("stationuuid") or last_station_info.get(
+            "uuid_or_url", ""
+        )
+        station_selection_urls.append(uuid)
 
     fav_stations = alias.alias_map
     for entry in fav_stations:
