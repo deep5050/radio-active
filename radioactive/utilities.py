@@ -647,18 +647,22 @@ def handle_listen_keypress(
                 else:
                     # child
                     os.setsid()
-                    # Redirect standard file descriptors
+                    # Redirect standard file descriptors, keeping named refs for cleanup
                     sys.stdin.close()
-                    sys.stdout = open(os.devnull, "w")
-                    sys.stderr = open(os.devnull, "w")
+                    _devnull_out = open(os.devnull, "w")
+                    _devnull_err = open(os.devnull, "w")
+                    sys.stdout = _devnull_out
+                    sys.stderr = _devnull_err
                     # child should not listen to keypresses anymore
                     import signal
 
                     try:
                         signal.pause()
-                    except:
+                    except (AttributeError, OSError):
                         while True:
                             time.sleep(100)
+                    _devnull_out.close()
+                    _devnull_err.close()
                     sys.exit(0)
             except AttributeError:
                 log.error("Background mode is only supported on Unix-like systems")
