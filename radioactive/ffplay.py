@@ -18,27 +18,32 @@ from zenlog import log
 def kill_background_ffplays() -> None:
     """
     Kill all background 'ffplay' processes started by this user.
+    Optimized to use faster platform-specific tools when available.
     """
+    try:
+        if sys.platform != "win32":
+            # Fast path for Unix-like systems
+            # -x ensures exact match for process name 'ffplay'
+            subprocess.run(
+                ["pkill", "-x", "ffplay"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            return
+    except Exception:
+        pass
+
+    # Fallback to psutil if pkill fails or on Windows
     all_processes = psutil.process_iter(attrs=["pid", "name"])
-    count = 0
-    # Iterate through the processes and terminate those named "ffplay"
     for process in all_processes:
         try:
             if process.info["name"] == "ffplay":
                 pid = process.info["pid"]
                 p = psutil.Process(pid)
                 p.terminate()
-                count += 1
-                log.info(f"Terminated ffplay process with PID {pid}")
-                if p.is_running():
-                    p.kill()
-                    log.debug(f"Forcefully killing ffplay process with PID {pid}")
+                log.debug(f"Terminated ffplay process with PID {pid}")
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            # Handle exceptions, such as processes that no longer exist or access denied
-            log.debug("Could not terminate a ffplay processes!")
-    if count == 0:
-        pass
-        # log.info("No background radios are running!")
+            pass
 
 
 class Ffplay:
@@ -90,8 +95,9 @@ class Ffplay:
             self.process = subprocess.Popen(
                 ffplay_commands,
                 shell=False,
-                stdout=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
                 stderr=subprocess.PIPE,
+                stdin=subprocess.PIPE,
                 text=True,
             )
 
@@ -127,7 +133,6 @@ class Ffplay:
                 break
             except Exception:
                 break
-            sleep(0.5)
 
     def _handle_error(self, stderr_result: str) -> None:
         """Log the error message."""
@@ -154,26 +159,11 @@ class Ffplay:
             log.debug(f"Could not kill parent process: {e}")
 
     def is_active(self) -> bool:
-        """Check if the ffplay process is currently active/running."""
+        """Check if the ffplay process is currently active/running (fast)."""
         if not self.process:
-            log.warning("Process is not initialized")
             return False
 
-        try:
-            proc = psutil.Process(self.process.pid)
-            if proc.status() == psutil.STATUS_ZOMBIE:
-                log.debug("Process is a zombie")
-                return False
-
-            if proc.status() in [psutil.STATUS_RUNNING, psutil.STATUS_SLEEPING]:
-                return True
-
-            log.warning("Process is not in an expected state")
-            return False
-
-        except (psutil.NoSuchProcess, Exception) as e:
-            log.debug(f"Process not found or error checking status: {e}")
-            return False
+        return self.process.poll() is None
 
     def play(self) -> None:
         """Resume or start playback."""
@@ -187,10 +177,10 @@ class Ffplay:
             try:
                 self.process.terminate()
                 try:
-                    self.process.wait(timeout=3)
+                    self.process.wait(timeout=0.2)
                 except subprocess.TimeoutExpired:
                     self.process.kill()
-                    self.process.wait(timeout=2)
+                    self.process.wait(timeout=0.2)
 
                 log.debug("Radio playback stopped successfully")
             except Exception as e:
