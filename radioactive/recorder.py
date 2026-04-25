@@ -19,14 +19,17 @@ def record_audio_auto_codec(input_stream_url):
             input_stream_url,
         ]
 
-        codec_info = subprocess.check_output(ffprobe_command, text=True)
+        codec_info = subprocess.check_output(ffprobe_command, text=True, timeout=10)
 
         # Determine the file extension based on the audio codec
         audio_codec = codec_info.strip()
         audio_codec = audio_codec.split("\n")[0]
         return audio_codec
 
-    except subprocess.CalledProcessError as e:
+    except FileNotFoundError:
+        log.error("ffprobe not found! Please install FFmpeg/ffprobe to use the recording feature.")
+        return None
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
         log.error(f"Error: could not fetch codec {e}")
         return None
 
@@ -80,9 +83,8 @@ def record_audio_from_url(input_url, output_file, force_mp3, loglevel, duration=
         log.error(
             "FFmpeg not found! Please install FFmpeg to use the recording feature."
         )
-    except Exception as ex:
-        log.error(f"Error while starting recording: {ex}")
         return None
     except Exception as ex:
         log.debug("Error: {}".format(ex))
-        log.error(f"An error occurred: {ex}")
+        log.error(f"Error while starting recording: {ex}")
+        return None
