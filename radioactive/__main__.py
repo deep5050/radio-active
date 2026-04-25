@@ -146,6 +146,7 @@ def main():
         handle_search_stations,
         handle_station_selection_menu,
         handle_station_uuid_play,
+        handle_update_modal,
         handle_update_screen,
         handle_user_choice_from_search_result,
         handle_welcome_screen,
@@ -238,10 +239,8 @@ def main():
     handle_welcome_screen()
 
     # Run update check in background so it never blocks the interactive prompt.
-    # The banner will print asynchronously when ready (during idle user input time).
-    _update_thread = threading.Thread(
-        target=handle_update_screen, args=(app,), daemon=True
-    )
+    # The modal will be shown if an update is detected.
+    _update_thread = threading.Thread(target=app.is_update_available, daemon=True)
     _update_thread.start()
 
     # ------------------ SCHEDULED RECORDING MODE ------------------ #
@@ -425,7 +424,9 @@ def main():
 
     # Update check is already running in the background thread started above;
     # wait briefly (non-blocking) so it can print before we proceed to prompts
-    _update_thread.join(timeout=0.1)
+    _update_thread.join(timeout=0.4)
+    if app.update_available:
+        handle_update_modal(app)
 
     # ----------- country ----------- #
     if options["discover_country_code"]:

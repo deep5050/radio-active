@@ -61,6 +61,7 @@ from radioactive.ui import (
     handle_history_table,
     handle_recording_popup,
     handle_show_station_info,
+    handle_update_modal,
     handle_update_screen,
     handle_welcome_screen,
     handle_zen_mode,
