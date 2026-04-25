@@ -459,9 +459,9 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
                 log.debug("Next station requested, picking first one")
 
             if user_input in ["r", "R", "random"]:
-                # pick a random integer withing range
-                user_input = randint(1, len(response) - 1)
-                log.debug(f"Radom station id: {user_input}")
+                # pick a random integer within range (inclusive of last result)
+                user_input = randint(1, len(response))
+                log.debug(f"Random station id: {user_input}")
             # elif user_input in ["f", "F", "fuzzy"]:
             # fuzzy find all the stations, and return the selected station id
             # user_input = fuzzy_find(response)
@@ -477,13 +477,13 @@ def handle_user_choice_from_search_result(handler, response) -> Tuple[str, str]:
                 return handle_station_uuid_play(handler, target_response["stationuuid"])
             else:
                 log.error("Please enter an ID within the range")
-                sys.exit(1)
+                return None, None
         except ValueError:
-            log.error("Please enter an valid ID number")
-            sys.exit(1)
+            log.error("Please enter a valid ID number")
+            return None, None
         except Exception as e:
             log.error(f"Error: {e}")
-            sys.exit(1)
+            return None, None
 
 
 def handle_listen_keypress(
