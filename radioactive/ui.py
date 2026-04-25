@@ -93,7 +93,7 @@ def handle_update_modal(app) -> None:
         if release_notes:
             update_msg += f"\n[bold yellow]What's new since v{local_version}:[/bold yellow]\n{release_notes}"
         else:
-            update_msg += f"\nSee all changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md"
+            update_msg += f"\nSee all changes: https://github.com/dpnkrpl/radio-active/blob/main/CHANGELOG.md"
 
         console = Console()
         with console.screen():
