@@ -188,7 +188,12 @@ def handle_record(
     outfile_path = os.path.join(record_file_path, tmp_filename)
 
     process = record_audio_from_url(
-        target_url, outfile_path, force_mp3, loglevel, duration
+        target_url,
+        outfile_path,
+        force_mp3,
+        loglevel,
+        duration,
+        station_name=curr_station_name,
     )
     return process, outfile_path
 
