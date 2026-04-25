@@ -27,7 +27,9 @@ def record_audio_auto_codec(input_stream_url):
         return audio_codec
 
     except FileNotFoundError:
-        log.error("ffprobe not found! Please install FFmpeg/ffprobe to use the recording feature.")
+        log.error(
+            "ffprobe not found! Please install FFmpeg/ffprobe to use the recording feature."
+        )
         return None
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
         log.error(f"Error: could not fetch codec {e}")

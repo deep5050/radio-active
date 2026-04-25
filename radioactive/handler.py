@@ -5,10 +5,9 @@ This handler solely depends on pyradios module to communicate with our remote AP
 import datetime
 import json
 import sys
+import threading
 from typing import Any, Dict, List, Optional, Union
 
-import requests_cache
-from pyradios import RadioBrowser
 from rich.console import Console
 from rich.table import Table
 from zenlog import log
@@ -147,6 +146,9 @@ class Handler:
 
         # When RadioBrowser can not be initiated properly due to no internet (probably)
         try:
+            import requests_cache
+            from pyradios import RadioBrowser
+
             expire_after = datetime.timedelta(days=DEFAULT_CACHE_RETENTION_DAYS)
             session = requests_cache.CachedSession(
                 cache_name="cache", backend="sqlite", expire_after=expire_after
@@ -185,8 +187,13 @@ class Handler:
             log.debug(json.dumps(self.response[0], indent=3))
             self.target_station = self.response[0]
 
-            # register a valid click to increase its popularity
-            self.vote_for_uuid(self.target_station["stationuuid"])
+            # register a valid click to increase its popularity (non-blocking)
+            t = threading.Thread(
+                target=self.vote_for_uuid,
+                args=(self.target_station["stationuuid"],),
+                daemon=True,
+            )
+            t.start()
 
             return self.response
 

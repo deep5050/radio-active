@@ -990,4 +990,3 @@ def handle_listen_keypress(
             except Exception as e:
                 log.debug(f"Error in fuzzy station search: {e}")
                 log.warning(f"Unknown command or station: {user_input}")
-
