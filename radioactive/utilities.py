@@ -148,7 +148,7 @@ def get_key():
 
         try:
             return ch.decode("utf-8")
-        except:
+        except (UnicodeDecodeError, ValueError):
             return ""
     else:
         import termios
