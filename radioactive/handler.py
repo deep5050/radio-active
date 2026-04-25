@@ -154,26 +154,34 @@ class Handler:
                 cache_name="cache", backend="sqlite", expire_after=expire_after
             )
             self.API = RadioBrowser(session=session)
+            self._country_map = None  # Lazy cache for country names -> codes
         except Exception as e:
             log.debug(f"Error initializing RadioBrowser: {e}")
             log.critical("Something is wrong with your internet connection")
             sys.exit(1)
 
+    def _get_country_map(self) -> Dict[str, str]:
+        """Lazy load and cache country mapping."""
+        if self._country_map is None:
+            try:
+                log.debug("Fetching country list for cache...")
+                countries = self.API.countries()
+                self._country_map = {
+                    c["name"].lower(): c["iso_3166_1"]
+                    for c in countries
+                    if "name" in c and "iso_3166_1" in c
+                }
+            except Exception as e:
+                log.debug(f"Could not fetch country list: {e}")
+                return {}
+        return self._country_map
+
     def get_country_code(self, name: str) -> Optional[str]:
         """
-        Get the ISO 3166-1 alpha-2 country code for a given country name.
-
-        Args:
-            name (str): The name of the country.
-
-        Returns:
-            str: The country code if found, None otherwise.
+        Get the ISO 3166-1 alpha-2 country code for a given country name (cached).
         """
-        self.countries = self.API.countries()
-        for country in self.countries:
-            if country["name"].lower() == name.lower():
-                return country["iso_3166_1"]
-        return None
+        cmap = self._get_country_map()
+        return cmap.get(name.lower())
 
     def validate_uuid_station(self) -> List[Dict[str, Any]]:
         """
@@ -236,7 +244,7 @@ class Handler:
         except Exception as e:
             log.debug(f"Error in search_by_station_name: {e}")
             log.error("Something went wrong. please try again.")
-            sys.exit(1)
+            return []
 
     # ------------------------- UUID ------------------------ #
     def play_by_station_uuid(self, uuid: str) -> List[Dict[str, Any]]:
@@ -255,7 +263,7 @@ class Handler:
         except Exception as e:
             log.debug(f"Error in play_by_station_uuid: {e}")
             log.error("Something went wrong. please try again.")
-            sys.exit(1)
+            return []
 
     # -------------------------- COUNTRY ----------------------#
     def discover_by_country(
@@ -297,13 +305,13 @@ class Handler:
                 except Exception as e:
                     log.debug(f"Error searching by country name: {e}")
                     log.error("Something went wrong. please try again.")
-                    sys.exit(1)
+                    return []
             else:
-                log.error("Not a valid country name")
-                sys.exit(1)
+                log.error(f"'{country_code_or_name}' is not a valid country name")
+                return []
 
-        # display the result
-        print_table(
+        # display and return result
+        return print_table(
             response,
             [
                 "Station:name@30",
@@ -314,7 +322,6 @@ class Handler:
             sort_by,
             filter_with,
         )
-        return response
 
     # ------------------- by state ---------------------
 
@@ -331,7 +338,7 @@ class Handler:
         except Exception as e:
             log.debug(f"Error discover_by_state: {e}")
             log.error("Something went wrong. please try again.")
-            sys.exit(1)
+            return []
 
         return print_table(
             response,
@@ -361,7 +368,7 @@ class Handler:
         except Exception as e:
             log.debug(f"Error discover_by_language: {e}")
             log.error("Something went wrong. please try again.")
-            sys.exit(1)
+            return []
 
         return print_table(
             response,
@@ -389,7 +396,7 @@ class Handler:
         except Exception as e:
             log.debug(f"Error discover_by_tag: {e}")
             log.error("Something went wrong. please try again.")
-            sys.exit(1)
+            return []
 
         return print_table(
             response,
