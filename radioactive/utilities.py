@@ -926,30 +926,35 @@ def handle_listen_keypress(
                 )
 
         elif user_input == "v+":
-            new_vol = min(player.volume + 10, 100)
-            player.set_volume(new_vol)
+            if player:
+                new_vol = min(player.volume + 10, 100)
+                player.set_volume(new_vol)
+            else:
+                log.info("Nothing is playing")
 
         elif user_input == "v-":
-            new_vol = max(player.volume - 10, 0)
-            player.set_volume(new_vol)
+            if player:
+                new_vol = max(player.volume - 10, 0)
+                player.set_volume(new_vol)
+            else:
+                log.info("Nothing is playing")
 
         elif user_input.startswith("v "):
-            try:
-                vol_str = user_input.split(" ")[1].strip()
-                new_vol = int(vol_str)
-                if 0 <= new_vol <= 100:
-                    player.set_volume(new_vol)
-                else:
-                    log.error("Volume must be between 0 and 100")
-            except Exception:
-                log.error("Invalid volume format. Use 'v 50'")
+            if player:
+                try:
+                    vol_str = user_input.split(" ")[1].strip()
+                    new_vol = int(vol_str)
+                    if 0 <= new_vol <= 100:
+                        player.set_volume(new_vol)
+                    else:
+                        log.error("Volume must be between 0 and 100")
+                except Exception:
+                    log.error("Invalid volume format. Use 'v 50'")
+            else:
+                log.info("Nothing is playing")
 
-        elif user_input == "?":
+        elif user_input in ["?", "help"]:
             handle_runtime_help_menu()
-
-        elif user_input in ["q", "Q", "quit"]:
-            player.stop()
-            sys.exit(0)
 
         elif user_input.strip() != "":
             # Fuzzy match station from aliases or history if not a direct command
@@ -971,9 +976,11 @@ def handle_listen_keypress(
                     station_url = url
                     station_name = name
                     target_url = url
+                    auto_fetcher.update_url(target_url)
             except SystemExit:
                 # Direct play sys.exit(1) on failure, we want to stay in loop
                 pass
             except Exception as e:
                 log.debug(f"Error in fuzzy station search: {e}")
                 log.warning(f"Unknown command or station: {user_input}")
+
