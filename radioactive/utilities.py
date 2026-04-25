@@ -894,9 +894,10 @@ def handle_listen_keypress(
                                 if len(target_list) == 1:
                                     log.info("Station is already playing!")
                                     break
-                            player.stop()
-                            player.url = new_target_url
-                            player.play()
+                            if player:
+                                player.stop()
+                                player.url = new_target_url
+                                player.play()
                             handle_current_play_panel(new_station_name)
                             # Save the new station as last played and add to history
                             handle_save_last_station(
@@ -908,6 +909,7 @@ def handle_listen_keypress(
                             station_url = new_target_url
                             station_name = new_station_name
                             target_url = new_target_url
+                            auto_fetcher.update_url(target_url)
                             break
                         else:
                             raise Exception("Could not resolve station URL")
