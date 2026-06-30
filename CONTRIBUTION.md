@@ -18,7 +18,7 @@ To get started, make sure you have `git`, `ffmpeg` and `python3` installed on yo
 
 1. Clone your fork to your local machine using the following command:
    ```bash
-    git clone https://github.com/deep5050/radio-active.git
+    git clone https://github.com/dpnkrpl/radio-active.git
     git checkout -b your-branch-name
    ```
 

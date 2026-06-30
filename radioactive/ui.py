@@ -21,7 +21,7 @@ def handle_welcome_screen() -> None:
         :radio: Play any radios around the globe right from this Terminal
         :smile: Author: Dipankar Pal
         :question: Type '--help' for more details on available commands
-        :bug: Visit: https://github.com/deep5050/radio-active
+        :bug: Visit: https://github.com/dpnkrpl/radio-active
         :question: Press ? for help
         """,
         title="[b]RADIOACTIVE[/b]",
@@ -54,7 +54,7 @@ def handle_update_screen(app) -> None:
         if release_notes:
             update_msg += f"\n[bold yellow]What's new since v{local_version}:[/bold yellow]\n{release_notes}"
         else:
-            update_msg += f"\nSee all changes: https://github.com/deep5050/radio-active/blob/main/CHANGELOG.md"
+            update_msg += f"\nSee all changes: https://github.com/dpnkrpl/radio-active/blob/main/CHANGELOG.md"
 
         update_panel = Panel(
             update_msg,

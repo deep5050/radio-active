@@ -17,16 +17,16 @@
  <!--
  <p align=center ><img align=center src=https://static.pepy.tech/personalized-badge/radio-active?period=total&units=international_system&left_color=black&right_color=green&left_text=TotalInstalls></p>
  <p>
-<img width="500px" alt="UPI" src="https://raw.githubusercontent.com/deep5050/random-shits-happen-here/main/235618869-8c9d9bce-096d-469e-8f61-c29cc01eacc3%20(1).png">
+<img width="500px" alt="UPI" src="https://raw.githubusercontent.com/dpnkrpl/random-shits-happen-here/main/235618869-8c9d9bce-096d-469e-8f61-c29cc01eacc3%20(1).png">
 </p>  -->
 
 <p align=center>
 <img align=center src=https://user-images.githubusercontent.com/27947066/271250790-291c02fa-e568-45c8-8097-72167a109b82.png  width=550px>
 <hr>
-<img alt="GitHub" src="https://img.shields.io/github/license/deep5050/radio-active?style=for-the-badge">
+<img alt="GitHub" src="https://img.shields.io/github/license/dpnkrpl/radio-active?style=for-the-badge">
 <img alt="PyPI" src="https://img.shields.io/pypi/v/radio-active?style=for-the-badge">
 <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/radio-active?style=for-the-badge">
-<img alt="CodeFactor Grade" src="https://img.shields.io/codefactor/grade/github/deep5050/radio-active/main?style=for-the-badge">
+<img alt="CodeFactor Grade" src="https://img.shields.io/codefactor/grade/github/dpnkrpl/radio-active/main?style=for-the-badge">
 <a href=https://discord.gg/53rfebFyqK><img alt="Discord" src="https://img.shields.io/discord/847703568949051392?style=for-the-badge"></a>
 </p>
 
@@ -36,7 +36,7 @@
 </div>
 
 # Demo
-<p align=center> <img src=https://github.com/deep5050/radio-active/assets/27947066/358d5c7f-c501-4335-873b-a9a1dc45cd69 width=600px> </p>
+<p align=center> <img src=https://github.com/dpnkrpl/radio-active/assets/27947066/358d5c7f-c501-4335-873b-a9a1dc45cd69 width=600px> </p>
 
 
 ### Features
@@ -63,11 +63,11 @@
 - [x] I'm feeling lucky! Play Random stations
 
 
-> See my progress ➡️ [here](https://github.com/users/deep5050/projects/5)
+> See my progress ➡️ [here](https://github.com/users/dpnkrpl/projects/5)
 
-🎊🎊 For developer's guides and detailed architecture refer to this wiki: https://deepwiki.com/deep5050/radio-active
+🎊🎊 For developer's guides and detailed architecture refer to this wiki: https://deepwiki.com/dpnkrpl/radio-active
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/deep5050/radio-active)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/dpnkrpl/radio-active)
 
 ### Why radioactive?
 
@@ -82,8 +82,8 @@ The praise from YouTube channels and blogs underscores Radioactive's emergence a
 3. LinuxLinks: https://www.linuxlinks.com/radio-active-listen-radio-terminal/3/
 4. Official entry in the RadioBrowser API: [https://www.radio-browser.info/users](https://www.radio-browser.info/users#:~:text=Sources-,radio%2Dactive,-Sources)
 5. ThingsAndStuff: https://wiki.thingsandstuff.org/Streaming#:~:text=com/billniakas/bash_radio_gr-,radio%2Dactive,-https%3A//github.com
-6. Awesome-stars: https://arbal.github.io/awesome-stars/#:~:text=deep5050/radio%2Dactive%20%2D%20Play%20any%20radios%20around%20the%20globe%20right%20from%20the%20terminal%20%3Azap%3A
-7. OpenSourceAgenda: https://www.opensourceagenda.com/projects/my-awesome-stars#:~:text=deep5050/radio%2Dactive%20%2D%20Play%20any%20radios%20around%20the%20globe%20right%20from%20the%20terminal%20%3Azap%3A
+6. Awesome-stars: https://arbal.github.io/awesome-stars/#:~:text=dpnkrpl/radio%2Dactive%20%2D%20Play%20any%20radios%20around%20the%20globe%20right%20from%20the%20terminal%20%3Azap%3A
+7. OpenSourceAgenda: https://www.opensourceagenda.com/projects/my-awesome-stars#:~:text=dpnkrpl/radio%2Dactive%20%2D%20Play%20any%20radios%20around%20the%20globe%20right%20from%20the%20terminal%20%3Azap%3A
 
 
 ### Install
@@ -344,7 +344,7 @@ see [CHANGELOG](./CHANGELOG.md)
 
 ### Community
 
-Share you favorite list with our community 🌐 ➡️ [Here](https://github.com/deep5050/radio-active/discussions/10)
+Share you favorite list with our community 🌐 ➡️ [Here](https://github.com/dpnkrpl/radio-active/discussions/10)
 
 > Your favorite list `alias_map` is under `~/radioactive/` directory.
 
@@ -352,9 +352,9 @@ Share you favorite list with our community 🌐 ➡️ [Here](https://github.com
 ### Support
 
 <p>
-<a href=https://deep5050.github.io/payme>Visit my contribution page for more payment options.
+<a href=https://dpnkrpl.github.io/payme>Visit my contribution page for more payment options.
 </p>
-<p align=center><a href="https://www.buymeacoffee.com/deep5050" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 117px !important;" ></a></p>
+<p align=center><a href="https://www.buymeacoffee.com/dpnkrpl" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 117px !important;" ></a></p>
 
 ### Acknowledgements
 
@@ -362,7 +362,7 @@ Share you favorite list with our community 🌐 ➡️ [Here](https://github.com
 
 
 <div align=center>
-<img src=https://github.com/deep5050/random-shits-happen-here/assets/27947066/83d08065-c209-4012-abb7-9c0aa64d761b width=400px >
+<img src=https://github.com/dpnkrpl/random-shits-happen-here/assets/27947066/83d08065-c209-4012-abb7-9c0aa64d761b width=400px >
 <p align=center> Happy Listening </p>
 
 </div>
@@ -378,11 +378,11 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://www.bjoli.com"><img src="https://avatars.githubusercontent.com/u/48383?v=4?s=100" width="100px;" alt="Joe Smith"/><br /><sub><b>Joe Smith</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=Yasumoto" title="Tests">⚠️</a> <a href="https://github.com/deep5050/radio-active/commits?author=Yasumoto" title="Code">💻</a> <a href="#ideas-Yasumoto" title="Ideas, Planning, & Feedback">🤔</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/salehjafarli"><img src="https://avatars.githubusercontent.com/u/81613563?v=4?s=100" width="100px;" alt="salehjafarli"/><br /><sub><b>salehjafarli</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=salehjafarli" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/marvoh"><img src="https://avatars.githubusercontent.com/u/5451142?v=4?s=100" width="100px;" alt="marvoh"/><br /><sub><b>marvoh</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=marvoh" title="Code">💻</a> <a href="https://github.com/deep5050/radio-active/issues?q=author%3Amarvoh" title="Bug reports">🐛</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://twitter.com/YuGiOhFan2023"><img src="https://avatars.githubusercontent.com/u/6971466?v=4?s=100" width="100px;" alt="Brandon Taylor"/><br /><sub><b>Brandon Taylor</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/commits?author=robinhood2014" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://s0ands0.github.io"><img src="https://avatars.githubusercontent.com/u/4116150?v=4?s=100" width="100px;" alt="S0AndS0"/><br /><sub><b>S0AndS0</b></sub></a><br /><a href="https://github.com/deep5050/radio-active/issues?q=author%3AS0AndS0" title="Bug reports">🐛</a> <a href="https://github.com/deep5050/radio-active/commits?author=S0AndS0" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.bjoli.com"><img src="https://avatars.githubusercontent.com/u/48383?v=4?s=100" width="100px;" alt="Joe Smith"/><br /><sub><b>Joe Smith</b></sub></a><br /><a href="https://github.com/dpnkrpl/radio-active/commits?author=Yasumoto" title="Tests">⚠️</a> <a href="https://github.com/dpnkrpl/radio-active/commits?author=Yasumoto" title="Code">💻</a> <a href="#ideas-Yasumoto" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/salehjafarli"><img src="https://avatars.githubusercontent.com/u/81613563?v=4?s=100" width="100px;" alt="salehjafarli"/><br /><sub><b>salehjafarli</b></sub></a><br /><a href="https://github.com/dpnkrpl/radio-active/commits?author=salehjafarli" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/marvoh"><img src="https://avatars.githubusercontent.com/u/5451142?v=4?s=100" width="100px;" alt="marvoh"/><br /><sub><b>marvoh</b></sub></a><br /><a href="https://github.com/dpnkrpl/radio-active/commits?author=marvoh" title="Code">💻</a> <a href="https://github.com/dpnkrpl/radio-active/issues?q=author%3Amarvoh" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://twitter.com/YuGiOhFan2023"><img src="https://avatars.githubusercontent.com/u/6971466?v=4?s=100" width="100px;" alt="Brandon Taylor"/><br /><sub><b>Brandon Taylor</b></sub></a><br /><a href="https://github.com/dpnkrpl/radio-active/commits?author=robinhood2014" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://s0ands0.github.io"><img src="https://avatars.githubusercontent.com/u/4116150?v=4?s=100" width="100px;" alt="S0AndS0"/><br /><sub><b>S0AndS0</b></sub></a><br /><a href="https://github.com/dpnkrpl/radio-active/issues?q=author%3AS0AndS0" title="Bug reports">🐛</a> <a href="https://github.com/dpnkrpl/radio-active/commits?author=S0AndS0" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
@@ -398,6 +398,6 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <div align=center>
 <p>
-<img src=https://stars.medv.io/deep5050/radio-active.svg align=center>
+<img src=https://stars.medv.io/dpnkrpl/radio-active.svg align=center>
 </p>
 </div>
