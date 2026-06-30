@@ -188,7 +188,12 @@ def handle_record(
     outfile_path = os.path.join(record_file_path, tmp_filename)
 
     process = record_audio_from_url(
-        target_url, outfile_path, force_mp3, loglevel, duration
+        target_url,
+        outfile_path,
+        force_mp3,
+        loglevel,
+        duration,
+        station_name=curr_station_name,
     )
     return process, outfile_path
 
@@ -205,10 +210,9 @@ def handle_add_station(alias) -> None:
 
     if left.strip() == "" or right.strip() == "":
         log.error("Empty inputs not allowed")
-        sys.exit(1)
+        return
     alias.add_entry(left, right)
     log.info("New entry: {}={} added\n".format(left, right))
-    sys.exit(0)
 
 
 def handle_add_to_favorite(alias, station_name: str, station_uuid_url: str) -> None:
@@ -337,37 +341,14 @@ def handle_direct_play(
         return station_name, station_name_or_url
     else:
         log.debug("Direct play: station name provided")
-        # station name from fav list
-        # search for the station in fav list and return name and url
-
+        # search in favorites first
         response = alias.search(station_name_or_url)
+
+        # if not found, check history
         if not response and history:
             log.debug("Not found in favorites, checking history")
-            # history object should have a search method or we iterate
-            # looking at history.py might be good
             if hasattr(history, "search"):
                 response = history.search(station_name_or_url)
-            else:
-                # fallback iteration
-                for entry in history.get_list():
-                    name = entry.get("name", "").strip()
-                    val = entry.get("uuid_or_url", "").strip()
-                    # also check stationuuid if it exists (older history)
-                    sid = entry.get("stationuuid", "").strip()
-
-                    token = station_name_or_url.strip().lower()
-                    log.debug(
-                        f"Comparing history entry: '{name.lower()}' with token: '{token}'"
-                    )
-
-                    if (
-                        name.lower() == token
-                        or val == station_name_or_url.strip()
-                        or sid == station_name_or_url.strip()
-                    ):
-                        log.debug(f"History match found: {name}")
-                        response = entry
-                        break
 
         if not response:
             log.debug(f"Search failed for: {station_name_or_url}")
@@ -376,7 +357,7 @@ def handle_direct_play(
             )
             return None, None
         else:
-            log.debug(f"Direct play: {response}")
+            log.debug(f"Direct play found: {response}")
             return response["name"], response.get("uuid_or_url") or response.get(
                 "stationuuid"
             )

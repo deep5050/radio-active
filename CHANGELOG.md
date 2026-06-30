@@ -1,3 +1,14 @@
+## 4.1.0
+
+1. Significant improvements on app loading speed :zap:
+2. Recording quality improved 🎶
+3. Faster station lookup
+4. Optimize interaction with external player, improving play/pause time
+5. Improved fuzzy find logic 🔍
+6. Stability improvements for windows
+7. Critical bug fixes 🐛
+8. Minor UI fixes
+
 ## 4.0.2
 
 1. More information on the shazam identified track
