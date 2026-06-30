@@ -31,7 +31,7 @@ setup(
     keywords="pyradios wrapper radios api shortwave internet-radio cli app",
     author="Dipankar Pal",
     author_email="dipankarpal5050@gmail.com",
-    url="https://github.com/deep5050/radio-active",
+    url="https://github.com/dpnkrpl/radio-active",
     license="MIT",
     entry_points={
         "console_scripts": [
@@ -53,7 +53,7 @@ setup(
     ],
     python_requires=">=3.6",
     project_urls={
-        "Source": "https://github.com/deep5050/radio-active/",
+        "Source": "https://github.com/dpnkrpl/radio-active/",
         "Upstream": "https://api.radio-browser.info/",
     },
 )

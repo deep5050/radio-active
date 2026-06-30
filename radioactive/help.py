@@ -158,5 +158,5 @@ def show_help():
 
     console.print(table)
     print(
-        "For more details : https://github.com/deep5050/radio-active/blob/main/README.md"
+        "For more details : https://github.com/dpnkrpl/radio-active/blob/main/README.md"
     )

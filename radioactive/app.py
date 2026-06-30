@@ -58,7 +58,7 @@ class App:
         try:
             import requests
 
-            url = "https://raw.githubusercontent.com/deep5050/radio-active/main/CHANGELOG.md"
+            url = "https://raw.githubusercontent.com/dpnkrpl/radio-active/main/CHANGELOG.md"
             response = requests.get(url)
             if response.status_code != 200:
                 return None
